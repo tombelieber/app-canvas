@@ -1,0 +1,32 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import example from "./catalog.json";
+export default {
+  title: "StoolSense",
+  port: 6106,
+  ...example,
+  async preview({ root, canvasOrigin }) {
+    const publicDir = join(root, "examples/stoolsense/public");
+    return {
+      url: (s) => `${canvasOrigin}/frame?id=${s.id}`,
+      async handle(req, res, url) {
+        const files = {
+          "/frame": ["index.html", "text/html; charset=utf-8"],
+          "/assets/frame.js": ["frame.js", "text/javascript"],
+          "/style.css": ["style.css", "text/css"],
+          "/sample.png": ["sample.png", "image/png"],
+          "/diet-template.csv": ["diet-template.csv", "text/csv"],
+        };
+        const asset =
+          files[url.pathname] ||
+          (/^\/api\/images\/[^/]+$/.test(url.pathname)
+            ? files["/sample.png"]
+            : null);
+        if (!asset) return false;
+        res.setHeader("Content-Type", asset[1]);
+        res.end(await readFile(join(publicDir, asset[0])));
+        return true;
+      },
+    };
+  },
+};

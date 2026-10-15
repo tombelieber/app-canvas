@@ -1,0 +1,865 @@
+{
+  "catalog": [
+    {
+      "id": "capture-home",
+      "title": "拍攝首頁",
+      "page": "capture",
+      "group": "app",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "history-home",
+      "title": "歷史紀錄",
+      "page": "history",
+      "group": "app",
+      "source": "client/history.js"
+    },
+    {
+      "id": "insights-home",
+      "title": "趨勢與飲食對照",
+      "page": "insights",
+      "group": "app",
+      "source": "client/history.js"
+    },
+    {
+      "id": "import-home",
+      "title": "飲食紀錄",
+      "page": "import",
+      "group": "app",
+      "source": "client/import.js"
+    },
+    {
+      "id": "data-home",
+      "title": "資料與 Profiles",
+      "page": "data",
+      "group": "app",
+      "source": "client/data.js"
+    },
+    {
+      "id": "capture-manual",
+      "title": "冇相補記",
+      "page": "capture",
+      "group": "capture",
+      "setup": "manual",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-photo",
+      "title": "相片預覽與重拍",
+      "page": "capture",
+      "group": "capture",
+      "setup": "photo",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-observations",
+      "title": "外觀與感受 · 展開",
+      "page": "capture",
+      "group": "capture",
+      "setup": "observations",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-care",
+      "title": "求醫問題 · 展開",
+      "page": "capture",
+      "group": "capture",
+      "setup": "care",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-time",
+      "title": "時間與歸屬 · 展開",
+      "page": "capture",
+      "group": "capture",
+      "setup": "time",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-pending",
+      "title": "待同步紀錄 · 可繼續",
+      "page": "capture",
+      "group": "capture",
+      "setup": "pending",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-saving",
+      "title": "雲端保存中",
+      "page": "capture",
+      "group": "capture",
+      "setup": "saving",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-offline",
+      "title": "離線 · 草稿保留",
+      "page": "capture",
+      "group": "capture",
+      "setup": "offline",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "capture-preview-error",
+      "title": "相片格式未能預覽",
+      "page": "capture",
+      "group": "capture",
+      "setup": "preview-error",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "history-empty",
+      "title": "未有紀錄",
+      "page": "history",
+      "group": "result",
+      "empty": true,
+      "source": "client/history.js"
+    },
+    {
+      "id": "history-pagination",
+      "title": "歷史 · 分頁",
+      "page": "history",
+      "group": "result",
+      "pagination": true,
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-manual",
+      "title": "手動記錄 · 已保存",
+      "page": "history",
+      "group": "result",
+      "event": "manual",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-photo",
+      "title": "原相已保存 · 未分析",
+      "page": "history",
+      "group": "result",
+      "event": "photo",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-partial",
+      "title": "原相未完成同步",
+      "page": "history",
+      "group": "result",
+      "event": "partial",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-running",
+      "title": "AI 分析中",
+      "page": "history",
+      "group": "result",
+      "event": "running",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-failed",
+      "title": "分析失敗 · 可重試",
+      "page": "history",
+      "group": "result",
+      "event": "failed",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-unknown",
+      "title": "分析完成 · 未獲資格",
+      "page": "history",
+      "group": "result",
+      "event": "unknown",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-appearance",
+      "title": "外觀建議 · 模擬合資格",
+      "page": "history",
+      "group": "result",
+      "event": "appearance",
+      "experimental": true,
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-photo-open",
+      "title": "查看與下載原相",
+      "page": "history",
+      "group": "result",
+      "event": "photo",
+      "expand": "photo",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-edit",
+      "title": "修改時間、Profile、感受",
+      "page": "history",
+      "group": "result",
+      "event": "manual",
+      "expand": "edit",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-versions",
+      "title": "分析及修正版本",
+      "page": "history",
+      "group": "result",
+      "event": "versions",
+      "expand": "versions",
+      "source": "client/history.js"
+    },
+    {
+      "id": "result-delete",
+      "title": "刪除紀錄 · 確認",
+      "page": "history",
+      "group": "result",
+      "event": "manual",
+      "setup": "confirm-event",
+      "source": "client/history.js"
+    },
+    {
+      "id": "visit-summary",
+      "title": "求診摘要 · 匯出內容",
+      "page": "history",
+      "group": "result",
+      "setup": "summary",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-insufficient",
+      "title": "資料未足夠",
+      "page": "history",
+      "group": "care",
+      "event": "insufficient",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-record",
+      "title": "保留紀錄，留意變化",
+      "page": "history",
+      "group": "care",
+      "event": "record",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-contact",
+      "title": "聯絡醫生跟進",
+      "page": "history",
+      "group": "care",
+      "event": "contact",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-urgent",
+      "title": "盡快取得醫療意見",
+      "page": "history",
+      "group": "care",
+      "event": "urgent",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-emergency",
+      "title": "立即求助",
+      "page": "history",
+      "group": "care",
+      "event": "emergency",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "care-other",
+      "title": "成人以外 · 適用範圍",
+      "page": "history",
+      "group": "care",
+      "event": "other",
+      "expand": "care",
+      "source": "client/history.js"
+    },
+    {
+      "id": "insights-empty",
+      "title": "未有對照資料",
+      "page": "insights",
+      "group": "insights",
+      "empty": true,
+      "source": "client/history.js"
+    },
+    {
+      "id": "insights-candidate",
+      "title": "候選模式 · 支持紀錄",
+      "page": "insights",
+      "group": "insights",
+      "pattern": "candidate",
+      "expand": "all",
+      "source": "client/history.js"
+    },
+    {
+      "id": "insights-confounded",
+      "title": "食物共現 · 無法分辨",
+      "page": "insights",
+      "group": "insights",
+      "pattern": "confounded",
+      "expand": "all",
+      "source": "client/history.js"
+    },
+    {
+      "id": "insights-intervals",
+      "title": "事件間隔與感受變化",
+      "page": "insights",
+      "group": "insights",
+      "expand": "all",
+      "source": "client/history.js"
+    },
+    {
+      "id": "import-empty",
+      "title": "未有飲食紀錄",
+      "page": "import",
+      "group": "import",
+      "empty": true,
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-mapping",
+      "title": "CSV 欄位與時間對應",
+      "page": "import",
+      "group": "import",
+      "setup": "mapping",
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-xlsx",
+      "title": "Excel 工作表選擇",
+      "page": "import",
+      "group": "import",
+      "setup": "xlsx",
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-ready",
+      "title": "預覽 · 可匯入",
+      "page": "import",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "ready",
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-duplicate",
+      "title": "預覽 · 重複資料",
+      "page": "import",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "duplicate",
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-invalid",
+      "title": "預覽 · 日期未能確認",
+      "page": "import",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "invalid",
+      "source": "client/import.js"
+    },
+    {
+      "id": "import-committed",
+      "title": "匯入完成",
+      "page": "import",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "ready",
+      "commit": true,
+      "source": "client/import.js"
+    },
+    {
+      "id": "meal-delete",
+      "title": "刪除飲食 · 確認",
+      "page": "import",
+      "group": "import",
+      "setup": "confirm-meal",
+      "source": "client/import.js"
+    },
+    {
+      "id": "data-originals",
+      "title": "原相選擇與 ZIP 匯出",
+      "page": "data",
+      "group": "data",
+      "setup": "originals",
+      "source": "client/data.js"
+    },
+    {
+      "id": "data-no-originals",
+      "title": "未有可匯出原相",
+      "page": "data",
+      "group": "data",
+      "setup": "originals",
+      "empty": true,
+      "source": "client/data.js"
+    },
+    {
+      "id": "data-delete",
+      "title": "選擇刪除範圍",
+      "page": "data",
+      "group": "data",
+      "setup": "delete",
+      "source": "client/data.js"
+    },
+    {
+      "id": "data-confirm-delete",
+      "title": "刪除所選資料 · 確認",
+      "page": "data",
+      "group": "data",
+      "setup": "confirm-delete",
+      "source": "client/data.js"
+    },
+    {
+      "id": "data-profile-created",
+      "title": "新增 Profile 完成",
+      "page": "data",
+      "group": "data",
+      "setup": "profile",
+      "source": "client/data.js"
+    },
+    {
+      "id": "data-export-complete",
+      "title": "ZIP 匯出完成",
+      "page": "data",
+      "group": "data",
+      "setup": "zip",
+      "source": "client/data.js"
+    },
+    {
+      "id": "component-symptoms",
+      "title": "痛楚、用力 · 所有選項",
+      "page": "capture",
+      "group": "components",
+      "component": "symptoms",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "component-observations",
+      "title": "外觀、備註 · 所有選項",
+      "page": "capture",
+      "group": "components",
+      "component": "observations",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "component-appearance",
+      "title": "Bristol、顏色與紅色似血物",
+      "page": "history",
+      "group": "components",
+      "component": "appearance",
+      "experimental": true,
+      "source": "client/history.js"
+    },
+    {
+      "id": "auth-checking",
+      "title": "正在確認登入身份",
+      "page": "capture",
+      "group": "system",
+      "auth": "checking",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "auth-expired",
+      "title": "登入已過期",
+      "page": "capture",
+      "group": "system",
+      "auth": "expired",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "auth-denied",
+      "title": "未獲邀請",
+      "page": "capture",
+      "group": "system",
+      "auth": "denied",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-invalid_care_answers",
+      "title": "求醫參考內容未能確認；請檢查選項及日數，未知可留空",
+      "page": "capture",
+      "group": "system",
+      "error": "invalid_care_answers",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-invalid_image",
+      "title": "相片格式未能確認，未完成同步",
+      "page": "capture",
+      "group": "system",
+      "error": "invalid_image",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-sign_in_required",
+      "title": "登入已過期，請重新登入",
+      "page": "capture",
+      "group": "system",
+      "error": "sign_in_required",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-not_invited",
+      "title": "呢個 email 未獲邀請",
+      "page": "capture",
+      "group": "system",
+      "error": "not_invited",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-storage_capacity",
+      "title": "雲端容量已滿，原相保留喺本機待同步",
+      "page": "capture",
+      "group": "system",
+      "error": "storage_capacity",
+      "setup": "photo",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-too_large",
+      "title": "內容超過呢次操作嘅大小上限",
+      "page": "capture",
+      "group": "system",
+      "error": "too_large",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-integrity_failed",
+      "title": "相片完整性檢查失敗",
+      "page": "capture",
+      "group": "system",
+      "error": "integrity_failed",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-event_deleted",
+      "title": "呢筆事件已刪除，唔會重新建立",
+      "page": "capture",
+      "group": "system",
+      "error": "event_deleted",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-revision_conflict",
+      "title": "紀錄已喺另一個畫面改過",
+      "page": "capture",
+      "group": "system",
+      "error": "revision_conflict",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-analysis_limit_or_running",
+      "title": "分析正在進行或今日分析額度已用完",
+      "page": "capture",
+      "group": "system",
+      "error": "analysis_limit_or_running",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-analysis_unavailable",
+      "title": "分析暫時不可用，紀錄仍然可以保存",
+      "page": "capture",
+      "group": "system",
+      "error": "analysis_unavailable",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-provider_unavailable",
+      "title": "AI 服務暫時不可用，可稍後手動重試",
+      "page": "capture",
+      "group": "system",
+      "error": "provider_unavailable",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-upload_incomplete",
+      "title": "相片未同步完成，可重試",
+      "page": "capture",
+      "group": "system",
+      "error": "upload_incomplete",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-ambiguous_date",
+      "title": "日期未能確認；請用 YYYY-MM-DD HH:mm 格式",
+      "page": "import",
+      "group": "system",
+      "error": "ambiguous_date",
+      "source": "client/import.js"
+    },
+    {
+      "id": "error-invalid_import_rows",
+      "title": "請先修正預覽中未能確認嘅行",
+      "page": "import",
+      "group": "system",
+      "error": "invalid_import_rows",
+      "source": "client/import.js"
+    },
+    {
+      "id": "error-service_unavailable",
+      "title": "服務暫時不可用",
+      "page": "capture",
+      "group": "system",
+      "error": "service_unavailable",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-conflict",
+      "title": "名稱或紀錄已存在，請重新整理",
+      "page": "capture",
+      "group": "system",
+      "error": "conflict",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-narrow_export_range",
+      "title": "資料較多，請縮短匯出日期範圍",
+      "page": "capture",
+      "group": "system",
+      "error": "narrow_export_range",
+      "source": "client/capture.js"
+    },
+    {
+      "id": "error-narrow_date_range",
+      "title": "資料較多，請縮短日期範圍",
+      "page": "import",
+      "group": "system",
+      "error": "narrow_date_range",
+      "source": "client/import.js"
+    }
+  ],
+  "groups": [
+    {
+      "id": "app",
+      "title": "App · 五個主頁",
+      "color": "#287b83"
+    },
+    {
+      "id": "capture",
+      "title": "記錄 · 拍攝與同步",
+      "color": "#287b83"
+    },
+    {
+      "id": "result",
+      "title": "結果 · 觀察與修正",
+      "color": "#4377bc"
+    },
+    {
+      "id": "care",
+      "title": "求醫參考 · 所有提示級別",
+      "color": "#b36a30"
+    },
+    {
+      "id": "insights",
+      "title": "對照 · 趨勢與線索",
+      "color": "#8b68aa"
+    },
+    {
+      "id": "import",
+      "title": "飲食 · 匯入流程",
+      "color": "#53863c"
+    },
+    {
+      "id": "data",
+      "title": "資料 · 匯出與刪除",
+      "color": "#987338"
+    },
+    {
+      "id": "components",
+      "title": "共用 UI · 所有選項",
+      "color": "#687681"
+    },
+    {
+      "id": "system",
+      "title": "系統 · 登入與錯誤",
+      "color": "#b45c58"
+    }
+  ],
+  "flows": [
+    {
+      "from": "capture-home",
+      "to": "history-home",
+      "label": "歷史分頁"
+    },
+    {
+      "from": "capture-home",
+      "to": "insights-home",
+      "label": "對照分頁"
+    },
+    {
+      "from": "capture-home",
+      "to": "import-home",
+      "label": "飲食分頁"
+    },
+    {
+      "from": "capture-home",
+      "to": "data-home",
+      "label": "資料分頁"
+    },
+    {
+      "from": "capture-home",
+      "to": "capture-photo",
+      "label": "拍照 / 選相"
+    },
+    {
+      "from": "capture-home",
+      "to": "capture-manual",
+      "label": "冇相補記"
+    },
+    {
+      "from": "capture-photo",
+      "to": "capture-observations",
+      "label": "補充感受"
+    },
+    {
+      "from": "capture-photo",
+      "to": "capture-saving",
+      "label": "保存"
+    },
+    {
+      "from": "capture-manual",
+      "to": "result-manual",
+      "label": "保存"
+    },
+    {
+      "from": "capture-photo",
+      "to": "capture-pending",
+      "label": "稍後同步"
+    },
+    {
+      "from": "capture-pending",
+      "to": "capture-photo",
+      "label": "繼續保存"
+    },
+    {
+      "from": "capture-saving",
+      "to": "result-running",
+      "label": "原相已保存"
+    },
+    {
+      "from": "capture-saving",
+      "to": "capture-offline",
+      "label": "連線中斷"
+    },
+    {
+      "from": "capture-offline",
+      "to": "capture-saving",
+      "label": "重試"
+    },
+    {
+      "from": "result-running",
+      "to": "result-unknown",
+      "label": "更新狀態"
+    },
+    {
+      "from": "result-failed",
+      "to": "result-running",
+      "label": "再分析"
+    },
+    {
+      "from": "history-home",
+      "to": "result-manual",
+      "label": "開啟紀錄"
+    },
+    {
+      "from": "result-manual",
+      "to": "result-edit",
+      "label": "修改"
+    },
+    {
+      "from": "result-edit",
+      "to": "result-versions",
+      "label": "保存修正"
+    },
+    {
+      "from": "result-photo",
+      "to": "result-photo-open",
+      "label": "查看原相"
+    },
+    {
+      "from": "result-manual",
+      "to": "visit-summary",
+      "label": "求診摘要"
+    },
+    {
+      "from": "result-manual",
+      "to": "result-delete",
+      "label": "刪除"
+    },
+    {
+      "from": "capture-care",
+      "to": "care-emergency",
+      "label": "大量 / 持續出血"
+    },
+    {
+      "from": "capture-care",
+      "to": "care-urgent",
+      "label": "警號"
+    },
+    {
+      "from": "insights-home",
+      "to": "insights-candidate",
+      "label": "支持紀錄"
+    },
+    {
+      "from": "insights-candidate",
+      "to": "result-manual",
+      "label": "查看事件"
+    },
+    {
+      "from": "import-home",
+      "to": "import-mapping",
+      "label": "選擇 CSV"
+    },
+    {
+      "from": "import-home",
+      "to": "import-xlsx",
+      "label": "選擇 Excel"
+    },
+    {
+      "from": "import-mapping",
+      "to": "import-ready",
+      "label": "預覽"
+    },
+    {
+      "from": "import-mapping",
+      "to": "import-invalid",
+      "label": "日期不明"
+    },
+    {
+      "from": "import-ready",
+      "to": "import-committed",
+      "label": "確認匯入"
+    },
+    {
+      "from": "import-committed",
+      "to": "import-duplicate",
+      "label": "再次匯入"
+    },
+    {
+      "from": "data-home",
+      "to": "data-originals",
+      "label": "選擇原相"
+    },
+    {
+      "from": "data-originals",
+      "to": "data-export-complete",
+      "label": "下載 ZIP"
+    },
+    {
+      "from": "data-home",
+      "to": "data-delete",
+      "label": "選擇資料"
+    },
+    {
+      "from": "data-delete",
+      "to": "data-confirm-delete",
+      "label": "刪除所選"
+    }
+  ]
+}

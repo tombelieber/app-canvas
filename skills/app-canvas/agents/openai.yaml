@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Canvas"
+  short_description: "Review real app pages, states and flows on one canvas"
+  default_prompt: "Use $app-canvas to add or maintain an interactive overview of this app's real pages and UI states."
