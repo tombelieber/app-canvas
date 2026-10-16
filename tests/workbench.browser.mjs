@@ -16,7 +16,8 @@ const config = {
 };
 const app = await startCanvas({ config, port: 0, watchFiles: false });
 const engine = process.env.APP_CANVAS_ENGINE || "chromium";
-const browser = await ({ chromium, webkit })[engine].launch();
+const reloadOnResize = engine === "webkit" && process.platform === "linux" && process.env.APP_CANVAS_HEADED === "1";
+const browser = await ({ chromium, webkit })[engine].launch({ headless: process.env.APP_CANVAS_HEADED !== "1" });
 try {
   await app.firstBuild;
   const context = await browser.newContext({ viewport: { width: 1280, height: 760 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
@@ -100,12 +101,17 @@ try {
   await page.getByRole("button", { name: "面板", exact: true }).tap();
   await page.getByRole("button", { name: "還原版面", exact: true }).tap();
   for (const viewport of [{ width: 1180, height: 820 }, { width: 736, height: 908 }, { width: 320, height: 800 }]) {
-    await page.setViewportSize(viewport); await settled();
+    await page.setViewportSize(viewport);
+    // GTK mobile emulation retains its initial layout viewport until reload;
+    // native macOS/headless and Chromium still exercise in-place resizing.
+    if (reloadOnResize) await page.reload();
+    await settled();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight + 1), true, `host stays within ${viewport.width}px viewport`);
     const b = await page.getByRole("button", { name: "Browse", exact: true }).boundingBox();
     assert.ok(b.width >= 44 && b.height >= 44, "mode switch is a reachable touch target");
   }
   await page.setViewportSize({ width: 1280, height: 760 });
+  if (reloadOnResize) await page.reload();
   if (!await page.locator('select[aria-label="播放流程"]').isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
   await page.locator('select[aria-label="播放流程"]').selectOption("save");
   await page.getByRole("button", { name: "▶ 播放", exact: true }).tap();

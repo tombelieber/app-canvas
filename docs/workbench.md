@@ -117,6 +117,21 @@ portrait/split widths, panel recovery, scoped/depth navigation,
 cross-page camera movement, bounded running app frames and absence of host reloads or
 external requests. CI runs both before GitHub Pages deployment.
 
+On Linux, run tablet QA in a rendered virtual display:
+
+```sh
+xvfb-run -a env APP_CANVAS_HEADED=1 npm run test:tablet
+```
+
+CI uses this same WebKit display mode. The headless Linux engine can stop the
+main document's animation frames with the full iframe canvas; the test checks
+that the rendering clock advances before exercising actual touch input. The
+display mode retains the same viewport, touch actions, case assertions and
+complete queue. macOS can use the default headless mode.
+Linux GTK mobile emulation also needs a planned reload after a test changes
+device dimensions. These are counted separately; unexpected app reloads still
+fail. The macOS/Chromium runs retain in-place resize checks.
+
 These are desktop-engine/device-emulation checks. A physical iPad's Safari,
 memory pressure, virtual keyboard and long-session behavior still require
 device validation. Static metadata from the previous runtime remains supported

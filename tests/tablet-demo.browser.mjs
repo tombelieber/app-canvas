@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 const hosted = process.env.APP_CANVAS_TEST_URL;
 const app = hosted ? { address: hosted, firstBuild: Promise.resolve(), close: async () => {} } : await startCanvas({ root: packageRoot, configPath: "examples/stoolsense/canvas.config.mjs", port: 0, watchFiles: false });
-const browser = await webkit.launch();
+const browser = await webkit.launch({ headless: process.env.APP_CANVAS_HEADED !== "1" });
 try {
   await app.firstBuild;
   const bootManifest = hosted ? await (await fetch(new URL("manifest.json", hosted))).json() : app.getManifest();
@@ -12,7 +12,8 @@ try {
   assert.deepEqual(fallbackCases, [], "the DOM-compatible demo must keep all 77 full previews without starting fallback apps");
   const page = await browser.newPage({ viewport: { width: 1280, height: 760 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, timezoneId: "Asia/Hong_Kong" });
   page.setDefaultTimeout(15000);
-  const errors = [], remote = []; let reloads = 0;
+  const errors = [], remote = []; let reloads = 0, plannedViewportReloads = 0;
+  const reloadOnResize = process.platform === "linux" && process.env.APP_CANVAS_HEADED === "1";
   page.on("pageerror", e => errors.push(e.message));
   page.on("request", r => { if (!r.url().startsWith(app.address) && !r.url().startsWith("blob:")) remote.push(r.url()); });
   page.on("framenavigated", f => { if (f === page.mainFrame()) reloads++; });
@@ -26,6 +27,10 @@ try {
     }
   };
   await ready();
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(Error("Main-frame rendering clock stopped; run Linux tablet QA with a rendered display (APP_CANVAS_HEADED=1).")), 3000);
+    requestAnimationFrame(() => requestAnimationFrame(() => { clearTimeout(timer); resolve(); }));
+  }));
   const initialStage = await page.locator(".flow-stage").boundingBox();
   assert.ok(initialStage.y <= 52 && initialStage.height >= 708, `landscape canvas gets the full height below one compact toolbar: ${JSON.stringify(initialStage)}`);
   assert.equal(await page.locator('.screen-frame[data-visible="true"]').count(), 77, "default overview shows all complete screens");
@@ -51,6 +56,7 @@ try {
     await page.getByLabel("展開深度").selectOption("1"); await ready();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     await page.setViewportSize(i % 2 ? { width: 1280, height: 760 } : { width: 1180, height: 820 });
+    if (reloadOnResize) { plannedViewportReloads++; await page.reload(); }
   }
   await page.getByRole("button", { name: "畫面總覽", exact: true }).tap();
   await page.getByLabel("頁面範圍").selectOption("capture"); await ready();
@@ -73,9 +79,9 @@ try {
   assert.ok(await page.locator("iframe[data-screen]").count() <= 4);
   const frame = await page.locator(".journey-live").boundingBox(), area = await page.locator(".flow-stage").boundingBox();
   assert.ok(frame.x >= area.x && frame.x + frame.width <= area.x + area.width && frame.y >= area.y && frame.y + frame.height <= area.y + area.height + 2);
-  assert.equal(reloads, 1, "switching views and scopes must not reload the host canvas");
+  assert.equal(reloads, 1 + plannedViewportReloads, "view/scope/playback must never add unplanned host reloads");
   assert.deepEqual(errors, []); assert.deepEqual(remote, []);
-  const proof = { engine: "WebKit", viewport: "iPad emulation, portrait/landscape", physicalDevice: false, cases: 77, played: 121, liveLimit: 4, hostNavigations: reloads, errors, remote };
+  const proof = { engine: "WebKit", headed: process.env.APP_CANVAS_HEADED === "1", viewport: "iPad emulation, portrait/landscape", physicalDevice: false, cases: 77, played: 121, liveLimit: 4, hostNavigations: reloads, plannedViewportReloads, errors, remote };
   await writeFile(".artifacts/tablet/demo-proof.json", JSON.stringify(proof, null, 2));
   await page.screenshot({ path: ".artifacts/tablet/stoolsense-playback.png" });
   console.log("PASS:", JSON.stringify(proof));
