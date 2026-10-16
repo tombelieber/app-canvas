@@ -36,6 +36,10 @@ try {
   await page.getByLabel("播放速度").selectOption("0");
   await page.getByRole("button", { name: "▶ 播放", exact: true }).tap();
   await page.waitForFunction(() => ["complete", "error"].includes(document.querySelector(".journey-panel")?.dataset.status), null, { timeout: 240000 });
+  if (await page.locator(".journey-panel").getAttribute("data-status") === "error") {
+    const preview = await page.frameLocator('iframe[data-screen="journey"]').locator("html").evaluate(el => ({ ready: el.dataset.reviewReady, error: el.dataset.reviewError, previewErrors: window.__review?.errors || window.__appCanvas?.errors || [], text: document.body.innerText.slice(-1600) })).catch(e => ({ inspectionError: e.message }));
+    console.error("Synthetic demo failure:", JSON.stringify({ errors, preview }));
+  }
   assert.equal(await page.locator(".journey-panel").getAttribute("data-status"), "complete", await page.locator(".journey-panel").innerText());
   assert.equal(await page.locator(".journey-panel").getAttribute("data-finished"), "121");
   await ready();

@@ -11,6 +11,9 @@ test("playback reserves a live slot without evicting retained drafts",()=>{
   const result=previewPool({...base,retained:["old-a","old-b","old-c"],selected:"10",playing:true});
   assert.deepEqual([...result],["old-a","old-b","old-c"]);
 });
+test("playback does not start duplicate background app fixtures",()=>{
+  assert.equal(previewPool({...base,playing:true,selected:"10"}).size,0,"the continuing player is the only new app instance during playback");
+});
 test("zoomed-out and collapsed previews do not start background apps",()=>{
   assert.equal(previewPool({...base,viewport:{x:0,y:0,zoom:.02}}).size,0);
   assert.equal(previewPool({...base,nodes:nodes.map(n=>({...n,data:{...n.data,compact:true}}))}).size,0);

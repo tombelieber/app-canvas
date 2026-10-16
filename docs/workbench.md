@@ -62,7 +62,8 @@ The native preview keeps its own scrolling while in Interact.
 ## Bounded actual-code previews
 
 The renderer has a budget of **four live app iframes on touch devices** and
-**eight on desktop**, including the continuing playback frame. Zoomed-out
+**eight on desktop**, including the continuing playback frame. During playback, only that continuing
+frame and already-retained drafts run; duplicate background cases stay unloaded. Zoomed-out
 summaries and unloaded frames show labels/conditions, never screenshots.
 Selecting or sufficiently zooming into a frame loads its real adapter.
 Catalog size is not the number of concurrently running apps.
@@ -89,6 +90,7 @@ external requests. CI runs both before GitHub Pages deployment.
 
 These are desktop-engine/device-emulation checks. A physical iPad's Safari,
 memory pressure, virtual keyboard and long-session behavior still require
-device validation. The reported iPad crash has not been reproduced on physical
+device validation. Static metadata from the previous runtime remains supported
+during a cached upgrade. The reported iPad crash has not been reproduced on physical
 hardware; resource bounds and stable iframe ordering address observed
 implementation risks without establishing a device-specific crash cause.

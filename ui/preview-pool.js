@@ -2,6 +2,7 @@
 // never serialize/replay arbitrary app input events to pretend to restore state.
 export function previewPool({ nodes, viewport, area, selected, active, retained, limit, playing }) {
   const ids = new Set(retained);
+  if (playing) return ids;
   if (!playing && active) ids.add(active);
   if (!playing && selected && ids.size < limit) ids.add(selected);
   const candidates = nodes.filter(n => n.type === "screen" && n.data.visible && !n.data.compact).map(n => {
