@@ -20,7 +20,8 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "./canvas.css";
-const project = await (await fetch("/project.json")).json();
+const resource = (name) => new URL(`../${name}`, import.meta.url);
+const project = await (await fetch(resource("project.json"))).json();
 const { catalog, flows, groups } = project;
 
 function ScreenNode({ id, data, selected }) {
@@ -158,9 +159,9 @@ function Canvas() {
     flow = useReactFlow();
   const loadedHash = useRef(null);
   useEffect(() => {
-    const events = new EventSource("/events");
-    events.onmessage = (e) => {
-      const next = JSON.parse(e.data);
+    let cancelled = false;
+    const update = (next) => {
+      if (cancelled) return;
       if (next.canvasHash) {
         if (loadedHash.current && loadedHash.current !== next.canvasHash) {
           location.reload();
@@ -170,7 +171,16 @@ function Canvas() {
       }
       setManifest(next);
     };
-    return () => events.close();
+    if (project.static) {
+      fetch(resource("manifest.json")).then((r) => {
+        if (!r.ok) throw Error("Manifest unavailable");
+        return r.json();
+      }).then(update).catch((error) => update({ status: "error", screens: {}, error: error.message }));
+      return () => { cancelled = true; };
+    }
+    const events = new EventSource(resource("events"));
+    events.onmessage = (e) => update(JSON.parse(e.data));
+    return () => { cancelled = true; events.close(); };
   }, []);
   useEffect(() => {
     const listener = (e) => {
@@ -284,7 +294,7 @@ function Canvas() {
   return (
     <div className="review-workspace">
       <header className="workspace-bar">
-        <a className="workspace-brand" href="/">
+        <a className="workspace-brand" href="./">
           {project.title} <span>UI canvas</span>
         </a>
         <span
@@ -292,7 +302,7 @@ function Canvas() {
         >
           <i />
           {manifest.status === "ready"
-            ? `${rendered} 個畫面 · 已同步`
+            ? `${rendered} 個畫面 · ${project.static ? "示範版本" : "已同步"}`
             : manifest.status === "error"
               ? "生成失敗"
               : `正在生成 ${rendered} / ${catalog.length}`}
@@ -358,7 +368,8 @@ function Canvas() {
         </div>
         <div className="layers-foot">
           <strong>同一份 App UI code</strong>
-          <p>預覽全部係虛構資料。修改程式後自動重建畫面。</p>
+          <p>{project.static ? "公開 demo：固定版本 UI、虛構資料。接入你嘅 repo 後，畫面會跟程式更新。" : "預覽全部係虛構資料。修改程式後自動重建畫面。"}</p>
+          {project.links?.repository && <p><a href={project.links.repository} target="_blank" rel="noreferrer">GitHub ↗</a> · <a href={project.links.agentGuide} target="_blank" rel="noreferrer">交畀你的 Agent ↗</a></p>}
           <label>
             <input
               type="checkbox"

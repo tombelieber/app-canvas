@@ -2,16 +2,38 @@
 
 A zoomable overview of your real application pages, named states and flows. Double-click a screen to use the real UI, then reset its disposable data.
 
+**[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
+No install, login or API key. Explore **77 named states**, labeled flows and
+working recording/editing/import/export interactions using synthetic data.
+
 ![StoolSense on the canvas](docs/stoolsense-canvas.png)
 
 One runtime serves multiple projects. Each project keeps its **screen catalog, preview adapter, synthetic fixtures and interaction checks**. Components, layouts and CSS come from the application. There is no second design file to synchronize.
+
+## Give this to your coding agent
+
+Open your application repository in your agent and paste:
+
+```text
+Read https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md
+and add App Canvas to this repository. Inventory all pages, meaningful UI
+states, shared controls and flows. Use the actual application code and CSS,
+with isolated synthetic fixtures. Deliver a working canvas, missing-page
+checks and verified interactions; report counts and any remaining omissions.
+```
+
+The [agent guide](AGENT_GUIDE.md) contains installation, integration, coverage,
+verification and ongoing maintenance steps. The bundled [React/Vite example](examples/react-vite)
+is a runnable reference. It does not require Figma or a particular AI vendor.
+An agent that can inspect/edit code and run commands can follow the guide;
+Codex and Claude Code also have a bundled skill installer.
 
 ## Try the included application
 
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.1.1
+npm install -g github:tombelieber/app-canvas#v0.2.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -19,6 +41,11 @@ app-canvas demo
 Open <http://127.0.0.1:6106>. The bundled StoolSense example contains **77 authored cases** from a real recording app, with synthetic records. Recording, correction, deletion, import, export, navigation and dialogs work locally. It makes no AI calls and needs no account.
 
 The example is a frozen frontend export. In a live project the adapter imports current application code; the source watcher rebuilds the overview. Changing this frozen example does not modify the original application.
+
+The hosted demo also uses this frozen synthetic export. It has no application
+backend, production session, real health records, AI requests or analytics.
+Saving and deleting affect only the disposable browser preview. GitHub Pages
+serves the static files under GitHub's own hosting policies.
 
 ## Connect a project
 
@@ -104,6 +131,28 @@ Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canva
 
 `preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs are trusted local code. Cached thumbnails live under `node_modules/.cache/app-canvas/`; the board uses those images and mounts one interactive iframe at a time. Source changes trigger rebuilding; dependency/configuration changes may require restarting the command.
 
+## Publish a synthetic canvas
+
+The local development server stays loopback-only. A project can separately
+provide `preview.exportStatic({ outDir })`: it writes explicitly publishable
+frontend assets and returns `{ [caseId]: './frame/index.html?id=case-id' }`.
+The shared exporter adds the same canvas UI, thumbnails and relative manifests:
+
+```sh
+app-canvas export --config canvas.config.mjs --out <new-directory>
+```
+
+The output works at a domain root or nested path. Export requires every case
+to render, refuses an existing output directory and fails without an explicit
+static adapter. It does not sanitize arbitrary repositories or turn a live
+backend into a static application. Review publication rights, source content,
+fixtures, images and the exported artifact before hosting it.
+
+The included StoolSense adapter is already synthetic and exportable. Its
+[static asset mapping](examples/stoolsense/static.mjs) is intentionally
+specific to that frozen frontend. This repo's GitHub Pages workflow builds and
+tests that example on main; it never reads the private StoolSense repository.
+
 ## Related OSS
 
 This is an existing problem with useful existing solutions, not an empty market:
@@ -125,6 +174,10 @@ npm ci
 npm run check
 npm test
 npm run test:browser
+npm run test:onboarding
+npm run build:demo
+npm run test:static
+npm run check:privacy
 npm run pack:check
 ```
 

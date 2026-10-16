@@ -1,6 +1,6 @@
 {
   "name": "app-canvas",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An interactive overview of real application pages, states and flows",
   "author": {
     "name": "tombelieber",
@@ -8,5 +8,7 @@
   },
   "repository": "https://github.com/tombelieber/app-canvas",
   "license": "MIT",
-  "skills": ["./skills/app-canvas"]
+  "skills": [
+    "./skills/app-canvas"
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "name": "app-canvas-react-vite-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "ui:review": "app-canvas --config ui-review/canvas.config.mjs",
+    "test:ui:review": "app-canvas --config ui-review/canvas.config.mjs --verify"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.12.0"
+  },
+  "devDependencies": { "vite": "^7.2.4" }
+}

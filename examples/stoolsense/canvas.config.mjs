@@ -1,13 +1,19 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import example from "./catalog.json";
+import { exportStoolSense } from "./static.mjs";
 export default {
   title: "StoolSense",
   port: 6106,
   ...example,
+  links: {
+    repository: "https://github.com/tombelieber/app-canvas",
+    agentGuide: "https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md",
+  },
   async preview({ root, canvasOrigin }) {
     const publicDir = join(root, "examples/stoolsense/public");
     return {
+      exportStatic: ({ outDir }) => exportStoolSense({ publicDir, outDir, catalog: example.catalog }),
       url: (s) => `${canvasOrigin}/frame?id=${s.id}`,
       async handle(req, res, url) {
         const files = {

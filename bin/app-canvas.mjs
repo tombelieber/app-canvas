@@ -13,6 +13,7 @@ const { values, positionals } = parseArgs({
     verify: { type: "boolean" },
     check: { type: "boolean" },
     target: { type: "string" },
+    out: { type: "string" },
     help: { type: "boolean" },
   },
 });
@@ -25,7 +26,7 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check]\napp-canvas demo\napp-canvas browsers\napp-canvas install --target codex|claude|both",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check]\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both",
   );
   process.exit(0);
 }
@@ -44,6 +45,8 @@ if (positionals[0] === "browsers") {
 }
 let app;
 try {
+  const exporting = positionals[0] === "export";
+  if (exporting && !values.out) throw Error("export requires --out <new-directory>");
   if (values.check) {
     const { loadProject } = await import("../lib/config.mjs");
     const project = await loadProject(
@@ -61,8 +64,8 @@ try {
       positionals[0] === "demo"
         ? "examples/stoolsense/canvas.config.mjs"
         : values.config || "canvas.config.mjs",
-    port: values.port ? Number(values.port) : undefined,
-    watchFiles: !values.verify,
+    port: values.port ? Number(values.port) : exporting ? 0 : undefined,
+    watchFiles: !values.verify && !exporting,
   });
   console.log(`App canvas: ${app.address}`);
   for (const signal of ["SIGINT", "SIGTERM"])
@@ -70,7 +73,11 @@ try {
       await app.close();
       process.exit(0);
     });
-  if (values.verify) {
+  if (exporting) {
+    const result = await app.exportStatic({ outDir: values.out });
+    console.log(`Exported ${result.total} screens and interactive previews to ${result.directory}`);
+    await app.close();
+  } else if (values.verify) {
     const proof = await app.verify();
     console.log(
       `PASS: ${proof.total} registered screens${proof.interactionsVerified ? " and project interactions" : ""}`,

@@ -1,0 +1,17 @@
+{
+  "groups": [{ "id": "tasks", "title": "Tasks" }, { "id": "settings", "title": "Settings" }],
+  "catalog": [
+    { "id": "tasks", "group": "tasks", "title": "Tasks / populated", "path": "/", "pattern": "/", "source": "src/App.jsx:Tasks", "ready": "[data-state=populated]" },
+    { "id": "tasks-empty", "group": "tasks", "title": "Tasks / empty", "path": "/", "source": "src/App.jsx:Tasks", "ready": "[data-state=empty]" },
+    { "id": "tasks-loading", "group": "tasks", "title": "Tasks / loading", "path": "/", "source": "src/App.jsx:Tasks", "ready": "[data-state=loading]" },
+    { "id": "tasks-error", "group": "tasks", "title": "Tasks / failed then retry", "path": "/", "source": "src/App.jsx:Tasks", "ready": "[data-state=error]" },
+    { "id": "settings", "group": "settings", "title": "Settings / editable", "path": "/settings", "pattern": "/settings", "source": "src/App.jsx:Settings", "ready": "[data-state=settings]" },
+    { "id": "settings-denied", "group": "settings", "title": "Settings / access denied", "path": "/settings", "source": "src/App.jsx:Settings", "ready": "[data-state=denied]" }
+  ],
+  "flows": [
+    { "from": "tasks", "to": "settings", "label": "Open settings" },
+    { "from": "tasks-empty", "to": "tasks", "label": "Add task" },
+    { "from": "tasks-error", "to": "tasks", "label": "Retry" },
+    { "from": "settings", "to": "tasks", "label": "Return to tasks" }
+  ]
+}

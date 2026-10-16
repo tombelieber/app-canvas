@@ -12,7 +12,15 @@ const { startCanvas, packageRoot } = await import(
 import example from "../examples/stoolsense/catalog.json" with { type: "json" };
 const { catalog } = example;
 
-const app = await startCanvas({
+const hostedUrl = process.env.APP_CANVAS_TEST_URL;
+const hostedManifest = hostedUrl ? await (await fetch(new URL("manifest.json", hostedUrl))).json() : null;
+const app = hostedUrl ? {
+  address: hostedUrl,
+  firstBuild: Promise.resolve(),
+  verify: async () => {},
+  getManifest: () => hostedManifest,
+  close: async () => {},
+} : await startCanvas({
   root: packageRoot,
   configPath: "examples/stoolsense/canvas.config.mjs",
   port: 0,
@@ -37,12 +45,12 @@ try {
     remote = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("request", (request) => {
-    if (new URL(request.url()).origin !== app.address)
+    if (new URL(request.url()).origin !== new URL(app.address).origin && !request.url().startsWith("blob:"))
       remote.push(request.url());
   });
   await page.goto(app.address);
   await page
-    .getByText(`${catalog.length} 個畫面 · 已同步`, { exact: true })
+    .getByText(`${catalog.length} 個畫面 · ${hostedUrl ? "示範版本" : "已同步"}`, { exact: true })
     .waitFor();
   await page.getByRole("button", { name: "全覽", exact: false }).click();
   await page.waitForFunction(
@@ -141,6 +149,40 @@ try {
   );
   assert.deepEqual(errors, []);
   assert.deepEqual(remote, [], "review never requests a remote service");
+  if (hostedUrl) {
+    // A screenshot export is insufficient: every hosted case must also boot
+    // and all overview images must exist on the public/subpath deployment.
+    let index = 0;
+    await Promise.all(Array.from({ length: 3 }, async () => {
+      while (index < catalog.length) {
+        const scenario = catalog[index++];
+        const screen = hostedManifest.screens[scenario.id];
+        const response = await fetch(new URL(screen.image, hostedUrl));
+        assert.equal(response.status, 200, `missing hosted thumbnail ${scenario.id}`);
+        assert.match(response.headers.get("content-type"), /image\/png/);
+        const preview = await browser.newPage();
+        const failures = [];
+        preview.on("pageerror", (error) => failures.push(error.message));
+        preview.on("request", (request) => {
+          if (!request.url().startsWith(hostedUrl) && !request.url().startsWith("blob:")) failures.push(`Unexpected request ${request.url()}`);
+        });
+        try {
+          await preview.goto(new URL(screen.url, hostedUrl).href);
+          await preview.locator("html[data-review-ready]").waitFor();
+          assert.equal(await preview.locator("html").getAttribute("data-review-ready"), "true", `hosted preview failed: ${scenario.id}`);
+          assert.equal(await preview.locator("html").getAttribute("data-review-error"), null);
+          assert.deepEqual(failures, [], scenario.id);
+          if (scenario.id === "capture-preview-error") {
+            await preview.locator("#preview-error:not([hidden])").waitFor();
+            assert.equal(await preview.locator(".capture-preview img").isHidden(), true);
+          } else {
+            assert.equal(await preview.evaluate(() => [...document.images].every((img) => !img.complete || img.naturalWidth > 0)), true, `broken hosted image ${scenario.id}`);
+          }
+        } finally { await preview.close(); }
+      }
+    }));
+    console.log(`PASS: all ${catalog.length} hosted interactive cases and thumbnails; no account, external requests or localhost runtime.`);
+  }
   console.log(
     `PASS: ${catalog.length} actual-code screens; canvas, flows, save/edit/delete, CSV/Excel, ZIP, keyboard exit, responsive layout and isolated transport.`,
   );

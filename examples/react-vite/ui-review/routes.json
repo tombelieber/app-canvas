@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/",
+    "component": "Tasks",
+    "kind": "page",
+    "source": "src/App.jsx"
+  },
+  {
+    "path": "/settings",
+    "component": "Settings",
+    "kind": "page",
+    "source": "src/App.jsx"
+  }
+]
