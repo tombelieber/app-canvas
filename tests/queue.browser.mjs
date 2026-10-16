@@ -24,7 +24,8 @@ try {
   const page=await browser.newPage({viewport:{width:1512,height:982}});
   await page.goto(app.address);
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
-  await page.getByLabel("播放流程").selectOption("__all__");
+  if (!await page.locator('select[aria-label="播放流程"]').isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
+  await page.locator('select[aria-label="播放流程"]').selectOption("__all__");
   await page.getByRole("button",{name:"單步",exact:true}).click();
   await page.locator('.journey-panel[data-status="paused"][data-step="1"]').waitFor();
   assert.equal(await page.locator('.inspector code').innerText(),"failed");
@@ -44,7 +45,7 @@ try {
   await page.locator('.journey-panel[data-status="complete"][data-finished="3"]').waitFor();
   // Preserve the selected path while showing its neighboring bad/recovery branch.
   await page.getByRole("button",{name:"狀態圖",exact:true}).click();
-  await page.getByLabel("播放流程").selectOption("recovery");
+  await page.locator('select[aria-label="播放流程"]').selectOption("recovery");
   await page.getByLabel("顯示其他分支").check();
   assert.equal(await page.locator('.screen-frame[data-outcome="failure"]').count(),1);
   await page.getByRole("button",{name:"單步",exact:true}).click();

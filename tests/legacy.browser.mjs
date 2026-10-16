@@ -12,6 +12,11 @@ try{
   for(const s of project.catalog){delete s.pageId;delete s.feature;}
   await route.fulfill({response,json:project});
  });
+ await page.route("**/events",async route=>{
+  const manifest=structuredClone(app.getManifest());
+  for(const screen of Object.values(manifest.screens))delete screen.domUrl;
+  await route.fulfill({contentType:"text/event-stream",body:`data: ${JSON.stringify(manifest)}\n\n`});
+ });
  const failure=page.waitForEvent("pageerror").then(e=>({error:e.message}));
  await page.goto(app.address);
  const result=await Promise.race([failure,page.locator('.review-workspace[data-live-ready="true"]').waitFor({timeout:10000}).then(()=>({ready:true}))]);

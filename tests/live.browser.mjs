@@ -15,7 +15,7 @@ try {
     await page.getByLabel("搜尋畫面").fill(id);
     await page.locator(`button[title="${id}"]`).click();
     await page.frameLocator(`iframe[data-screen="${id}"]`).locator('html[data-review-ready="true"]').waitFor();
-    assert.ok(await page.locator("iframe").count() <= 8, "all states must render actual code within a bounded resource budget");
+    assert.ok(await page.locator("iframe[data-screen]").count() <= 8, "all states must render actual code within a bounded resource budget");
   }
   console.log("PASS: all 77 cases render real application DOM on selection without screenshot images or simultaneous unbounded app instances.");
 } finally { await browser.close(); await app.close(); }

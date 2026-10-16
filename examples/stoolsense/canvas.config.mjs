@@ -16,6 +16,7 @@ export default {
   async preview({ root, canvasOrigin }) {
     const publicDir = join(root, "examples/stoolsense/public");
     return {
+      exportDom: true, // Same already-public synthetic frontend is measured and exported.
       exportStatic: ({ outDir }) => exportStoolSense({ publicDir, outDir, catalog: example.catalog }),
       url: (s) => `${canvasOrigin}/frame?id=${s.id}`,
       async handle(req, res, url) {

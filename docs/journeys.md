@@ -73,11 +73,12 @@ case, or restarts the current journey with fresh fixtures.
 
 ## Whole-app state graph and complete playback
 
-The **畫面總覽** view exposes every registered case and loads its actual UI
-within the shared live-preview budget. Page summaries and deferred frames are
-not screenshots; select a frame to load it.
-**狀態圖** lays out the combined directed graph with compact state cards;
-select a card to expand the same real UI, then press **Interact** to operate it.
+The **畫面總覽** view exposes every registered case as a complete real UI.
+Script-free HTML/CSS from the source-rendering pass keeps all screens visible
+without running every application. Selection and playback use the original
+app code. **狀態圖** lays out the combined directed graph with those same full
+screens, never compact metadata cards. Press **Interact** to operate a selected
+screen. See the [rendering and tablet contract](workbench.md) for fallback limits.
 `outcome` gives a state its semantic label and color: `neutral`, `success`,
 `failure`, `pending` or `warning`. An optional `condition` explains its inputs.
 Color describes the application state, not whether a test passed or a medical

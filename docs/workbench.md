@@ -1,10 +1,10 @@
 # Pages, states and the touch workbench
 
-Start in **頁面導航**: the whole-app view shows one card per page with its
-features and state count. Select a page to see its features. Depth selects
-page only, page plus features, or every named state. Search can find a state
-across pages. **畫面總覽** exposes all states; **狀態圖** shows the branching
-graph. Selecting a state expands its actual application UI.
+Start in **畫面總覽** with every named state shown as complete application
+UI. **狀態圖** connects the same full screens as a directed graph. Neither
+view replaces screens with summary cards. The left sidebar filters pages,
+features and depth; these controls change which full screens are shown.
+Selecting a screen zooms to it. Search finds states across pages.
 
 ## Page ownership
 
@@ -52,21 +52,45 @@ selects it and pans/zooms the camera to the destination.
   preferences are scoped by project title and URL path. The mode/panel dock
   remains visible, even with all panels hidden; **還原版面** restores defaults.
 
-On touch devices and narrow windows, the navigation opens as a drawer and
-selected-screen information occupies a scrollable bottom panel. The remaining
-canvas is the camera's fit area. Controls have at least 44px touch targets;
-inputs use 16px text to avoid input-focus magnification. Portrait, landscape,
-split view and safe-area insets are handled without page-level overflow.
-The native preview keeps its own scrolling while in Interact.
+iPad landscape uses docked left/right sidebars, a full-height canvas and one
+**52px toolbar**. Both sidebars are shown by default and can be collapsed
+independently; collapsing a sidebar returns its width to the canvas.
+Page/search/depth controls belong to the left sidebar; playback and selected
+screen details belong to the right. Each sidebar has a collapse button; the
+top toolbar also has direct panel toggles. The floating dock restores panels
+when the toolbar is hidden. At widths below 1000px, navigation becomes a drawer
+and details use a bottom panel. Pointer type does not force landscape tablets
+into the narrow layout. Controls have 44px touch targets and inputs use 16px
+text. The remaining canvas is the camera's fit area.
 
-## Bounded actual-code previews
+## Full UI without starting every app
 
-The renderer has a budget of **four live app iframes on touch devices** and
-**eight on desktop**, including the continuing playback frame. During playback, only that continuing
-frame and already-retained drafts run; duplicate background cases stay unloaded. Zoomed-out
-summaries and unloaded frames show labels/conditions, never screenshots.
-Selecting or sufficiently zooming into a frame loads its real adapter.
-Catalog size is not the number of concurrently running apps.
+During the existing isolated measurement pass, App Canvas captures the HTML
+and CSS that the **real source app** produced. It preserves form values,
+CSSOM styles, SVG and local image/font assets. The overview displays these
+script-free documents, without raster screenshots or separately written UI.
+Both the full overview and graph show actual page contents at every zoom.
+Offscreen documents are released; when zoomed out, all visible screens remain
+visible. Source rebuilds refresh both the overview documents and live apps.
+
+Selecting a screen loads the original HTML/CSS/JS. Interact unlocks its real
+controls; playback uses one continuing original app. DOM-compatible previews
+keep at most **four running app frames on touch devices / eight on desktop**,
+including the player. Passive overview documents are not running app instances.
+During playback only the continuing app and retained drafts run.
+
+Canvas/video/embedded/shadow-root content, imported or inaccessible styles,
+and assets that cannot be safely embedded fall back to the original live app.
+Those visible fallback frames are additional to the regular live budget; large
+projects using those surfaces need their own resource measurements. This
+fallback preserves existing integrations and avoids showing an incorrect UI.
+Old manifests without DOM documents continue to use real app frames.
+
+Measured documents stay local by default. Static publication copies them only
+when the explicitly publishable adapter also sets `exportDom: true`, after its
+fixtures and assets have been reviewed. An adapter that sanitizes/replaces its
+local data must not opt in with unreviewed local DOM. The frozen synthetic demo
+uses this opt-in; it exports the same public frontend that was measured.
 
 Entering Interact retains that frame in memory across scope, view and panel
 changes. Keep iframe ancestor DOM order stable: moving an existing iframe
@@ -84,8 +108,9 @@ rebuild starts a new preview run; preview drafts are not durable app records.
 pinch, accidental-tap prevention, capacity and draft retention.
 `npm run test:tablet` checks the workbench with WebKit touch emulation and runs
 the complete synthetic StoolSense queue of 44 flows plus 77 cases. It includes
-portrait/landscape/split widths, panel recovery, scoped/depth navigation,
-cross-page camera movement, bounded frames and absence of host reloads or
+1280×760 landscape (toolbar ≤52px, docked sidebars, full screens),
+portrait/split widths, panel recovery, scoped/depth navigation,
+cross-page camera movement, bounded running app frames and absence of host reloads or
 external requests. CI runs both before GitHub Pages deployment.
 
 These are desktop-engine/device-emulation checks. A physical iPad's Safari,

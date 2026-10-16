@@ -43,7 +43,7 @@ Requires Node.js 22+. Use the repository's package manager and lockfile; npm
 examples below are the reference path. No paid API key or model call is needed.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.5.1
+npm install --save-dev github:tombelieber/app-canvas#v0.6.0
 npx app-canvas browsers
 ```
 
@@ -96,9 +96,12 @@ Add `ui:review` and `test:ui:review` package scripts. Register source/config wat
 paths, page/state source locations and labeled `flows` edges. Every catalog
 case must be addressable and render actual code when opened. Declare `pages`
 from the actual router and `pageId` / `feature` on each state; see the
-[page/feature/state and tablet contract](docs/workbench.md). Unopened previews
-load on demand within a four-frame touch / eight-frame desktop budget, including
-playback. Interacted previews stay mounted across filters and modes. Never
+[page/feature/state and tablet contract](docs/workbench.md). The overview and
+state graph show full source-rendered HTML/CSS, with no summary cards or raster
+screenshots. Script-free DOM documents keep the whole app visible; selection
+and playback use the original app code. DOM-compatible content uses four touch
+/ eight desktop running-app slots. Unsupported drawing/embedded content and
+legacy manifests retain live rendering; measure that fallback separately. Interacted previews stay mounted across filters and modes. Never
 reorder their DOM ancestors or silently evict drafts; retained capacity requires
 an explicit release. Browse locks app controls; Interact is an explicit button.
 Top/left/right panels must remain recoverable after hiding them. Filtering must preserve drafts;
@@ -106,6 +109,11 @@ reset must restore only the selected fixture. The shared bridge namespaces
 both Storage APIs before app code. Supply frame-local substitutes for
 IndexedDB, SDK caches and other persistence too. Do not treat the trusted-code
 iframe as a hostile-code security sandbox.
+
+Measured DOM stays local. For a separately authorized public static export,
+review the rendered fixtures/assets before setting `exportDom: true` on the
+publishable preview adapter. Do not copy measured local DOM when the static
+adapter sanitizes or replaces that data.
 
 The Vite helper and custom HTML served through `handle` receive the bridge
 automatically. Separate-origin custom preview servers must inject

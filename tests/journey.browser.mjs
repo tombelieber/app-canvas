@@ -11,13 +11,14 @@ try {
  const page = await browser.newPage({ viewport: { width: 1512, height: 982 } });
  await page.goto(app.address);
  await page.locator('.review-workspace[data-live-ready="true"]').waitFor({ timeout: 45000 });
- assert.equal(await page.getByLabel("播放流程").count(), 1);
+ if (!await page.locator('select[aria-label="播放流程"]').isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
+ assert.equal(await page.locator('select[aria-label="播放流程"]').count(), 1);
  assert.equal(await page.getByRole("button", { name: "狀態圖", exact: true }).count(), 1, "full branching graph is available");
- assert.equal(await page.getByLabel("播放流程").locator('option[value="__all__"]').count(), 1, "all authored cases can play as a bounded queue");
- await page.getByLabel("播放流程").selectOption(config.journeys[0].id);
+ assert.equal(await page.locator('select[aria-label="播放流程"]').locator('option[value="__all__"]').count(), 1, "all authored cases can play as a bounded queue");
+ await page.locator('select[aria-label="播放流程"]').selectOption(config.journeys[0].id);
  await page.getByLabel("播放速度").selectOption("0");
  for (const journey of config.journeys.slice(0, 3)) {
-   await page.getByLabel("播放流程").selectOption(journey.id);
+   await page.locator('select[aria-label="播放流程"]').selectOption(journey.id);
    await page.getByRole("button", { name: "▶ 播放", exact: true }).click();
    await page.waitForFunction(() => ["complete", "error"].includes(document.querySelector(".journey-panel")?.dataset.status), null, { timeout: 30000 });
    assert.equal(await page.locator(".journey-panel").getAttribute("data-status"), "complete", await page.locator(".journey-panel").innerText());
@@ -25,14 +26,14 @@ try {
    assert.equal(await page.locator('iframe[data-screen="journey"]').count(), 1);
    console.log(`PASS: ${journey.id} performed ${journey.steps.length} real UI steps and focused the terminal screen.`);
  }
- await page.getByLabel("播放流程").selectOption(config.journeys[0].id);
+ await page.locator('select[aria-label="播放流程"]').selectOption(config.journeys[0].id);
  await page.getByRole("button", { name: "單步", exact: true }).click();
  await page.locator('.journey-panel[data-status="paused"][data-step="1"]').waitFor();
  await page.getByRole("button", { name: "單步", exact: true }).click();
  await page.locator('.journey-panel[data-status="complete"]').waitFor();
  await page.getByRole("button", { name: "重播", exact: true }).click();
  await page.locator('.journey-panel[data-status="complete"]').waitFor();
- await page.getByLabel("播放流程").selectOption("broken-proof");
+ await page.locator('select[aria-label="播放流程"]').selectOption("broken-proof");
  await page.getByRole("button", { name: "▶ 播放", exact: true }).click();
  await page.locator('.journey-panel[data-status="error"]').waitFor();
  assert.match(await page.locator(".journey-panel").innerText(), /deliberately-absent-control/);

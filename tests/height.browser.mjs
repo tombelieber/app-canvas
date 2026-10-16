@@ -18,6 +18,10 @@ try {
   await page.getByRole("button", {name:"畫面總覽",exact:true}).click();
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
   await page.evaluate(() => new Promise((resolve) => { let count = 0; const frame = () => ++count === 12 ? resolve() : requestAnimationFrame(frame); requestAnimationFrame(frame); }));
-  assert.equal(await page.locator('iframe[data-screen="home"]').evaluate((el) => parseFloat(el.style.height)), measured, "live resize observations must not feed a vh/scroll-area height growth loop");
+  assert.equal(await page.locator('iframe[data-preview="home"]').evaluate((el) => parseFloat(el.style.height)), measured, "overview retains the measured full-document height");
+  await page.getByRole("button", { name: "▶ 操作 App", exact: true }).click();
+  await page.frameLocator('iframe[data-screen="home"]').locator("main").waitFor();
+  await page.evaluate(() => new Promise(resolve => { let count=0; const tick=()=>++count===12?resolve():requestAnimationFrame(tick); requestAnimationFrame(tick); }));
+  assert.equal(await page.locator('iframe[data-screen="home"]').evaluate(el=>parseFloat(el.style.height)), 844, "live resize observations must not feed a vh/scroll-area height growth loop");
   console.log("PASS: viewport-dependent scroll layout keeps a bounded measured overview height.");
 } finally { await browser.close(); await app.close(); }

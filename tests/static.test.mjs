@@ -13,7 +13,9 @@ test("static export contains the same canvas, relative assets and no local previ
     await writeFile(join(output, file), "fixture");
   const project = { title: "Example", groups: [{ id: "pages" }], catalog: [{ id: "home", title: "Home", group: "pages" }], flows: [] };
   const manifest = { status: "ready", revision: 1, screens: { home: { url: "http://127.0.0.1:123/frame?id=home", width: 390, height: 844 } } };
-  const preview = { async exportStatic({ outDir }) {
+  await writeFile(join(output, "dom-home.html"), '<!doctype html><html><body><h1>Actual source DOM</h1></body></html>');
+  manifest.screens.home.domUrl = "http://127.0.0.1:123/assets/dom-home.html";
+  const preview = { exportDom: true, async exportStatic({ outDir }) {
     await mkdir(join(outDir, "frame"));
     await writeFile(join(outDir, "frame/index.html"), "synthetic preview");
     return { home: "./frame/index.html?id=home" };
@@ -23,10 +25,16 @@ test("static export contains the same canvas, relative assets and no local previ
     const exported = await readFile(join(outDir, "manifest.json"), "utf8");
     assert.ok(!exported.includes("127.0.0.1"));
     assert.equal(JSON.parse(exported).screens.home.url, "./frame/index.html?id=home");
+    assert.equal(JSON.parse(exported).screens.home.domUrl, "./assets/dom-home.html");
+    assert.match(await readFile(join(outDir, "assets/dom-home.html"), "utf8"), /Actual source DOM/);
     assert.equal(JSON.parse(await readFile(join(outDir, "project.json"))).static, true);
     assert.match(await readFile(join(outDir, "index.html"), "utf8"), /\.\/assets\/canvas.js/);
     await assert.rejects(() => access(join(outDir, "thumb")), "static canvas never exports screenshot thumbnails");
     assert.match(await readFile(join(outDir, "frame/index.html"), "utf8"), /frame-bridge.js/);
+    const legacyDir = join(root, "legacy-adapter");
+    await exportCanvas({ output, outDir: legacyDir, project, preview: { exportStatic: preview.exportStatic }, manifest });
+    assert.equal(JSON.parse(await readFile(join(legacyDir, "manifest.json"))).screens.home.domUrl, undefined, "an adapter must explicitly approve publishing measured local DOM");
+    await assert.rejects(() => access(join(legacyDir, "assets/dom-home.html")), "local DOM is not exported implicitly");
     await assert.rejects(() => exportCanvas({ output, outDir, project, preview, manifest }), /exist/i);
     await assert.rejects(() => exportCanvas({ output, outDir: join(root, "no-adapter"), project, preview: {}, manifest }), /exportStatic/);
     await assert.rejects(() => access(join(root, "no-adapter")));

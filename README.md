@@ -7,7 +7,7 @@ No install, login or API key. Explore **77 named states**, labeled flows and
 working recording/editing/import/export interactions using synthetic data.
 Play **44 interaction flows and all 77 individual cases**, separately or as
 one queue. The branching state graph labels success, failure, waiting and
-conditional variants; select a node to expand its real UI.
+conditional variants using complete real UI screens.
 
 ![A failed save, retained draft and successful retry on the real UI canvas](docs/stoolsense-playback.jpg)
 
@@ -36,7 +36,7 @@ Codex and Claude Code also have a bundled skill installer.
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.5.1
+npm install -g github:tombelieber/app-canvas#v0.6.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -57,7 +57,8 @@ own continuing session; the next flow or standalone case starts fresh. A
 standalone case starts from its declared fixture condition and checks that
 view, including states that require an external login or provider outcome.
 It is not presented as a user navigating to every state from one session.
-**畫面總覽** exposes all named states with bounded live previews; **狀態圖** uses compact, expandable nodes.
+**畫面總覽** shows every complete UI; **狀態圖** connects the same full screens.
+A single compact toolbar and collapsible sidebars preserve iPad landscape space.
 **顯示其他分支** retains neighboring states while following a selected flow.
 
 The hosted demo also uses this frozen synthetic export. It has no application
@@ -156,13 +157,16 @@ Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canva
 
 `preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs and preview code are trusted local code. The Vite helper and HTML served through `handle` get the shared preview bridge automatically. A custom server on a separate origin must apply `ctx.bridgeHtml(html)` before its application scripts.
 
-The default **page overview** groups features and state counts. Choose a page,
-expand to feature or all-state depth, or switch to **畫面總覽** / **狀態圖**.
-Actual UI code loads on selection or when sufficiently zoomed into a visible
-frame. Live previews are bounded to four on touch devices and eight on desktop,
-including playback. Unopened previews may be evicted; interacted frames stay
-mounted across filters and modes. At retained capacity, explicitly release a
-preview before unlocking another. No screenshot cache is generated or displayed.
+The default **畫面總覽** shows complete real HTML/CSS for all named states.
+The measurement pass reuses source-rendered DOM and styles in script-free
+preview documents; it does not generate screenshots or a second UI.
+Selecting a screen loads its original app code; Interact unlocks real controls.
+The branching **狀態圖** also displays full screens. Page/feature/depth filters
+and playback live in collapsible sidebars, with one 52px toolbar on iPad landscape.
+DOM-compatible content uses four touch / eight desktop running-app slots,
+including playback. Unsupported drawing/embedded content retains live rendering
+and needs project-specific resource checks. Edited frames stay mounted across
+filters and modes; explicitly release a retained frame at capacity.
 See the [workbench and iPad guide](docs/workbench.md).
 
 DOM measurements and compiled files live under

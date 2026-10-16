@@ -64,7 +64,7 @@ try {
     catalog.length,
   );
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor({ timeout: 45000 });
-  assert.ok(await page.locator("iframe").count() <= 8, "bounded live previews");
+  assert.ok(await page.locator("iframe[data-screen]").count() <= 8, "bounded live previews");
   assert.equal(await page.locator(".screen-frame img").count(), 0);
   assert.deepEqual(downloads, [], "loading all named states must not trigger unsolicited downloads");
   await page.waitForFunction((n) => document.querySelectorAll(".react-flow__minimap-node").length >= n, catalog.length);
@@ -144,7 +144,7 @@ try {
   await frame.locator("#manual").click();
   await page.keyboard.press("Escape");
   await page.locator(".screen-frame.is-interactive").waitFor({ state: "hidden" });
-  await page.getByRole("button", { name: "頁面導航", exact: true }).click();
+  await page.getByRole("button", { name: "畫面總覽", exact: true }).click();
   await page.getByLabel("搜尋畫面").fill("");
   await page.getByLabel("頁面範圍").selectOption("all");
   await page.getByLabel("展開深度").selectOption("0");
@@ -165,7 +165,7 @@ try {
       `canvas overflow at ${width}px`,
     );
   }
-  await page.getByRole("button", { name: "▶ 操作 App", exact: true }).click();
+  await page.getByRole("button", { name: "Interact", exact: true }).click();
   await frame.locator("#save-form").waitFor();
   assert.equal(
     await page.evaluate(

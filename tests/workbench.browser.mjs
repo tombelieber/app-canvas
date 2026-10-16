@@ -19,19 +19,21 @@ const engine = process.env.APP_CANVAS_ENGINE || "chromium";
 const browser = await ({ chromium, webkit })[engine].launch();
 try {
   await app.firstBuild;
-  const context = await browser.newContext({ viewport: { width: 820, height: 1180 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
+  const context = await browser.newContext({ viewport: { width: 1280, height: 760 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
   const page = await context.newPage(), errors = [];
   page.on("pageerror", e => errors.push(e.message));
   await page.goto(app.address);
   await page.getByText("30 個畫面 · 已同步", { exact: true }).waitFor();
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
-  assert.ok(await page.locator("iframe").count() <= 4, "touch overview must bound live app instances, including hidden cases");
+  assert.ok(await page.locator("iframe[data-screen]").count() <= 4, "touch overview must bound live app instances, including hidden cases");
   await page.getByLabel("頁面範圍").selectOption("home");
-  assert.equal(await page.locator('.screen-frame[data-visible="true"]').count(), 3, "default depth shows one representative per feature");
+  assert.equal(await page.locator('.screen-frame[data-visible="true"]').count(), 15, "default depth shows complete states");
+  await page.getByLabel("展開深度").selectOption("1");
+  assert.equal(await page.locator('.screen-frame[data-visible="true"]').count(), 3, "optional depth limits which full screens are shown");
   await page.getByLabel("展開深度").selectOption("all");
   assert.equal(await page.locator('.screen-frame[data-visible="true"]').count(), 15);
   await page.getByLabel("搜尋畫面").fill("case-0");
-  await page.getByRole("button", { name: "導航", exact: true }).tap();
+  if (await page.getByRole("button", { name: "導航", exact: true }).isVisible()) await page.getByRole("button", { name: "導航", exact: true }).tap();
   await page.locator('button[title="case-0"]').tap();
   const settled = () => page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
   await settled();
@@ -69,20 +71,20 @@ try {
   const bounds = await page.locator('[data-id="case-20"] .screen-frame').boundingBox(), stage = await page.locator(".flow-stage").boundingBox();
   assert.ok(bounds.x >= stage.x && bounds.x + bounds.width <= stage.x + stage.width && bounds.y >= stage.y);
   await page.getByLabel("搜尋畫面").fill("case-0");
-  await page.getByRole("button", { name: "導航", exact: true }).tap();
+  if (await page.getByRole("button", { name: "導航", exact: true }).isVisible()) await page.getByRole("button", { name: "導航", exact: true }).tap();
   await page.locator('button[title="case-0"]').tap();
   await settled();
   assert.equal(await frame.getByLabel("Draft").inputValue(), "unsaved memory-only draft", "edited frame remains mounted across scope changes");
   for (const id of ["case-1", "case-2", "case-3"]) {
     await page.getByLabel("搜尋畫面").fill(id);
-    await page.getByRole("button", { name: "導航", exact: true }).tap();
+    if (await page.getByRole("button", { name: "導航", exact: true }).isVisible()) await page.getByRole("button", { name: "導航", exact: true }).tap();
     await page.locator(`button[title="${id}"]`).tap(); await settled();
     await page.getByRole("button", { name: "Interact", exact: true }).tap();
     await page.getByRole("button", { name: "Browse", exact: true }).tap();
   }
   await page.getByRole("alert").filter({ hasText: "請喺「面板」釋放" }).waitFor();
   assert.equal(await frame.getByLabel("Draft").inputValue(), "unsaved memory-only draft", "budget exhaustion never silently evicts an edited frame");
-  assert.ok(await page.locator("iframe").count() <= 4);
+  assert.ok(await page.locator("iframe[data-screen]").count() <= 4);
   page.once("dialog", dialog => dialog.accept());
   await page.getByRole("button", { name: "釋放 · State 2", exact: true }).tap();
   await page.getByRole("button", { name: "面板", exact: true }).tap();
@@ -103,11 +105,12 @@ try {
     const b = await page.getByRole("button", { name: "Browse", exact: true }).boundingBox();
     assert.ok(b.width >= 44 && b.height >= 44, "mode switch is a reachable touch target");
   }
-  await page.setViewportSize({ width: 820, height: 1180 });
-  await page.getByLabel("播放流程").selectOption("save");
+  await page.setViewportSize({ width: 1280, height: 760 });
+  if (!await page.locator('select[aria-label="播放流程"]').isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
+  await page.locator('select[aria-label="播放流程"]').selectOption("save");
   await page.getByRole("button", { name: "▶ 播放", exact: true }).tap();
   await page.locator('.journey-panel[data-status="complete"]').waitFor();
-  assert.ok(await page.locator("iframe").count() <= 4, "playback shares the touch live-frame budget");
+  assert.ok(await page.locator("iframe[data-screen]").count() <= 4, "playback shares the touch live-frame budget");
   assert.deepEqual(errors, []);
   await mkdir(".artifacts/tablet", { recursive: true });
   await page.screenshot({ path: `.artifacts/tablet/${engine}.png` });

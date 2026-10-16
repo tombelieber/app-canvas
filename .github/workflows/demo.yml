@@ -24,7 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run check && npm test
       - run: npx playwright install --with-deps chromium webkit
-      - run: npm run test:legacy && npm run test:navigation && npm run test:height && npm run test:journeys
+      - run: npm run test:dom && npm run test:legacy && npm run test:navigation && npm run test:height && npm run test:journeys
       - run: npm run test:queue && npm run test:file
       - run: npm run test:touch && npm run test:tablet
       - run: npm run test:onboarding
