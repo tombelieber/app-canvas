@@ -122,3 +122,7 @@ an `expect` on that state, and must belong to the connected combined graph.
 The UI counts authored coverage; completion counters describe only the
 current playback run. A new state without its reviewed case or connection
 fails the CLI check. Existing configurations keep working without the guard.
+
+Whole-set playback retains the configured native viewport even when browsing
+full-height pages. Operated controls are scrolled into view inside the preview;
+this must not scroll the host canvas.

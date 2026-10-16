@@ -33,19 +33,6 @@ function Canvas() {
   const bridge = useBridge(() => { setActive(null); player.stop(); });
   const visible = useMemo(() => catalog.filter((s) => (group === "all" || s.group === group) && (!query || `${s.title} ${s.id}`.toLowerCase().includes(query.toLowerCase())) && (!journeyScreens || journeyScreens.includes(s.id))), [group, query, journeyScreens]);
   const selected = catalog.find((s) => s.id === selectedId);
-  const nodes = useMemo(() => {
-    const ids = new Set(visible.map((s) => s.id)), groupIds = new Set(visible.map((s) => `group-${s.group}`));
-    // Freeze each overview at its source-build measurement. Feeding live scroll
-    // height back into vh-based apps can grow the iframe on every resize.
-    return layoutScreens(catalog, manifest, groups, { mode: view, flows, focusedId: selectedId }).map((node) => {
-      if (journeyScreens?.includes(node.id)) node = { ...node, position: { x: journeyScreens.indexOf(node.id) * 670, y: 90 } };
-      if ((journeyScreens?.includes(node.id) && view !== "machine") || node.id === active) {
-        const height = node.data.screen.viewport?.height || 844;
-        node = { ...node, initialWidth: 390, initialHeight: height * 390 / node.data.viewport.width + 48, position: journeyScreens?.includes(node.id) ? { x: journeyScreens.indexOf(node.id) * 670, y: 90 } : node.position, data: { ...node.data, compact: false, width: 390, viewport: { ...node.data.viewport, height }, height: height * 390 / node.data.viewport.width }, style: { ...node.style, width: 390, height: height * 390 / node.data.viewport.width + 48 } };
-      }
-      return { ...node, style: { ...node.style, visibility: ids.has(node.id) || (!journeyScreens && groupIds.has(node.id)) ? "visible" : "hidden" } };
-    });
-  }, [visible, manifest, journeyScreens, active, view, selectedId]);
   const navigate = useCallback((id, interact = false) => {
     if (!catalog.some((s) => s.id === id)) return;
     select(id); setActive(interact ? id : null);
@@ -56,6 +43,19 @@ function Canvas() {
   const player = useJourney({ definitions: plan, bridge, navigate });
   useEffect(() => { if (autoStart && plan.length) { player.start(); setAutoStart(false); } }, [autoStart, plan]);
   const chooseJourney = (id, autoplay = false) => { player.stop(); select(null); setActive(null); setGroup("all"); setQuery(""); setJourneyId(id); setBranches(id.startsWith("__")); setAutoStart(autoplay); };
+  const nodes = useMemo(() => {
+    const ids = new Set(visible.map((s) => s.id)), groupIds = new Set(visible.map((s) => `group-${s.group}`));
+    // Freeze each overview at its source-build measurement. Feeding live scroll
+    // height back into vh-based apps can grow the iframe on every resize.
+    return layoutScreens(catalog, manifest, groups, { mode: view, flows, focusedId: selectedId }).map((node) => {
+      if (journeyScreens?.includes(node.id)) node = { ...node, position: { x: journeyScreens.indexOf(node.id) * 670, y: 90 } };
+      if ((journeyScreens?.includes(node.id) && view !== "machine") || node.id === active || node.id === player.state?.screen) {
+        const height = node.data.screen.viewport?.height || 844;
+        node = { ...node, initialWidth: 390, initialHeight: height * 390 / node.data.viewport.width + 48, position: journeyScreens?.includes(node.id) ? { x: journeyScreens.indexOf(node.id) * 670, y: 90 } : node.position, data: { ...node.data, compact: false, width: 390, viewport: { ...node.data.viewport, height }, height: height * 390 / node.data.viewport.width }, style: { ...node.style, width: 390, height: height * 390 / node.data.viewport.width + 48 } };
+      }
+      return { ...node, style: { ...node.style, visibility: ids.has(node.id) || (!journeyScreens && groupIds.has(node.id)) ? "visible" : "hidden" } };
+    });
+  }, [visible, manifest, journeyScreens, active, view, selectedId, player.state?.screen]);
   const goTo = (id, interact = false) => { player.stop(); navigate(id, interact); };
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
   useEffect(() => {

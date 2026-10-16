@@ -15,7 +15,7 @@ const config = {
   ],
   preview: async ({canvasOrigin})=>({url:s=>`${canvasOrigin}/frame?id=${s.id}`,handle(req,res,url){
     if(url.pathname!=="/frame")return false;
-    res.setHeader("Content-Type","text/html");res.end(`<!doctype html><html data-review-ready="true"><head></head><body><h1>${url.searchParams.get("id")}</h1><input aria-label="Draft"><button id="fail" onclick="document.querySelector('output').textContent='Failed'">Fail</button><button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button><output>Initial</output></body></html>`);return true;
+    res.setHeader("Content-Type","text/html");res.end(`<!doctype html><html data-review-ready="true"><head></head><body><h1>${url.searchParams.get("id")}</h1><input aria-label="Draft"><button id="fail" onclick="document.querySelector('output').textContent='Failed'">Fail</button><output>Initial</output><div style="height:1600px">Long real page</div><button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button></body></html>`);return true;
   }}),
 };
 const app=await startCanvas({config,port:0,watchFiles:false}), browser=await chromium.launch({headless:true});
@@ -24,15 +24,17 @@ try {
   const page=await browser.newPage({viewport:{width:1512,height:982}});
   await page.goto(app.address);
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
-  await page.getByRole("button",{name:"狀態圖",exact:true}).click();
   await page.getByLabel("播放流程").selectOption("__all__");
   await page.getByRole("button",{name:"單步",exact:true}).click();
   await page.locator('.journey-panel[data-status="paused"][data-step="1"]').waitFor();
   assert.equal(await page.locator('.inspector code').innerText(),"failed");
+  assert.equal(await page.locator('iframe[data-screen="journey"]').evaluate(el=>parseFloat(el.style.height)),844,"whole-set playback uses the native viewport, even in a full-page overview");
   await page.getByRole("button",{name:"單步",exact:true}).click();
   await page.locator('.journey-panel[data-status="paused"][data-finished="1"]').waitFor();
   assert.equal(await page.locator('.inspector code').innerText(),"saved");
   assert.equal(await page.frameLocator('iframe[data-screen="journey"]').locator('input').inputValue(),"kept draft","one flow preserves its draft");
+  assert.ok(await page.frameLocator('iframe[data-screen="journey"]').locator('#save').evaluate(el=>el.getBoundingClientRect().top < innerHeight),"playback reveals the operated control inside its native viewport");
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollTop),0,"revealing an action must not scroll the host canvas");
   await page.getByLabel("播放速度").selectOption("0");
   await page.getByRole("button",{name:"▶ 播放",exact:true}).click();
   await page.locator('.journey-panel[data-status="complete"][data-finished="3"]').waitFor();
@@ -41,6 +43,7 @@ try {
   await page.getByRole("button",{name:"重播",exact:true}).click();
   await page.locator('.journey-panel[data-status="complete"][data-finished="3"]').waitFor();
   // Preserve the selected path while showing its neighboring bad/recovery branch.
+  await page.getByRole("button",{name:"狀態圖",exact:true}).click();
   await page.getByLabel("播放流程").selectOption("recovery");
   await page.getByLabel("顯示其他分支").check();
   assert.equal(await page.locator('.screen-frame[data-outcome="failure"]').count(),1);

@@ -36,7 +36,7 @@ Codex and Claude Code also have a bundled skill installer.
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.4.1
+npm install -g github:tombelieber/app-canvas#v0.4.2
 app-canvas browsers
 app-canvas demo
 ```
