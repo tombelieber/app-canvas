@@ -20,7 +20,7 @@ export async function exportStoolSense({ publicDir, outDir, catalog }) {
     .replace('href="/style.css"', 'href="./style.css"')
     .replace('src="/assets/frame.js"', 'src="./frame.js"');
   await writeFile(join(frame, "index.html"), html);
-  for (const name of ["style.css", "sample.png", "diet-template.csv"])
+  for (const name of ["style.css", "sample.png", "diet-template.csv", "invalid-meals.csv"])
     await copyFile(join(publicDir, name), join(frame, name));
   await cp(join(publicDir, "../notices"), join(frame, "notices"), { recursive: true });
   return Object.fromEntries(catalog.map((s) => [s.id, `./frame/index.html?id=${encodeURIComponent(s.id)}`]));

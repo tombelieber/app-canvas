@@ -11,6 +11,14 @@ edits, imports and deletions affect only that disposable preview. The example
 has no production API, credentials, private images, real health records or AI
 requests. Any qualified-model appearance is an explicitly synthetic UI case.
 
+All 77 named cases have independent playback with explicit DOM checks. There
+are also 44 continuing interaction flows. Select all flows/cases to play the
+whole set, or use the state graph to follow branches and expand real screens.
+Dashed conditions and component references are distinct from performed
+operations. Authentication fixtures display the actual shared login screen;
+the demo does not perform or bypass sign-in. The complete-case and connected
+graph guards are enabled, so new catalog states cannot silently be omitted.
+
 `public/frame.js` is a bundled frontend export, not a second canvas engine.
 `provenance.json` identifies the frontend revision and fixture count. The
 original application maintains the UI source; this example is regenerated from

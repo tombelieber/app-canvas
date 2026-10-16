@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -27,6 +27,7 @@
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "docs/*.png",
+    "docs/*.jpg",
     "docs/*.md",
     "AGENT_GUIDE.md"
   ],
@@ -45,12 +46,15 @@
     "test:navigation": "node tests/navigation.browser.mjs",
     "test:journeys": "node tests/journey.browser.mjs",
     "test:live": "node tests/live.browser.mjs",
-    "test:height": "node tests/height.browser.mjs"
+    "test:height": "node tests/height.browser.mjs",
+    "test:queue": "node tests/queue.browser.mjs",
+    "test:all-cases": "node tests/all-cases.browser.mjs"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
+    "@dagrejs/dagre": "3.1.1",
     "@xyflow/react": "^12.12.0",
     "esbuild": "^0.28.2",
     "playwright": "^1.64.1",

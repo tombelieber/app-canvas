@@ -5,35 +5,45 @@
       "title": "拍攝首頁",
       "page": "capture",
       "group": "app",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "已登入，未建立草稿"
     },
     {
       "id": "history-home",
       "title": "歷史紀錄",
       "page": "history",
       "group": "app",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "已保存虛構事件"
     },
     {
       "id": "insights-home",
       "title": "趨勢與飲食對照",
       "page": "insights",
       "group": "app",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "虛構歷史與飲食資料"
     },
     {
       "id": "import-home",
       "title": "飲食紀錄",
       "page": "import",
       "group": "app",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "已有虛構飲食紀錄"
     },
     {
       "id": "data-home",
       "title": "資料與 Profiles",
       "page": "data",
       "group": "app",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "已登入嘅虛構資料空間"
     },
     {
       "id": "capture-manual",
@@ -41,7 +51,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "manual",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "冇相補記（虛構資料）"
     },
     {
       "id": "capture-photo",
@@ -49,7 +61,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "photo",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "相片預覽與重拍（虛構資料）"
     },
     {
       "id": "capture-observations",
@@ -57,7 +71,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "observations",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "外觀與感受 · 展開（虛構資料）"
     },
     {
       "id": "capture-care",
@@ -65,7 +81,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "care",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "求醫問題 · 展開（虛構資料）"
     },
     {
       "id": "capture-time",
@@ -73,7 +91,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "time",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "時間與歸屬 · 展開（虛構資料）"
     },
     {
       "id": "capture-pending",
@@ -81,7 +101,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "pending",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "待同步紀錄 · 可繼續（虛構資料）"
     },
     {
       "id": "capture-saving",
@@ -89,7 +111,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "saving",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "合成保存請求保持等待，顯示進行中 UI"
     },
     {
       "id": "capture-offline",
@@ -97,7 +121,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "offline",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "合成網絡失敗，草稿保留"
     },
     {
       "id": "capture-preview-error",
@@ -105,7 +131,9 @@
       "page": "capture",
       "group": "capture",
       "setup": "preview-error",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "虛構不支援影像格式；原檔仍保留"
     },
     {
       "id": "history-empty",
@@ -113,7 +141,9 @@
       "page": "history",
       "group": "result",
       "empty": true,
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "所選範圍未有事件"
     },
     {
       "id": "history-pagination",
@@ -121,7 +151,9 @@
       "page": "history",
       "group": "result",
       "pagination": true,
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "有 53 筆虛構事件，需要分頁"
     },
     {
       "id": "result-manual",
@@ -129,7 +161,9 @@
       "page": "history",
       "group": "result",
       "event": "manual",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "手動記錄 · 已保存（虛構資料）"
     },
     {
       "id": "result-photo",
@@ -137,7 +171,9 @@
       "page": "history",
       "group": "result",
       "event": "photo",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "原相同步完成，未啟動分析"
     },
     {
       "id": "result-partial",
@@ -145,7 +181,9 @@
       "page": "history",
       "group": "result",
       "event": "partial",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "pending",
+      "condition": "事件存在，但原相未完整同步"
     },
     {
       "id": "result-running",
@@ -153,7 +191,9 @@
       "page": "history",
       "group": "result",
       "event": "running",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "pending",
+      "condition": "已有分析工作，狀態 running"
     },
     {
       "id": "result-failed",
@@ -161,7 +201,9 @@
       "page": "history",
       "group": "result",
       "event": "failed",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "failure",
+      "condition": "已保存嘅分析工作失敗"
     },
     {
       "id": "result-unknown",
@@ -169,7 +211,9 @@
       "page": "history",
       "group": "result",
       "event": "unknown",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "分析完成，分類仍未合資格"
     },
     {
       "id": "result-appearance",
@@ -178,7 +222,9 @@
       "group": "result",
       "event": "appearance",
       "experimental": true,
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "只用虛構合資格分類展示 UI"
     },
     {
       "id": "result-photo-open",
@@ -187,7 +233,9 @@
       "group": "result",
       "event": "photo",
       "expand": "photo",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "查看與下載原相（虛構資料）"
     },
     {
       "id": "result-edit",
@@ -196,7 +244,9 @@
       "group": "result",
       "event": "manual",
       "expand": "edit",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "修改時間、Profile、感受（虛構資料）"
     },
     {
       "id": "result-versions",
@@ -205,7 +255,9 @@
       "group": "result",
       "event": "versions",
       "expand": "versions",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "分析及修正版本（虛構資料）"
     },
     {
       "id": "result-delete",
@@ -214,7 +266,9 @@
       "group": "result",
       "event": "manual",
       "setup": "confirm-event",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "刪除紀錄 · 確認（虛構資料）"
     },
     {
       "id": "visit-summary",
@@ -222,7 +276,9 @@
       "page": "history",
       "group": "result",
       "setup": "summary",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "由真實摘要 renderer 產生嘅下載內容預覽"
     },
     {
       "id": "care-insufficient",
@@ -231,7 +287,9 @@
       "group": "care",
       "event": "insufficient",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "補充答案未填齊"
     },
     {
       "id": "care-record",
@@ -240,7 +298,9 @@
       "group": "care",
       "event": "record",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "虛構成人答案完整，未觸發求醫提示"
     },
     {
       "id": "care-contact",
@@ -249,7 +309,9 @@
       "group": "care",
       "event": "contact",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "虛構少量見血報告"
     },
     {
       "id": "care-urgent",
@@ -258,7 +320,9 @@
       "group": "care",
       "event": "urgent",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "虛構腹瀉超過兩日"
     },
     {
       "id": "care-emergency",
@@ -267,7 +331,9 @@
       "group": "care",
       "event": "emergency",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "虛構大量出血報告"
     },
     {
       "id": "care-other",
@@ -276,7 +342,9 @@
       "group": "care",
       "event": "other",
       "expand": "care",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "記錄對象為成人以外"
     },
     {
       "id": "insights-empty",
@@ -284,7 +352,9 @@
       "page": "insights",
       "group": "insights",
       "empty": true,
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "所選範圍沒有對照資料"
     },
     {
       "id": "insights-candidate",
@@ -293,7 +363,9 @@
       "group": "insights",
       "pattern": "candidate",
       "expand": "all",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "虛構資料中有候選模式與支持紀錄"
     },
     {
       "id": "insights-confounded",
@@ -302,7 +374,9 @@
       "group": "insights",
       "pattern": "confounded",
       "expand": "all",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "虛構食物經常共同出現，無法分辨"
     },
     {
       "id": "insights-intervals",
@@ -310,7 +384,9 @@
       "page": "insights",
       "group": "insights",
       "expand": "all",
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "有已記錄事件間隔"
     },
     {
       "id": "import-empty",
@@ -318,7 +394,9 @@
       "page": "import",
       "group": "import",
       "empty": true,
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "沒有虛構飲食紀錄"
     },
     {
       "id": "import-mapping",
@@ -326,7 +404,9 @@
       "page": "import",
       "group": "import",
       "setup": "mapping",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "CSV 欄位與時間對應（虛構資料）"
     },
     {
       "id": "import-xlsx",
@@ -334,7 +414,9 @@
       "page": "import",
       "group": "import",
       "setup": "xlsx",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "Excel 工作表選擇（虛構資料）"
     },
     {
       "id": "import-ready",
@@ -343,7 +425,9 @@
       "group": "import",
       "setup": "import-preview",
       "preview": "ready",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "success",
+      "condition": "預覽 · 可匯入（虛構資料）"
     },
     {
       "id": "import-duplicate",
@@ -352,7 +436,9 @@
       "group": "import",
       "setup": "import-preview",
       "preview": "duplicate",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "warning",
+      "condition": "合成預覽辨識所有來源行為重複"
     },
     {
       "id": "import-invalid",
@@ -361,7 +447,9 @@
       "group": "import",
       "setup": "import-preview",
       "preview": "invalid",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "合成預覽有未確認日期，提交停用"
     },
     {
       "id": "import-committed",
@@ -371,7 +459,9 @@
       "setup": "import-preview",
       "preview": "ready",
       "commit": true,
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "success",
+      "condition": "匯入完成（虛構資料）"
     },
     {
       "id": "meal-delete",
@@ -379,7 +469,9 @@
       "page": "import",
       "group": "import",
       "setup": "confirm-meal",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "刪除飲食 · 確認（虛構資料）"
     },
     {
       "id": "data-originals",
@@ -387,7 +479,9 @@
       "page": "data",
       "group": "data",
       "setup": "originals",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "原相選擇與 ZIP 匯出（虛構資料）"
     },
     {
       "id": "data-no-originals",
@@ -396,7 +490,9 @@
       "group": "data",
       "setup": "originals",
       "empty": true,
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "warning",
+      "condition": "所選範圍沒有完整原相"
     },
     {
       "id": "data-delete",
@@ -404,7 +500,9 @@
       "page": "data",
       "group": "data",
       "setup": "delete",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "選擇刪除範圍（虛構資料）"
     },
     {
       "id": "data-confirm-delete",
@@ -412,7 +510,9 @@
       "page": "data",
       "group": "data",
       "setup": "confirm-delete",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "刪除所選資料 · 確認（虛構資料）"
     },
     {
       "id": "data-profile-created",
@@ -420,7 +520,9 @@
       "page": "data",
       "group": "data",
       "setup": "profile",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "success",
+      "condition": "新增 Profile 完成（虛構資料）"
     },
     {
       "id": "data-export-complete",
@@ -428,7 +530,9 @@
       "page": "data",
       "group": "data",
       "setup": "zip",
-      "source": "client/data.js"
+      "source": "client/data.js",
+      "outcome": "success",
+      "condition": "ZIP 匯出完成（虛構資料）"
     },
     {
       "id": "component-symptoms",
@@ -436,7 +540,9 @@
       "page": "capture",
       "group": "components",
       "component": "symptoms",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "真實共用元件選項"
     },
     {
       "id": "component-observations",
@@ -444,7 +550,9 @@
       "page": "capture",
       "group": "components",
       "component": "observations",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "真實共用元件選項"
     },
     {
       "id": "component-appearance",
@@ -453,7 +561,9 @@
       "group": "components",
       "component": "appearance",
       "experimental": true,
-      "source": "client/history.js"
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "真實共用元件選項"
     },
     {
       "id": "auth-checking",
@@ -461,7 +571,9 @@
       "page": "capture",
       "group": "system",
       "auth": "checking",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "身份檢查尚未完成"
     },
     {
       "id": "auth-expired",
@@ -469,7 +581,9 @@
       "page": "capture",
       "group": "system",
       "auth": "expired",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "虛構身份驗證回應 401"
     },
     {
       "id": "auth-denied",
@@ -477,7 +591,9 @@
       "page": "capture",
       "group": "system",
       "auth": "denied",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "虛構身份回應 403；現有 App 顯示共用重新登入畫面"
     },
     {
       "id": "error-invalid_care_answers",
@@ -485,7 +601,9 @@
       "page": "capture",
       "group": "system",
       "error": "invalid_care_answers",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：invalid_care_answers"
     },
     {
       "id": "error-invalid_image",
@@ -493,7 +611,9 @@
       "page": "capture",
       "group": "system",
       "error": "invalid_image",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：invalid_image"
     },
     {
       "id": "error-sign_in_required",
@@ -501,7 +621,9 @@
       "page": "capture",
       "group": "system",
       "error": "sign_in_required",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：sign_in_required"
     },
     {
       "id": "error-not_invited",
@@ -509,7 +631,9 @@
       "page": "capture",
       "group": "system",
       "error": "not_invited",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：not_invited"
     },
     {
       "id": "error-storage_capacity",
@@ -518,7 +642,9 @@
       "group": "system",
       "error": "storage_capacity",
       "setup": "photo",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：storage_capacity"
     },
     {
       "id": "error-too_large",
@@ -526,7 +652,9 @@
       "page": "capture",
       "group": "system",
       "error": "too_large",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：too_large"
     },
     {
       "id": "error-integrity_failed",
@@ -534,7 +662,9 @@
       "page": "capture",
       "group": "system",
       "error": "integrity_failed",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：integrity_failed"
     },
     {
       "id": "error-event_deleted",
@@ -542,7 +672,9 @@
       "page": "capture",
       "group": "system",
       "error": "event_deleted",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：event_deleted"
     },
     {
       "id": "error-revision_conflict",
@@ -550,7 +682,9 @@
       "page": "capture",
       "group": "system",
       "error": "revision_conflict",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：revision_conflict"
     },
     {
       "id": "error-analysis_limit_or_running",
@@ -558,7 +692,9 @@
       "page": "capture",
       "group": "system",
       "error": "analysis_limit_or_running",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：analysis_limit_or_running"
     },
     {
       "id": "error-analysis_unavailable",
@@ -566,7 +702,9 @@
       "page": "capture",
       "group": "system",
       "error": "analysis_unavailable",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：analysis_unavailable"
     },
     {
       "id": "error-provider_unavailable",
@@ -574,7 +712,9 @@
       "page": "capture",
       "group": "system",
       "error": "provider_unavailable",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：provider_unavailable"
     },
     {
       "id": "error-upload_incomplete",
@@ -582,7 +722,9 @@
       "page": "capture",
       "group": "system",
       "error": "upload_incomplete",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：upload_incomplete"
     },
     {
       "id": "error-ambiguous_date",
@@ -590,7 +732,9 @@
       "page": "import",
       "group": "system",
       "error": "ambiguous_date",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：ambiguous_date"
     },
     {
       "id": "error-invalid_import_rows",
@@ -598,7 +742,9 @@
       "page": "import",
       "group": "system",
       "error": "invalid_import_rows",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：invalid_import_rows"
     },
     {
       "id": "error-service_unavailable",
@@ -606,7 +752,9 @@
       "page": "capture",
       "group": "system",
       "error": "service_unavailable",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：service_unavailable"
     },
     {
       "id": "error-conflict",
@@ -614,7 +762,9 @@
       "page": "capture",
       "group": "system",
       "error": "conflict",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：conflict"
     },
     {
       "id": "error-narrow_export_range",
@@ -622,7 +772,9 @@
       "page": "capture",
       "group": "system",
       "error": "narrow_export_range",
-      "source": "client/capture.js"
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：narrow_export_range"
     },
     {
       "id": "error-narrow_date_range",
@@ -630,7 +782,9 @@
       "page": "import",
       "group": "system",
       "error": "narrow_date_range",
-      "source": "client/import.js"
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "共用錯誤提示範例：narrow_date_range"
     }
   ],
   "groups": [
@@ -682,184 +836,304 @@
   ],
   "flows": [
     {
-      "from": "capture-home",
       "to": "history-home",
-      "label": "歷史分頁"
+      "label": "歷史分頁",
+      "kind": "action",
+      "from": "capture-home"
     },
     {
-      "from": "capture-home",
-      "to": "insights-home",
-      "label": "對照分頁"
+      "to": "capture-home",
+      "label": "虛構身份獲准",
+      "kind": "condition",
+      "from": "auth-checking"
     },
     {
-      "from": "capture-home",
-      "to": "import-home",
-      "label": "飲食分頁"
+      "to": "auth-expired",
+      "label": "身份過期",
+      "kind": "condition",
+      "from": "auth-checking"
     },
     {
-      "from": "capture-home",
-      "to": "data-home",
-      "label": "資料分頁"
+      "to": "auth-denied",
+      "label": "未獲邀請",
+      "kind": "condition",
+      "from": "auth-checking"
     },
     {
-      "from": "capture-home",
-      "to": "capture-photo",
-      "label": "拍照 / 選相"
-    },
-    {
-      "from": "capture-home",
-      "to": "capture-manual",
-      "label": "冇相補記"
-    },
-    {
-      "from": "capture-photo",
-      "to": "capture-observations",
-      "label": "補充感受"
-    },
-    {
-      "from": "capture-photo",
       "to": "capture-saving",
-      "label": "保存"
+      "label": "合成保存請求等待中",
+      "kind": "condition",
+      "from": "capture-photo"
     },
     {
-      "from": "capture-manual",
-      "to": "result-manual",
-      "label": "保存"
-    },
-    {
-      "from": "capture-photo",
-      "to": "capture-pending",
-      "label": "稍後同步"
-    },
-    {
-      "from": "capture-pending",
-      "to": "capture-photo",
-      "label": "繼續保存"
-    },
-    {
-      "from": "capture-saving",
-      "to": "result-running",
-      "label": "原相已保存"
-    },
-    {
-      "from": "capture-saving",
       "to": "capture-offline",
-      "label": "連線中斷"
+      "label": "合成網絡斷線",
+      "kind": "condition",
+      "from": "capture-photo"
     },
     {
-      "from": "capture-offline",
-      "to": "capture-saving",
-      "label": "重試"
+      "to": "history-empty",
+      "label": "未有事件",
+      "kind": "condition",
+      "from": "history-home"
     },
     {
-      "from": "result-running",
-      "to": "result-unknown",
-      "label": "更新狀態"
+      "to": "history-pagination",
+      "label": "事件超過一頁",
+      "kind": "condition",
+      "from": "history-home"
     },
     {
-      "from": "result-failed",
+      "to": "result-partial",
+      "label": "原相未完成",
+      "kind": "condition",
+      "from": "history-home"
+    },
+    {
       "to": "result-running",
-      "label": "再分析"
+      "label": "工作執行中",
+      "kind": "condition",
+      "from": "result-photo"
     },
     {
-      "from": "history-home",
-      "to": "result-manual",
-      "label": "開啟紀錄"
+      "to": "result-failed",
+      "label": "合成分析工作失敗",
+      "kind": "condition",
+      "from": "result-running"
     },
     {
-      "from": "result-manual",
-      "to": "result-edit",
-      "label": "修改"
+      "to": "result-unknown",
+      "label": "完成但未合資格",
+      "kind": "condition",
+      "from": "result-running"
     },
     {
-      "from": "result-edit",
-      "to": "result-versions",
-      "label": "保存修正"
+      "to": "result-appearance",
+      "label": "虛構合資格欄位",
+      "kind": "condition",
+      "from": "result-unknown"
     },
     {
-      "from": "result-photo",
-      "to": "result-photo-open",
-      "label": "查看原相"
-    },
-    {
-      "from": "result-manual",
       "to": "visit-summary",
-      "label": "求診摘要"
+      "label": "下載摘要內容",
+      "kind": "reference",
+      "from": "result-manual"
     },
     {
-      "from": "result-manual",
-      "to": "result-delete",
-      "label": "刪除"
+      "to": "capture-care",
+      "label": "展開求醫補充問題",
+      "kind": "reference",
+      "from": "capture-manual"
     },
     {
-      "from": "capture-care",
-      "to": "care-emergency",
-      "label": "大量 / 持續出血"
+      "to": "insights-empty",
+      "label": "無對照資料",
+      "kind": "condition",
+      "from": "insights-home"
     },
     {
-      "from": "capture-care",
-      "to": "care-urgent",
-      "label": "警號"
-    },
-    {
-      "from": "insights-home",
       "to": "insights-candidate",
-      "label": "支持紀錄"
+      "label": "有候選模式",
+      "kind": "condition",
+      "from": "insights-home"
     },
     {
-      "from": "insights-candidate",
-      "to": "result-manual",
-      "label": "查看事件"
+      "to": "insights-confounded",
+      "label": "食物共現",
+      "kind": "condition",
+      "from": "insights-home"
     },
     {
-      "from": "import-home",
-      "to": "import-mapping",
-      "label": "選擇 CSV"
+      "to": "insights-intervals",
+      "label": "事件間隔",
+      "kind": "reference",
+      "from": "insights-home"
     },
     {
-      "from": "import-home",
+      "to": "import-empty",
+      "label": "無飲食紀錄",
+      "kind": "condition",
+      "from": "import-home"
+    },
+    {
       "to": "import-xlsx",
-      "label": "選擇 Excel"
+      "label": "虛構 Excel 已讀入",
+      "kind": "condition",
+      "from": "import-home"
     },
     {
-      "from": "import-mapping",
-      "to": "import-ready",
-      "label": "預覽"
+      "to": "data-no-originals",
+      "label": "沒有完整原相",
+      "kind": "condition",
+      "from": "data-home"
     },
     {
-      "from": "import-mapping",
-      "to": "import-invalid",
-      "label": "日期不明"
+      "to": "component-symptoms",
+      "label": "共用感受選項",
+      "kind": "reference",
+      "from": "capture-manual"
     },
     {
-      "from": "import-ready",
-      "to": "import-committed",
-      "label": "確認匯入"
+      "to": "component-observations",
+      "label": "共用外觀選項",
+      "kind": "reference",
+      "from": "capture-observations"
     },
     {
-      "from": "import-committed",
-      "to": "import-duplicate",
-      "label": "再次匯入"
+      "to": "component-appearance",
+      "label": "全部虛構外觀選項",
+      "kind": "reference",
+      "from": "result-appearance"
     },
     {
-      "from": "data-home",
-      "to": "data-originals",
-      "label": "選擇原相"
+      "to": "care-insufficient",
+      "label": "補充答案未填齊",
+      "kind": "condition",
+      "from": "capture-care"
     },
     {
-      "from": "data-originals",
-      "to": "data-export-complete",
-      "label": "下載 ZIP"
+      "to": "care-record",
+      "label": "虛構成人答案完整，未觸發求醫提示",
+      "kind": "condition",
+      "from": "capture-care"
     },
     {
-      "from": "data-home",
-      "to": "data-delete",
-      "label": "選擇資料"
+      "to": "care-contact",
+      "label": "虛構少量見血報告",
+      "kind": "condition",
+      "from": "capture-care"
     },
     {
-      "from": "data-delete",
-      "to": "data-confirm-delete",
-      "label": "刪除所選"
+      "to": "care-urgent",
+      "label": "虛構腹瀉超過兩日",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-emergency",
+      "label": "虛構大量出血報告",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-other",
+      "label": "記錄對象為成人以外",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "error-invalid_care_answers",
+      "label": "invalid_care_answers",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-invalid_image",
+      "label": "invalid_image",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-sign_in_required",
+      "label": "sign_in_required",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-not_invited",
+      "label": "not_invited",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-storage_capacity",
+      "label": "storage_capacity",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-too_large",
+      "label": "too_large",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-integrity_failed",
+      "label": "integrity_failed",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-event_deleted",
+      "label": "event_deleted",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-revision_conflict",
+      "label": "revision_conflict",
+      "kind": "condition",
+      "from": "result-edit"
+    },
+    {
+      "to": "error-analysis_limit_or_running",
+      "label": "analysis_limit_or_running",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-analysis_unavailable",
+      "label": "analysis_unavailable",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-provider_unavailable",
+      "label": "provider_unavailable",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-upload_incomplete",
+      "label": "upload_incomplete",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-ambiguous_date",
+      "label": "ambiguous_date",
+      "kind": "condition",
+      "from": "import-mapping"
+    },
+    {
+      "to": "error-invalid_import_rows",
+      "label": "invalid_import_rows",
+      "kind": "condition",
+      "from": "import-mapping"
+    },
+    {
+      "to": "error-service_unavailable",
+      "label": "service_unavailable",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-conflict",
+      "label": "conflict",
+      "kind": "condition",
+      "from": "data-home"
+    },
+    {
+      "to": "error-narrow_export_range",
+      "label": "narrow_export_range",
+      "kind": "condition",
+      "from": "data-home"
+    },
+    {
+      "to": "error-narrow_date_range",
+      "label": "narrow_date_range",
+      "kind": "condition",
+      "from": "import-mapping"
     }
   ]
 }

@@ -54,9 +54,10 @@ requests. A `:segment` matches one path segment. Set `network: true` for a
 rejection, otherwise a synthetic response defaults to status 503. It does not
 enable a live backend. SDK calls need fixture support at their own boundary.
 
-The [StoolSense journeys](../examples/stoolsense/journeys.json) exercise normal
-save, a failed save with draft preservation/retry, and an analysis request
-failure/retry. All records and photo assets are synthetic. These checks do not
+The [StoolSense journeys](../examples/stoolsense/journeys.mjs) exercise 44
+interaction flows and all 77 named cases: recording, drafts, rejections,
+retries, edits, deletion/cancellation, imports, exports, profiles, care-reference
+variants and authentication. All records and photo assets are synthetic. These checks do not
 qualify medical output or any AI model.
 
 In the canvas, select a journey, then play, pause between steps, single-step,
@@ -64,3 +65,55 @@ change delay, replay with fresh fixtures or stop. Other named previews keep
 their own state. Manually following a flow leaves playback and focuses that
 named case. Escape exits in-canvas interaction; reset restores the selected
 case, or restarts the current journey with fresh fixtures.
+
+## Whole-app state graph and complete playback
+
+The **畫面總覽** view displays the full live UI of every registered case.
+**狀態圖** lays out the combined directed graph with compact state cards;
+select a card to expand the same real UI, then double-click to interact.
+`outcome` gives a state its semantic label and color: `neutral`, `success`,
+`failure`, `pending` or `warning`. An optional `condition` explains its inputs.
+Color describes the application state, not whether a test passed or a medical
+result is correct. Unknown outcome defaults to neutral.
+
+Graph edges combine `flows` and authored journey transitions. A flow edge's
+`kind` is `action` (default), `recovery`, `condition`, or `reference`.
+Conditions/references are dashed and labeled; they do not pretend to perform
+an app operation. A checked journey's operation takes precedence over a
+reference for the same source/destination. Failed-to-successful transitions
+are shown as recovery. The selected path can retain other branches with
+**顯示其他分支**. Connections always select and focus their named destination.
+
+Use `kind: "case"` for a standalone condition:
+
+```js
+{
+  id: "expired-case", kind: "case", title: "Expired session",
+  entry: "auth-expired", condition: "Synthetic identity returns 401",
+  steps: [{
+    title: "The private UI is locked", screen: "auth-expired",
+    actions: [{ type: "expect", selector: "#locked:not([hidden])" }],
+  }],
+}
+```
+
+It starts from the named fixture and checks that actual view. This is useful
+for permission boundaries, loading, component options and external outcomes.
+It does not assert that an imaginary click caused that condition. `kind:
+"flow"` (or omitted) is a continuing interaction flow. Every destination
+should have an assertion for the state it claims to reach.
+
+The picker can play all flows, all individual cases or the entire set.
+Each flow preserves one continuing session; crossing into the next flow/case
+creates a fresh session. Single-step pauses across those boundaries too.
+Errors stop the queue and retain the last confirmed state; replay starts over.
+Pause finishes any already-running action before the next step. Playback
+does not make real authentication, backend behavior or device permissions
+synthetic-proof equivalents.
+
+Enable `coverage: { requireAllCases: true, requireConnected: true }` in the
+project config. Every catalog state then needs a `kind: "case"` journey with
+an `expect` on that state, and must belong to the connected combined graph.
+The UI counts authored coverage; completion counters describe only the
+current playback run. A new state without its reviewed case or connection
+fails the CLI check. Existing configurations keep working without the guard.

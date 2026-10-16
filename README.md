@@ -5,9 +5,11 @@ A zoomable overview of your real application pages, named states and flows. Ever
 **[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
 No install, login or API key. Explore **77 named states**, labeled flows and
 working recording/editing/import/export interactions using synthetic data.
-Play the normal-save, offline-recovery and analysis-request-retry journeys.
+Play **44 interaction flows and all 77 individual cases**, separately or as
+one queue. The branching state graph labels success, failure, waiting and
+conditional variants; select a node to expand its real UI.
 
-![StoolSense on the canvas](docs/stoolsense-canvas.png)
+![A failed save, retained draft and successful retry on the real UI canvas](docs/stoolsense-playback.jpg)
 
 One runtime serves multiple projects. Each project keeps its **screen catalog, preview adapter, synthetic fixtures and interaction checks**. Components, layouts and CSS come from the application. There is no second design file to synchronize.
 
@@ -34,7 +36,7 @@ Codex and Claude Code also have a bundled skill installer.
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.3.0
+npm install -g github:tombelieber/app-canvas#v0.4.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -50,6 +52,13 @@ Filtering keeps drafts; **重設** restores only that named preview.
 Use **播放流程** to run a checked journey, pause, single-step or replay with
 fresh fixtures. Flow links navigate between named cases; playback performs
 actions in one continuing app session. See [journey authoring](docs/journeys.md).
+Choose **全部流程與情境** to play the entire reviewed set. Each flow keeps its
+own continuing session; the next flow or standalone case starts fresh. A
+standalone case starts from its declared fixture condition and checks that
+view, including states that require an external login or provider outcome.
+It is not presented as a user navigating to every state from one session.
+**畫面總覽** shows all live pages; **狀態圖** uses compact, expandable nodes.
+**顯示其他分支** retains neighboring states while following a selected flow.
 
 The hosted demo also uses this frozen synthetic export. It has no application
 backend, production session, real health records, AI requests or analytics.
@@ -121,6 +130,12 @@ app-canvas --config canvas.config.mjs --verify
 ```
 
 `--check` validates the catalog, journeys and configured route coverage. `--verify` renders every registered case, rejects preview errors/unmocked requests, tests the live canvas and every authored journey, then runs your optional `verify({ browser, preview, manifest, canvasOrigin })` interaction function. `--port` overrides an occupied canvas port; the tool never stops another service.
+
+Set `coverage: { requireAllCases: true, requireConnected: true }` once every
+catalog state has a checked `kind: "case"` journey and belongs to the state
+graph. Adding a state without its case or connection then fails `--check`.
+Existing integrations can adopt this incrementally; the UI shows missing
+case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
 
@@ -203,6 +218,8 @@ npm run check
 npm test
 npm run test:navigation
 npm run test:journeys
+npm run test:queue
+npm run test:all-cases
 npm run test:browser
 npm run test:onboarding
 npm run build:demo

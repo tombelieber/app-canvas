@@ -1,47 +1,73 @@
 import { useEffect, useRef, useState } from "react";
-export function useJourney({ definition, bridge, navigate }) {
+
+export function useJourney({ definitions, bridge, navigate }) {
   const [state, update] = useState(null), [speed, setSpeed] = useState(900);
   const current = useRef(null), context = useRef({ bridge, navigate, speed });
   context.current = { bridge, navigate, speed };
+  const planKey = definitions.map(j => j.id).join(",");
   const stop = () => {
-    const run = current.current; if (run) { run.cancelled = true; run.resume?.(); context.current.bridge.cancel("journey"); }
+    const run = current.current;
+    if (run) { run.cancelled = true; run.resume?.(); context.current.bridge.cancel("journey"); }
     current.current = null; update(null);
   };
-  useEffect(() => { stop(); }, [definition?.id]);
+  useEffect(() => { stop(); }, [planKey]);
   useEffect(() => () => { if (current.current) { current.current.cancelled = true; current.current.resume?.(); } }, []);
+
   const start = async (single = false) => {
-    if (!definition) return;
+    if (!definitions.length) return;
     stop();
-    const run = { key: crypto.randomUUID(), definition, screen: definition.entry, index: 0, paused: single, allowance: single ? 1 : Infinity, cancelled: false };
+    const run = { paused: single, allowance: single ? 1 : Infinity, cancelled: false, finished: [], trace: [], queueLength: definitions.length };
     current.current = run;
-    update({ ...run, status: "loading" }); context.current.navigate(run.screen);
-    try {
-      await context.current.bridge.whenReady("journey", run.key);
-      if (run.cancelled) return;
-      for (let index = 0; index < definition.steps.length; index++) {
-        while (run.paused && run.allowance <= 0 && !run.cancelled) {
-          update({ ...run, status: "paused" }); await new Promise((resolve) => { run.resume = resolve; });
-        }
-        if (run.cancelled) return;
-        run.index = index;
-        update({ ...run, status: "playing" });
-        for (const action of definition.steps[index].actions) {
-          if (run.cancelled) return;
-          await context.current.bridge.command("journey", action);
-        }
-        if (run.cancelled) return;
-        run.screen = definition.steps[index].screen; run.completed = index + 1; run.allowance--;
-        context.current.navigate(run.screen); update({ ...run, status: run.paused ? "paused" : "playing" });
-        if (!run.paused && context.current.speed) await new Promise((resolve) => { const timer = setTimeout(resolve, context.current.speed); run.resume = () => { clearTimeout(timer); resolve(); }; });
+    const publish = (status) => update({ ...run, finished: [...run.finished], trace: [...run.trace], status });
+    const permission = async () => {
+      while (run.paused && run.allowance <= 0 && !run.cancelled) {
+        publish("paused"); await new Promise(resolve => { run.resume = resolve; });
       }
-      if (!run.cancelled) update({ ...run, status: "complete" });
-    } catch (error) { if (!run.cancelled) update({ ...run, status: "error", error: error.message }); }
+      return !run.cancelled;
+    };
+    try {
+      for (let q = 0; q < definitions.length; q++) {
+        if (q && !(await permission())) return;
+        run.definition = definitions[q]; run.queueIndex = q; run.index = 0; run.completed = 0;
+        run.screen = run.definition.entry; run.key = crypto.randomUUID();
+        publish("loading"); context.current.navigate(run.screen);
+        await context.current.bridge.whenReady("journey", run.key);
+        if (run.cancelled) return;
+        for (let i = 0; i < run.definition.steps.length; i++) {
+          if (!(await permission())) return;
+          run.index = i; run.inStep = true; publish("playing");
+          const step = run.definition.steps[i];
+          for (const action of step.actions) {
+            if (run.cancelled) return;
+            await context.current.bridge.command("journey", action);
+          }
+          if (run.cancelled) return;
+          run.trace.push({ from: run.screen, to: step.screen });
+          run.screen = step.screen; run.completed = i + 1; run.allowance--; run.inStep = false;
+          context.current.navigate(run.screen);
+          const end = i === run.definition.steps.length - 1;
+          if (end) run.finished.push(run.definition.id);
+          if (end && q === definitions.length - 1) { publish("complete"); return; }
+          publish(run.paused ? "paused" : "playing");
+          if (!run.paused && context.current.speed) await new Promise(resolve => {
+            const timer = setTimeout(resolve, context.current.speed);
+            run.resume = () => { clearTimeout(timer); resolve(); };
+          });
+        }
+      }
+    } catch (error) { if (!run.cancelled) { run.error = error.message; publish("error"); } }
   };
   const resume = (single = false) => {
     const run = current.current;
     if (!run || state?.status === "complete" || state?.status === "error") return start(single);
     run.paused = single; run.allowance = single ? 1 : Infinity;
-    update({ ...run, status: "playing" }); run.resume?.();
+    update(old => ({ ...old, status: "playing" })); run.resume?.();
   };
-  return { state, speed, setSpeed, start, stop, resume, pause: () => { if (current.current) { current.current.paused = true; current.current.allowance = 0; update((old) => ({ ...old, status: "paused" })); } } };
+  const pause = () => {
+    const run = current.current; if (!run) return;
+    run.paused = true; run.allowance = 0;
+    update(old => ({ ...old, status: run.inStep ? "pausing" : "paused" }));
+    if (!run.inStep) run.resume?.();
+  };
+  return { state, speed, setSpeed, start, stop, resume, pause };
 }

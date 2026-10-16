@@ -2,12 +2,13 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import example from "./catalog.json";
 import { exportStoolSense } from "./static.mjs";
-import journeys from "./journeys.json";
+import { createJourneys } from "./journeys.mjs";
 export default {
   title: "StoolSense",
   port: 6106,
   ...example,
-  journeys,
+  journeys: createJourneys(example.catalog),
+  coverage: { requireAllCases: true, requireConnected: true },
   links: {
     repository: "https://github.com/tombelieber/app-canvas",
     agentGuide: "https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md",
@@ -24,6 +25,7 @@ export default {
           "/style.css": ["style.css", "text/css"],
           "/sample.png": ["sample.png", "image/png"],
           "/diet-template.csv": ["diet-template.csv", "text/csv"],
+          "/invalid-meals.csv": ["invalid-meals.csv", "text/csv"],
         };
         const asset =
           files[url.pathname] ||

@@ -1,4 +1,20 @@
-export function layoutScreens(screens, manifest, groups) {
+import dagre from "@dagrejs/dagre";
+export function layoutScreens(screens, manifest, groups, options = {}) {
+  if (options.mode === "machine") {
+    const graph = new dagre.graphlib.Graph();
+    graph.setGraph({ rankdir: "LR", nodesep: 65, ranksep: 180, marginx: 60, marginy: 90 });
+    graph.setDefaultEdgeLabel(() => ({}));
+    const nodes = screens.map(s => {
+      const width = s.viewport?.width || 390, height = s.viewport?.height || 844;
+      const h = height * 390 / width;
+      const compact = options.focusedId !== s.id, nodeWidth = compact ? 300 : 390, nodeHeight = compact ? 140 : h + 48;
+      graph.setNode(s.id, { width: nodeWidth, height: nodeHeight + (compact ? 0 : 52) });
+      return { id: s.id, type: "screen", data: { screen: s, width: nodeWidth, compact, height: h, viewport: { width, height }, url: manifest.screens?.[s.id]?.url, error: manifest.screens?.[s.id]?.error }, style: { width: nodeWidth, height: nodeHeight }, initialWidth: nodeWidth, initialHeight: nodeHeight, draggable: false };
+    });
+    for (const f of options.flows || []) if (graph.hasNode(f.from) && graph.hasNode(f.to) && f.from !== f.to) graph.setEdge(f.from, f.to);
+    dagre.layout(graph);
+    return nodes.map(n => { const p = graph.node(n.id); return { ...n, position: { x: p.x - n.initialWidth / 2, y: p.y - (n.initialHeight + (n.data.compact ? 0 : 52)) / 2 } }; });
+  }
   const nodes = [],
     blocks = [],
     skyline = Array(20).fill(0);

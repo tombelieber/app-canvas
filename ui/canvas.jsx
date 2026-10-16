@@ -11,8 +11,10 @@ import { project, useManifest } from "./useManifest.js";
 import { LiveFrame } from "./LiveFrame.jsx";
 import { useJourney } from "./useJourney.js";
 import { JourneyPanel } from "./JourneyPanel.jsx";
+import { graphFlows, caseCoverage, outcomes } from "../lib/coverage.mjs";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
-const { catalog, groups, flows } = project;
+const { catalog, groups } = project;
+const flows = graphFlows(project), coverage = caseCoverage(project);
 const runId = crypto.randomUUID();
 
 function Canvas() {
@@ -23,8 +25,10 @@ function Canvas() {
   const [moving, setMoving] = useState(false);
   const cameraRun = useRef(0);
   const [journeyId, setJourneyId] = useState("");
+  const [view, setView] = useState("overview"), [branches, setBranches] = useState(false), [autoStart, setAutoStart] = useState(false);
   const definition = project.journeys.find((j) => j.id === journeyId);
-  const journeyScreens = useMemo(() => definition ? [...new Set([definition.entry, ...definition.steps.map((s) => s.screen)])] : null, [definition]);
+  const plan = useMemo(() => journeyId === "__all__" ? project.journeys : journeyId === "__flows__" ? project.journeys.filter(j=>j.kind !== "case") : journeyId === "__cases__" ? project.journeys.filter(j=>j.kind === "case") : definition ? [definition] : [], [journeyId, definition]);
+  const journeyScreens = useMemo(() => definition && !branches ? [...new Set([definition.entry, ...definition.steps.map((s) => s.screen)])] : null, [definition, branches]);
   const stage = useRef(null), camera = useReactFlow();
   const bridge = useBridge(() => { setActive(null); player.stop(); });
   const visible = useMemo(() => catalog.filter((s) => (group === "all" || s.group === group) && (!query || `${s.title} ${s.id}`.toLowerCase().includes(query.toLowerCase())) && (!journeyScreens || journeyScreens.includes(s.id))), [group, query, journeyScreens]);
@@ -33,14 +37,15 @@ function Canvas() {
     const ids = new Set(visible.map((s) => s.id)), groupIds = new Set(visible.map((s) => `group-${s.group}`));
     // Freeze each overview at its source-build measurement. Feeding live scroll
     // height back into vh-based apps can grow the iframe on every resize.
-    return layoutScreens(catalog, manifest, groups).map((node) => {
-      if (journeyScreens?.includes(node.id) || node.id === active) {
+    return layoutScreens(catalog, manifest, groups, { mode: view, flows, focusedId: selectedId }).map((node) => {
+      if (journeyScreens?.includes(node.id)) node = { ...node, position: { x: journeyScreens.indexOf(node.id) * 670, y: 90 } };
+      if ((journeyScreens?.includes(node.id) && view !== "machine") || node.id === active) {
         const height = node.data.screen.viewport?.height || 844;
-        node = { ...node, initialHeight: height * 390 / node.data.viewport.width + 48, position: journeyScreens?.includes(node.id) ? { x: journeyScreens.indexOf(node.id) * 560, y: 90 } : node.position, data: { ...node.data, viewport: { ...node.data.viewport, height }, height: height * 390 / node.data.viewport.width }, style: { ...node.style, height: height * 390 / node.data.viewport.width + 48 } };
+        node = { ...node, initialWidth: 390, initialHeight: height * 390 / node.data.viewport.width + 48, position: journeyScreens?.includes(node.id) ? { x: journeyScreens.indexOf(node.id) * 670, y: 90 } : node.position, data: { ...node.data, compact: false, width: 390, viewport: { ...node.data.viewport, height }, height: height * 390 / node.data.viewport.width }, style: { ...node.style, width: 390, height: height * 390 / node.data.viewport.width + 48 } };
       }
       return { ...node, style: { ...node.style, visibility: ids.has(node.id) || (!journeyScreens && groupIds.has(node.id)) ? "visible" : "hidden" } };
     });
-  }, [visible, manifest, journeyScreens, active]);
+  }, [visible, manifest, journeyScreens, active, view, selectedId]);
   const navigate = useCallback((id, interact = false) => {
     if (!catalog.some((s) => s.id === id)) return;
     select(id); setActive(interact ? id : null);
@@ -48,7 +53,9 @@ function Canvas() {
     if (journeyScreens && !journeyScreens.includes(id)) setJourneyId("");
     setRequest({ id, nonce: performance.now() });
   }, [visible, journeyScreens]);
-  const player = useJourney({ definition, bridge, navigate });
+  const player = useJourney({ definitions: plan, bridge, navigate });
+  useEffect(() => { if (autoStart && plan.length) { player.start(); setAutoStart(false); } }, [autoStart, plan]);
+  const chooseJourney = (id, autoplay = false) => { player.stop(); select(null); setActive(null); setGroup("all"); setQuery(""); setJourneyId(id); setBranches(id.startsWith("__")); setAutoStart(autoplay); };
   const goTo = (id, interact = false) => { player.stop(); navigate(id, interact); };
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
   useEffect(() => {
@@ -71,7 +78,7 @@ function Canvas() {
     setRequest(null);
   }, [request, nodes, camera, selectedId]);
   useEffect(() => { if (!selectedId) fit(); }, [manifest.status, fit]);
-  useEffect(fit, [journeyId]);
+  useEffect(fit, [journeyId, view, branches]);
   const filterGroup = (id) => { player.stop(); setJourneyId(""); setGroup(id); setQuery(""); select(null); setActive(null); fit(); };
   const search = (value) => { player.stop(); setJourneyId(""); setQuery(value); select(null); setActive(null); fit(); };
   useEffect(() => {
@@ -84,12 +91,13 @@ function Canvas() {
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
   }, [fit, navigate, selectedId, active]);
   const shown = new Set(visible.map((s) => s.id));
-  const journeyFlows = definition?.steps.map((step, i) => ({ from: i ? definition.steps[i - 1].screen : definition.entry, to: step.screen, label: step.title })).filter((edge) => edge.from !== edge.to);
+  const journeyFlows = !branches && definition?.steps.map((step, i) => ({ from: i ? definition.steps[i - 1].screen : definition.entry, to: step.screen, label: step.title })).filter((edge) => edge.from !== edge.to);
   const displayedFlows = journeyFlows || flows;
   const edges = lines ? displayedFlows.filter((f) => shown.has(f.from) && shown.has(f.to)).map((f, i) => ({
-    id: `flow-${i}`, source: f.from, target: f.to, label: f.label, type: "smoothstep",
+    id: `flow-${i}`, source: f.from, target: f.to, label: `${f.kind === "condition" ? "條件：" : f.kind === "reference" ? "參照：" : ""}${f.label || ""}`, type: "smoothstep",
     markerEnd: { type: MarkerType.ArrowClosed, color: "#5d7ca5" },
-    style: { stroke: f.from === selectedId || f.to === selectedId ? "#287b83" : "#7892ad", strokeWidth: f.from === selectedId || f.to === selectedId ? 4 : 2 },
+    animated: player.state?.trace.at(-1)?.from === f.from && player.state?.trace.at(-1)?.to === f.to,
+    style: { stroke: f.from === selectedId || f.to === selectedId ? "#287b83" : f.kind === "recovery" ? "#277d50" : catalog.find(s=>s.id===f.to)?.outcome === "failure" ? "#b44d4d" : "#7892ad", strokeDasharray: ["condition", "reference"].includes(f.kind) ? "10 6" : undefined, strokeWidth: f.from === selectedId || f.to === selectedId ? 4 : 2 },
     labelStyle: { fontSize: 15, fill: "#33516d" }, labelBgPadding: [10, 6], labelBgBorderRadius: 5,
   })) : [];
   const linked = displayedFlows.filter((f) => f.from === selectedId || f.to === selectedId);
@@ -98,7 +106,7 @@ function Canvas() {
   const journeyNode = player.state && nodes.find((node) => node.id === player.state.screen);
   const entryUrl = player.state && manifest.screens[player.state.definition.entry]?.url;
   return <PreviewContext.Provider value={context}>
-    <div className={`review-workspace ${selected ? "has-inspector" : ""}`} data-camera-ready={!moving && !request} data-live-ready={catalog.every((s) => bridge.states[s.id]?.ready && !bridge.states[s.id]?.error)}>
+    <div className={`review-workspace ${selected ? "has-inspector" : ""}`} data-view={view} data-camera-ready={!moving && !request} data-live-ready={catalog.every((s) => bridge.states[s.id]?.ready && !bridge.states[s.id]?.error)}>
       <header className="workspace-bar">
         <a className="workspace-brand" href="./">{project.title} <span>LIVE UI canvas</span></a>
         <span className={`sync-status ${manifest.status === "ready" ? "ready" : ""}`}><i />{manifest.status === "ready" ? `${rendered} 個畫面 · ${project.static ? "示範版本" : "已同步"}` : manifest.status === "error" ? "載入失敗" : `正在載入 ${rendered} / ${catalog.length}`}</span>
@@ -118,7 +126,7 @@ function Canvas() {
         </div>
       </aside>
       <main className="canvas-area">
-        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={(id) => { player.stop(); select(null); setActive(null); setGroup("all"); setQuery(""); setJourneyId(id); }} player={player} />
+        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} view={view} onView={(next)=>{ setView(next); if(next==="machine")setBranches(true); }} branches={branches} onBranches={setBranches} coverage={coverage} />
         <div className="flow-stage" ref={stage}>
         <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}
           onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
@@ -128,7 +136,7 @@ function Canvas() {
           onMoveStart={() => setMoving(true)} onMoveEnd={() => setMoving(false)}
           minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null}
           panOnScroll panOnDrag selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
-          <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={(n) => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
+          <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={(n) => n.type === "section" ? "#e2e7ec" : ({success:"#277d50",failure:"#ad4141",pending:"#ad842c",warning:"#bd9462"}[n.data.screen?.outcome] || "#87a8ad")} nodeStrokeWidth={0} />
           {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
             <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} />
           </div></ViewportPortal>}
@@ -139,6 +147,9 @@ function Canvas() {
       {selected && <aside className="inspector">
         <button className="close" aria-label="關閉畫面資料" onClick={() => { player.stop(); select(null); setActive(null); }}>×</button>
         <span className="inspector-kicker">{player.state ? "流程播放 · LIVE" : active ? "互動模式 · LIVE" : "瀏覽模式 · LIVE"}</span><h2>{selected.title}</h2><code>{selected.id}</code>
+        {selected.outcome && <span className="state-badge" data-outcome={selected.outcome}>{outcomes[selected.outcome]}</span>}
+        {selected.condition && <p className="entry-condition">觸發條件：{selected.condition}</p>}
+        {project.journeys.find(j=>j.kind === "case" && j.entry === selected.id) && <button onClick={()=>chooseJourney(project.journeys.find(j=>j.kind === "case" && j.entry === selected.id).id, true)}>▶ 播放此情境</button>}
         <button className="present" onClick={() => active ? setActive(null) : goTo(selected.id, true)}>{active ? "停止操作 · 保留畫面" : "▶ 操作呢個畫面"}</button>
         <button onClick={() => navigate(selected.id, !!active)}>放大至畫面 <kbd>2</kbd></button>
         <button onClick={() => player.state ? player.start() : setResets((old) => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))}>重設</button>

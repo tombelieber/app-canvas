@@ -441,3 +441,44 @@ button:disabled { opacity:.4; cursor:default; }
  .inspector { grid-column:1; grid-row:4; width:auto; max-height:200px; border-radius:0; }
  .canvas-hint { left:64px; }
 }
+
+/* The graph's colors encode state, rather than decoration. */
+[data-outcome="success"] { --state-color:#277d50; --state-tint:#edf7f0; }
+[data-outcome="failure"] { --state-color:#ad4141; --state-tint:#fff0f0; }
+[data-outcome="pending"] { --state-color:#926514; --state-tint:#fff8e9; }
+[data-outcome="warning"] { --state-color:#8b6027; --state-tint:#fff5e8; }
+[data-outcome="neutral"] { --state-color:#5e6d7b; --state-tint:#f0f3f5; }
+.screen-frame { border-top:4px solid var(--state-color,#5e6d7b); }
+.screen-frame.is-selected { outline:3px solid #3489d0; }
+.state-badge { display:inline-block; padding:3px 6px; border-radius:4px; background:var(--state-tint); color:var(--state-color); font-size:11px; font-weight:600; white-space:nowrap; }
+.frame-label span { overflow:hidden; text-overflow:ellipsis; max-width:270px; }
+.frame-label small { flex-shrink:0; }
+.canvas-view-controls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; margin-bottom:7px; }
+.canvas-view-controls button[aria-pressed="true"] { background:#287b83; color:white; border-color:#287b83; }
+.case-coverage { color:#53616f; font-size:11px; margin-left:auto; }
+.journey-panel > label { min-width:0; max-width:100%; }
+.journey-panel select[aria-label="播放流程"] { max-width:min(520px,calc(100vw - 100px)); }
+.journey-controls { flex-wrap:wrap; }
+.branch-choice { display:flex; gap:5px; align-items:center; font-size:11px; white-space:nowrap; }
+.branch-choice input { margin:0; }
+.journey-panel p { overflow-wrap:anywhere; }
+.journey-panel .entry-condition { color:#65707b; font-size:11px; margin-top:3px; }
+.coverage-missing { color:#ad4141; }
+.state-legend { display:flex; flex-wrap:wrap; gap:6px 12px; color:#65707b; font-size:10px; width:100%; }
+.state-legend span[data-outcome]::before { content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--state-color); margin-right:4px; }
+@media(max-width:600px) {
+ .case-coverage { width:100%; margin-left:0; }
+ .journey-panel { padding:8px; gap:5px; }
+ .journey-panel select[aria-label="播放流程"] { max-width:calc(100vw - 70px); }
+ .state-legend { gap:4px 9px; }
+ .journey-controls button { padding:5px 6px; font-size:11px; }
+}
+.compact-state { height:140px; border-radius:7px; }
+.compact-state > .frame-label { display:none; }
+.compact-state > .screen-surface { height:0 !important; visibility:hidden; }
+.machine-caption { padding:15px; font-size:13px; }
+.machine-caption > div { display:flex; gap:8px; align-items:flex-start; justify-content:space-between; }
+.machine-caption b { font-size:15px; line-height:1.35; max-height:40px; overflow:hidden; }
+.machine-caption p { margin:8px 0; color:#64717d; line-height:1.4; height:36px; overflow:hidden; }
+.machine-caption small { color:#287b83; font-size:10px; }
+@media(prefers-reduced-motion:reduce) { .react-flow__edge-path { animation:none !important; } }

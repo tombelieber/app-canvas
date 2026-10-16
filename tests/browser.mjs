@@ -10,9 +10,10 @@ const { startCanvas, packageRoot } = await import(
     : "../lib/server.mjs"
 );
 import example from "../examples/stoolsense/catalog.json" with { type: "json" };
-import journeys from "../examples/stoolsense/journeys.json" with { type: "json" };
+import { createJourneys } from "../examples/stoolsense/journeys.mjs";
 import { verifyJourneys } from "../lib/verify.mjs";
 const { catalog } = example;
+const journeys = createJourneys(catalog);
 
 const hostedUrl = process.env.APP_CANVAS_TEST_URL;
 const hostedManifest = hostedUrl ? await (await fetch(new URL("manifest.json", hostedUrl))).json() : null;
@@ -31,7 +32,6 @@ const app = hostedUrl ? {
 let browser;
 try {
   await app.firstBuild;
-  await app.verify();
   const manifest = app.getManifest();
   assert.equal(manifest.status, "ready", JSON.stringify(manifest.screens));
   assert.equal(Object.keys(manifest.screens).length, catalog.length);

@@ -1,7 +1,8 @@
 # Third-party software and prior art
 
 App Canvas uses React Flow (`@xyflow/react`, MIT), React and React DOM (MIT),
-esbuild (MIT), Playwright (Apache-2.0), and TypeScript (Apache-2.0). Their
+esbuild (MIT), Playwright (Apache-2.0), TypeScript (Apache-2.0), and Dagre /
+Graphlib (MIT) for directed graph layout. Their
 packages retain their respective copyright and license notices.
 
 The runnable StoolSense example is an author-owned frontend with synthetic
@@ -18,4 +19,4 @@ and React Cosmos provide related real-component preview workflows.
 This project is an extraction of a working application review tool, not a
 claim to have invented code-backed UI canvases. No competitor source code is
 included. The initial focus is standalone application adapters, isolated
-interactive previews, generated full-page overview images and a shared CLI.
+interactive live-code previews, checked journey playback and a shared CLI.

@@ -43,7 +43,7 @@ Requires Node.js 22+. Use the repository's package manager and lockfile; npm
 examples below are the reference path. No paid API key or model call is needed.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.3.0
+npm install --save-dev github:tombelieber/app-canvas#v0.4.0
 npx app-canvas browsers
 ```
 
@@ -105,11 +105,20 @@ automatically. Separate-origin custom preview servers must inject
 `ctx.bridgeHtml(html)` before their application scripts. Every preview signals
 `data-review-ready="true"` only after its named state has settled.
 
-Add named `journeys` for important happy, failure and recovery paths using the
+Add named `journeys` for all reviewed happy, failure and recovery paths using the
 [authoring contract](docs/journeys.md). Playback executes real controls and
 assertions in one persistent preview session; its camera follows confirmed
 states. A flow link navigates between independently seeded cases. Keep those
 two meanings clear. The renderer never infers arbitrary flows automatically.
+Add a `kind: "case"` journey for every catalog entry, with a DOM assertion for
+that exact state and an explicit `condition` for independently seeded variants.
+Read-only, loading and authentication states are valid cases; do not invent
+a successful recovery or live sign-in to make them appear interactive.
+Use `outcome: "neutral" | "success" | "failure" | "pending" | "warning"`
+on states. Use `kind: "condition"` or `"reference"` on edges that describe
+fixture variants or component references rather than actual app operations.
+Checked journey transitions are added to the graph automatically. Full-page
+overview and compact state graph share the mounted real-code previews.
 
 ## 4. Make missing coverage fail
 
@@ -123,6 +132,11 @@ before updating a snapshot; do not blindly refresh it to silence the gate.
 For another router, use its actual route manifest and add a project-specific
 coverage check; do not pretend the React Router parser covers it. Named business
 states still need authored cases and interaction tests even with route checks.
+Enable `coverage: { requireAllCases: true, requireConnected: true }`. Prove it
+fails when a new case lacks its checked journey or graph connection. Do not
+silence the guard by creating a generic "body exists" assertion. Check the
+visible condition, completion, disabled control, retained draft or meaningful
+output that distinguishes that case. See the [77-case example](examples/stoolsense/journeys.mjs).
 
 Implement `verify({ browser, preview, manifest, canvasOrigin })` in the config.
 Exercise the app's important flows through real controls, including mutation,
