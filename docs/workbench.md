@@ -68,7 +68,11 @@ text. The remaining canvas is the camera's fit area.
 During the existing isolated measurement pass, App Canvas captures the HTML
 and CSS that the **real source app** produced. It preserves form values,
 CSSOM styles, SVG and local image/font assets. The overview displays these
-script-free documents, without raster screenshots or separately written UI.
+render-only documents, without raster screenshots or separately written UI.
+Ordinary previews execute no scripts. Open native dialogs/popovers use one
+fixed, hash-authorized bootstrap to restore the browser's own top layer and
+backdrop. Preview documents are inert and have an opaque origin; application
+scripts and event handlers are stripped, and cannot access the parent app.
 Both the full overview and graph show actual page contents at every zoom.
 Offscreen documents are released; when zoomed out, all visible screens remain
 visible. Source rebuilds refresh both the overview documents and live apps.

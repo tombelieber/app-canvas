@@ -12,7 +12,7 @@ export const ScreenNode = React.memo(function ScreenNode({ id, data }) {
     <div className={`screen-surface ${active ? "nodrag nopan nowheel" : ""}`} style={{ height: data.height }}>
       {data.error ? <div className="render-error">畫面未能生成：{data.error}</div> : data.url && live ?
         <LiveFrame id={id} url={data.url} viewport={data.viewport} epoch={`${ctx.revision}-${ctx.resets[id] || 0}`} runId={ctx.runId} interactive={active} bridge={ctx.bridge} title={`${data.screen.title} · 真實 UI`} /> :
-        ctx.previews.has(id) && data.domUrl ? <iframe data-preview={id} title={`${data.screen.title} · 完整 UI`} src={`${data.domUrl}${data.domUrl.includes("?") ? "&" : "?"}__canvas_revision=${ctx.revision}`} sandbox="allow-same-origin" tabIndex={-1} onLoad={event => { event.currentTarget.dataset.ready = "true"; }} style={{ width: data.viewport.width, height: data.viewport.height, transform: `scale(${390 / data.viewport.width})`, transformOrigin: "top left", pointerEvents: "none" }} /> : null}
+        ctx.previews.has(id) && data.domUrl ? <iframe data-preview={id} title={`${data.screen.title} · 完整 UI`} src={`${data.domUrl}${data.domUrl.includes("?") ? "&" : "?"}__canvas_revision=${ctx.revision}`} sandbox="allow-scripts" inert tabIndex={-1} onLoad={event => { event.currentTarget.dataset.ready = "true"; }} style={{ width: data.viewport.width, height: data.viewport.height, transform: `scale(${390 / data.viewport.width})`, transformOrigin: "top left", pointerEvents: "none" }} /> : null}
     </div>
     <Handle type="source" position={Position.Right} />
   </article>;

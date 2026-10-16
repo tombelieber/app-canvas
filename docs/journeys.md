@@ -74,7 +74,7 @@ case, or restarts the current journey with fresh fixtures.
 ## Whole-app state graph and complete playback
 
 The **畫面總覽** view exposes every registered case as a complete real UI.
-Script-free HTML/CSS from the source-rendering pass keeps all screens visible
+Render-only HTML/CSS from the source-rendering pass keeps all screens visible
 without running every application. Selection and playback use the original
 app code. **狀態圖** lays out the combined directed graph with those same full
 screens, never compact metadata cards. Press **Interact** to operate a selected

@@ -98,7 +98,7 @@ case must be addressable and render actual code when opened. Declare `pages`
 from the actual router and `pageId` / `feature` on each state; see the
 [page/feature/state and tablet contract](docs/workbench.md). The overview and
 state graph show full source-rendered HTML/CSS, with no summary cards or raster
-screenshots. Script-free DOM documents keep the whole app visible; selection
+screenshots. Render-only DOM documents keep the whole app visible; selection
 and playback use the original app code. DOM-compatible content uses four touch
 / eight desktop running-app slots. Unsupported drawing/embedded content and
 legacy manifests retain live rendering; measure that fallback separately. Interacted previews stay mounted across filters and modes. Never

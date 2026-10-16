@@ -158,7 +158,7 @@ Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canva
 `preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs and preview code are trusted local code. The Vite helper and HTML served through `handle` get the shared preview bridge automatically. A custom server on a separate origin must apply `ctx.bridgeHtml(html)` before its application scripts.
 
 The default **畫面總覽** shows complete real HTML/CSS for all named states.
-The measurement pass reuses source-rendered DOM and styles in script-free
+The measurement pass reuses source-rendered DOM and styles in render-only
 preview documents; it does not generate screenshots or a second UI.
 Selecting a screen loads its original app code; Interact unlocks real controls.
 The branching **狀態圖** also displays full screens. Page/feature/depth filters
