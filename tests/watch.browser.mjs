@@ -43,6 +43,7 @@ try {
   assert.equal(app.getManifest().status, "ready");
   const page = await browser.newPage();
   await page.goto(app.address);
+  await page.getByRole("button", {name:"▶ 操作 App",exact:true}).click();
   const frame = page.frameLocator('iframe[data-screen="home"]');
   await frame.getByRole("button", { name: "Before source edit" }).waitFor();
   const before = app.getManifest().revision;

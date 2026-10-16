@@ -34,6 +34,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto(app.address);
+  await page.getByRole("button", {name:"▶ 操作 App",exact:true}).click();
   const frame = page.frameLocator('iframe[data-screen="tasks"]');
   await frame.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
   const abort = new AbortController();

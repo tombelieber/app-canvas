@@ -10,8 +10,12 @@ try {
   await page.getByText("77 個畫面 · 已同步", { exact: true }).waitFor();
   await page.waitForFunction(() => document.querySelectorAll(".screen-frame").length === 77);
   assert.equal(await page.locator(".screen-frame img").count(), 0, "canvas must not display screenshots");
-  assert.equal(await page.locator(".screen-frame iframe").count(), 77, "all states must mount real UI code, including zoomed-out overview");
-  await page.locator('.review-workspace[data-live-ready="true"]').waitFor({ timeout: 45000 });
-  await page.frameLocator('iframe[data-screen="capture-home"]').locator("#manual").waitFor();
-  console.log("PASS: all 77 overview nodes render real application DOM without screenshot images.");
+  const manifest = app.getManifest();
+  for (const id of Object.keys(manifest.screens)) {
+    await page.getByLabel("搜尋畫面").fill(id);
+    await page.locator(`button[title="${id}"]`).click();
+    await page.frameLocator(`iframe[data-screen="${id}"]`).locator('html[data-review-ready="true"]').waitFor();
+    assert.ok(await page.locator("iframe").count() <= 8, "all states must render actual code within a bounded resource budget");
+  }
+  console.log("PASS: all 77 cases render real application DOM on selection without screenshot images or simultaneous unbounded app instances.");
 } finally { await browser.close(); await app.close(); }

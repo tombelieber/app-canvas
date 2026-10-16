@@ -23,9 +23,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check && npm test
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:navigation && npm run test:height && npm run test:journeys
       - run: npm run test:queue && npm run test:file
+      - run: npm run test:touch && npm run test:tablet
       - run: npm run test:onboarding
       - run: npm run build:demo
       - run: npm run test:static

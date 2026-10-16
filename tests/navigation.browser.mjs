@@ -45,10 +45,10 @@ try {
   const first = page.frameLocator('iframe[data-screen="start"]'), second = page.frameLocator('iframe[data-screen="next"]');
   await first.locator("#name").fill("draft survives filters");
   assert.ok(await first.locator("#bottom").evaluate((el) => { el.focus(); return document.scrollingElement.scrollTop; }) > 0, "normal focus must scroll the interactive app to an offscreen field");
-  assert.equal(await second.locator("#name").inputValue(), "", "sibling fixture starts independently");
   await page.locator(".inspector .flow-link").click();
   await targetFits("next");
   assert.equal(await page.locator('[data-id="next"] .is-interactive').count(), 1, "next keeps in-canvas interaction enabled");
+  assert.equal(await second.locator("#name").inputValue(), "", "sibling fixture starts independently");
   await second.locator("#name").fill("independent second draft");
   await first.locator("html").evaluate(() => localStorage.clear());
   assert.equal(await second.locator("html").evaluate(() => localStorage.getItem("draft")), "independent second draft", "clear is frame-local");
@@ -62,6 +62,7 @@ try {
   // A sibling cannot send commands to another preview, even at the same origin.
   await first.locator("html").evaluate(() => parent.document.querySelector('iframe[data-screen="next"]').contentWindow.postMessage({ channel: "app-canvas", type: "command", requestId: "wrong-source", action: { type: "fill", selector: "#name", value: "forged" } }, location.origin));
   await page.evaluate(() => window.postMessage({ channel: "app-canvas", type: "state", ready: false, error: "forged" }, location.origin));
+  await page.locator(".inspector-details summary").click();
   await page.getByRole("button", { name: "重設", exact: true }).click();
   await first.locator("#name").waitFor();
   await page.waitForFunction(() => document.querySelector('iframe[data-screen="start"]').contentDocument?.querySelector("#name")?.value === "");
@@ -69,6 +70,9 @@ try {
   assert.equal(await page.locator('.review-workspace[data-live-ready="true"]').count(), 1);
   assert.deepEqual(await page.evaluate(() => [localStorage.getItem("outside-preview"), sessionStorage.getItem("outside-preview")]), ["keep", "keep"], "native storage outside the preview stays untouched");
   // Edge labels are an additional navigation surface.
+  await page.getByLabel("頁面範圍").selectOption("all");
+  await page.getByLabel("展開深度").selectOption("all");
+  await page.getByLabel("流程連線範圍").selectOption("all");
   await page.getByRole("button", { name: "全覽", exact: false }).click();
   await settled();
   await page.locator(".react-flow__edge-textwrapper").filter({ hasText: "Continue" }).click();

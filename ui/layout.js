@@ -1,4 +1,9 @@
 import dagre from "@dagrejs/dagre";
+export function layoutPageSummary(screens, pages, manifest, area) {
+  const columns = Math.max(1, Math.min(4, Math.round(Math.sqrt(screens.length * area.width / Math.max(area.height, 1) * .6))));
+  return screens.map((s, i) => ({ id: s.id, type: "screen", position: { x: (i % columns) * 370, y: Math.floor(i / columns) * 200 }, initialWidth: 300, initialHeight: 140,
+    data: { screen: s, width: 300, height: 140, compact: true, pageSummary: pages.find(p => p.id === s.pageId), viewport: s.viewport || { width: 390, height: 844 }, url: manifest.screens?.[s.id]?.url, error: manifest.screens?.[s.id]?.error }, style: { width: 300, height: 140 } }));
+}
 export function layoutScreens(screens, manifest, groups, options = {}) {
   if (options.mode === "machine") {
     const graph = new dagre.graphlib.Graph();
@@ -22,7 +27,7 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
     const members = screens.filter((s) => s.group === g.id);
     if (!members.length) continue;
     const columns =
-        g.id === "app"
+        options.compact ? Math.min(3, Math.max(1, Math.ceil(Math.sqrt(members.length)))) : g.id === "app"
           ? 5
           : Math.max(
               3,
@@ -55,13 +60,15 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
     members.forEach((s) => {
       const col = heights.indexOf(Math.min(...heights));
       const m = manifest.screens?.[s.id] || {},
-        h = ((m.height || 1100) * 390) / (s.viewport?.width || 390);
+        compact = options.compact && options.focusedId !== s.id,
+        h = compact ? 140 : ((m.height || 1100) * 390) / (s.viewport?.width || 390);
       nodes.push({
         id: s.id,
         type: "screen",
         position: { x: blockX + 40 + col * 490, y: blockY + heights[col] },
         data: {
           screen: s,
+          compact,
           width: 390,
           height: h,
           url: m.url,

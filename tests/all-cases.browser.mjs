@@ -17,7 +17,7 @@ try {
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor({ timeout: 45000 });
   await page.getByRole("button", { name: "狀態圖", exact: true }).click();
   await page.locator('.review-workspace[data-view="machine"][data-camera-ready="true"]').waitFor();
-  assert.equal(await page.locator('.screen-frame iframe').count(), 77);
+  assert.ok(await page.locator('iframe').count() <= 8, 'bounded live previews');
   assert.equal(await page.locator('.screen-frame[data-outcome="failure"]').count() > 10, true);
   await verifyJourneys({ page, journeys: config.journeys, collectFailures: true, onResult: result=>console.log(`${result.passed ? "PASS" : "FAIL"}: ${result.id}${result.error ? ` ${result.error}` : ""}`) });
   assert.deepEqual(errors, []); assert.deepEqual(remote, []);

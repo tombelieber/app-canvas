@@ -14,6 +14,7 @@ try {
  assert.equal(await page.getByLabel("播放流程").count(), 1);
  assert.equal(await page.getByRole("button", { name: "狀態圖", exact: true }).count(), 1, "full branching graph is available");
  assert.equal(await page.getByLabel("播放流程").locator('option[value="__all__"]').count(), 1, "all authored cases can play as a bounded queue");
+ await page.getByLabel("播放流程").selectOption(config.journeys[0].id);
  await page.getByLabel("播放速度").selectOption("0");
  for (const journey of config.journeys.slice(0, 3)) {
    await page.getByLabel("播放流程").selectOption(journey.id);

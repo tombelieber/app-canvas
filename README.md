@@ -1,6 +1,6 @@
 # App Canvas
 
-A zoomable overview of your real application pages, named states and flows. Every screen renders live HTML/CSS/JS. Double-click to interact in place; follow a flow to pan and zoom to its destination.
+A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
 
 **[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
 No install, login or API key. Explore **77 named states**, labeled flows and
@@ -36,7 +36,7 @@ Codex and Claude Code also have a bundled skill installer.
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.4.2
+npm install -g github:tombelieber/app-canvas#v0.5.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -45,7 +45,7 @@ Open <http://127.0.0.1:6106>. The bundled StoolSense example contains **77 autho
 
 The example is a frozen frontend export. In a live project the adapter imports current application code; the source watcher rebuilds the overview. Changing this frozen example does not modify the original application.
 
-Browse by dragging/zooming. Double-click a screen or choose **▶ 操作 App** to
+Browse by dragging/zooming. Select a screen and press **Interact** or **▶ 操作 App** to
 use its controls directly on the canvas. **下一步**, **上一步** and graph edges
 select the destination and move the camera there. Esc returns to browsing.
 Filtering keeps drafts; **重設** restores only that named preview.
@@ -57,7 +57,7 @@ own continuing session; the next flow or standalone case starts fresh. A
 standalone case starts from its declared fixture condition and checks that
 view, including states that require an external login or provider outcome.
 It is not presented as a user navigating to every state from one session.
-**畫面總覽** shows all live pages; **狀態圖** uses compact, expandable nodes.
+**畫面總覽** exposes all named states with bounded live previews; **狀態圖** uses compact, expandable nodes.
 **顯示其他分支** retains neighboring states while following a selected flow.
 
 The hosted demo also uses this frozen synthetic export. It has no application
@@ -156,13 +156,21 @@ Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canva
 
 `preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs and preview code are trusted local code. The Vite helper and HTML served through `handle` get the shared preview bridge automatically. A custom server on a separate origin must apply `ctx.bridgeHtml(html)` before its application scripts.
 
-All registered cases stay mounted as separate live iframes, including while
-filtered or offscreen. A playback session adds one iframe. No screenshot cache
-is generated or displayed. DOM size probes and compiled canvas files live
-under `node_modules/.cache/app-canvas/`. Source changes reload the actual
-previews; dependency/configuration changes may require restarting the command.
-The bundled demo is checked with 77 simultaneous frames. Cost depends on the
-app: qualify larger catalogs and heavy pages on your target machine.
+The default **page overview** groups features and state counts. Choose a page,
+expand to feature or all-state depth, or switch to **畫面總覽** / **狀態圖**.
+Actual UI code loads on selection or when sufficiently zoomed into a visible
+frame. Live previews are bounded to four on touch devices and eight on desktop,
+including playback. Unopened previews may be evicted; interacted frames stay
+mounted across filters and modes. At retained capacity, explicitly release a
+preview before unlocking another. No screenshot cache is generated or displayed.
+See the [workbench and iPad guide](docs/workbench.md).
+
+DOM measurements and compiled files live under
+`node_modules/.cache/app-canvas/`. Source changes reload the previews;
+dependency/configuration changes may require restarting the command.
+The bundled demo covers 77 cases and 121 playable entries. WebKit iPad emulation
+is tested; physical iPad memory pressure and long-session stability need device
+validation. Cost still depends on the app.
 Overview heights are measured once per source build, avoiding resize feedback
 in `vh`/scroll-area layouts. Interactive frames use the configured native
 viewport and normal app scrolling, including keyboard focus.
@@ -206,7 +214,7 @@ This is an existing problem with useful existing solutions, not an empty market:
 | [html-flow-board](https://github.com/snowpact/html-flow-board)                    | Interactive HTML flow boards and FlowML authoring.                                                                                                                                               |
 | [Playroom](https://github.com/seek-oss/playroom)                                  | Composing real components across viewports.                                                                                                                                                      |
 | [React Cosmos](https://github.com/react-cosmos/react-cosmos)                      | Component fixtures and isolated development.                                                                                                                                                     |
-| **App Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with simultaneous live screens, camera-following flows and checked journey playback.                                            |
+| **App Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with bounded actual-code previews, camera-following flows and checked journey playback.                                            |
 
 The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App previews do not require adopting React Flow or Storybook. Native Swift/Kotlin/React Native device previews need a separate adapter and device verification; they are not implemented here.
 

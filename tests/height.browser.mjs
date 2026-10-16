@@ -15,6 +15,7 @@ try {
   await app.firstBuild;
   const measured = app.getManifest().screens.home.height;
   const page = await browser.newPage(); await page.goto(app.address);
+  await page.getByRole("button", {name:"畫面總覽",exact:true}).click();
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
   await page.evaluate(() => new Promise((resolve) => { let count = 0; const frame = () => ++count === 12 ? resolve() : requestAnimationFrame(frame); requestAnimationFrame(frame); }));
   assert.equal(await page.locator('iframe[data-screen="home"]').evaluate((el) => parseFloat(el.style.height)), measured, "live resize observations must not feed a vh/scroll-area height growth loop");

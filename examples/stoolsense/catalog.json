@@ -3,788 +3,865 @@
     {
       "id": "capture-home",
       "title": "拍攝首頁",
-      "page": "capture",
       "group": "app",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "已登入，未建立草稿"
+      "condition": "已登入，未建立草稿",
+      "feature": "首頁",
+      "pageId": "capture"
     },
     {
       "id": "history-home",
       "title": "歷史紀錄",
-      "page": "history",
       "group": "app",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "已保存虛構事件"
+      "condition": "已保存虛構事件",
+      "feature": "紀錄列表",
+      "pageId": "history"
     },
     {
       "id": "insights-home",
       "title": "趨勢與飲食對照",
-      "page": "insights",
       "group": "app",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "虛構歷史與飲食資料"
+      "condition": "虛構歷史與飲食資料",
+      "feature": "趨勢與線索",
+      "pageId": "insights"
     },
     {
       "id": "import-home",
       "title": "飲食紀錄",
-      "page": "import",
       "group": "app",
       "source": "client/import.js",
       "outcome": "neutral",
-      "condition": "已有虛構飲食紀錄"
+      "condition": "已有虛構飲食紀錄",
+      "feature": "飲食列表",
+      "pageId": "import"
     },
     {
       "id": "data-home",
       "title": "資料與 Profiles",
-      "page": "data",
       "group": "app",
       "source": "client/data.js",
       "outcome": "neutral",
-      "condition": "已登入嘅虛構資料空間"
+      "condition": "已登入嘅虛構資料空間",
+      "feature": "資料管理",
+      "pageId": "data"
     },
     {
       "id": "capture-manual",
       "title": "冇相補記",
-      "page": "capture",
       "group": "capture",
       "setup": "manual",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "冇相補記（虛構資料）"
+      "condition": "冇相補記（虛構資料）",
+      "feature": "新增紀錄",
+      "pageId": "capture"
     },
     {
       "id": "capture-photo",
       "title": "相片預覽與重拍",
-      "page": "capture",
       "group": "capture",
       "setup": "photo",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "相片預覽與重拍（虛構資料）"
+      "condition": "相片預覽與重拍（虛構資料）",
+      "feature": "新增紀錄",
+      "pageId": "capture"
     },
     {
       "id": "capture-observations",
       "title": "外觀與感受 · 展開",
-      "page": "capture",
       "group": "capture",
       "setup": "observations",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "外觀與感受 · 展開（虛構資料）"
+      "condition": "外觀與感受 · 展開（虛構資料）",
+      "feature": "補充內容",
+      "pageId": "capture"
     },
     {
       "id": "capture-care",
       "title": "求醫問題 · 展開",
-      "page": "capture",
       "group": "capture",
       "setup": "care",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "求醫問題 · 展開（虛構資料）"
+      "condition": "求醫問題 · 展開（虛構資料）",
+      "feature": "求醫問題",
+      "pageId": "capture"
     },
     {
       "id": "capture-time",
       "title": "時間與歸屬 · 展開",
-      "page": "capture",
       "group": "capture",
       "setup": "time",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "時間與歸屬 · 展開（虛構資料）"
+      "condition": "時間與歸屬 · 展開（虛構資料）",
+      "feature": "補充內容",
+      "pageId": "capture"
     },
     {
       "id": "capture-pending",
       "title": "待同步紀錄 · 可繼續",
-      "page": "capture",
       "group": "capture",
       "setup": "pending",
       "source": "client/capture.js",
       "outcome": "pending",
-      "condition": "待同步紀錄 · 可繼續（虛構資料）"
+      "condition": "待同步紀錄 · 可繼續（虛構資料）",
+      "feature": "同步與草稿",
+      "pageId": "capture"
     },
     {
       "id": "capture-saving",
       "title": "雲端保存中",
-      "page": "capture",
       "group": "capture",
       "setup": "saving",
       "source": "client/capture.js",
       "outcome": "pending",
-      "condition": "合成保存請求保持等待，顯示進行中 UI"
+      "condition": "合成保存請求保持等待，顯示進行中 UI",
+      "feature": "同步與草稿",
+      "pageId": "capture"
     },
     {
       "id": "capture-offline",
       "title": "離線 · 草稿保留",
-      "page": "capture",
       "group": "capture",
       "setup": "offline",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "合成網絡失敗，草稿保留"
+      "condition": "合成網絡失敗，草稿保留",
+      "feature": "同步與草稿",
+      "pageId": "capture"
     },
     {
       "id": "capture-preview-error",
       "title": "相片格式未能預覽",
-      "page": "capture",
       "group": "capture",
       "setup": "preview-error",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "虛構不支援影像格式；原檔仍保留"
+      "condition": "虛構不支援影像格式；原檔仍保留",
+      "feature": "新增紀錄",
+      "pageId": "capture"
     },
     {
       "id": "history-empty",
       "title": "未有紀錄",
-      "page": "history",
       "group": "result",
       "empty": true,
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "所選範圍未有事件"
+      "condition": "所選範圍未有事件",
+      "feature": "紀錄列表",
+      "pageId": "history"
     },
     {
       "id": "history-pagination",
       "title": "歷史 · 分頁",
-      "page": "history",
       "group": "result",
       "pagination": true,
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "有 53 筆虛構事件，需要分頁"
+      "condition": "有 53 筆虛構事件，需要分頁",
+      "feature": "紀錄列表",
+      "pageId": "history"
     },
     {
       "id": "result-manual",
       "title": "手動記錄 · 已保存",
-      "page": "history",
       "group": "result",
       "event": "manual",
       "source": "client/history.js",
       "outcome": "success",
-      "condition": "手動記錄 · 已保存（虛構資料）"
+      "condition": "手動記錄 · 已保存（虛構資料）",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-photo",
       "title": "原相已保存 · 未分析",
-      "page": "history",
       "group": "result",
       "event": "photo",
       "source": "client/history.js",
       "outcome": "success",
-      "condition": "原相同步完成，未啟動分析"
+      "condition": "原相同步完成，未啟動分析",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-partial",
       "title": "原相未完成同步",
-      "page": "history",
       "group": "result",
       "event": "partial",
       "source": "client/history.js",
       "outcome": "pending",
-      "condition": "事件存在，但原相未完整同步"
+      "condition": "事件存在，但原相未完整同步",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-running",
       "title": "AI 分析中",
-      "page": "history",
       "group": "result",
       "event": "running",
       "source": "client/history.js",
       "outcome": "pending",
-      "condition": "已有分析工作，狀態 running"
+      "condition": "已有分析工作，狀態 running",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-failed",
       "title": "分析失敗 · 可重試",
-      "page": "history",
       "group": "result",
       "event": "failed",
       "source": "client/history.js",
       "outcome": "failure",
-      "condition": "已保存嘅分析工作失敗"
+      "condition": "已保存嘅分析工作失敗",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-unknown",
       "title": "分析完成 · 未獲資格",
-      "page": "history",
       "group": "result",
       "event": "unknown",
       "source": "client/history.js",
       "outcome": "success",
-      "condition": "分析完成，分類仍未合資格"
+      "condition": "分析完成，分類仍未合資格",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-appearance",
       "title": "外觀建議 · 模擬合資格",
-      "page": "history",
       "group": "result",
       "event": "appearance",
       "experimental": true,
       "source": "client/history.js",
       "outcome": "success",
-      "condition": "只用虛構合資格分類展示 UI"
+      "condition": "只用虛構合資格分類展示 UI",
+      "feature": "分析狀態",
+      "pageId": "history"
     },
     {
       "id": "result-photo-open",
       "title": "查看與下載原相",
-      "page": "history",
       "group": "result",
       "event": "photo",
       "expand": "photo",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "查看與下載原相（虛構資料）"
+      "condition": "查看與下載原相（虛構資料）",
+      "feature": "原相",
+      "pageId": "history"
     },
     {
       "id": "result-edit",
       "title": "修改時間、Profile、感受",
-      "page": "history",
       "group": "result",
       "event": "manual",
       "expand": "edit",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "修改時間、Profile、感受（虛構資料）"
+      "condition": "修改時間、Profile、感受（虛構資料）",
+      "feature": "修正與刪除",
+      "pageId": "history"
     },
     {
       "id": "result-versions",
       "title": "分析及修正版本",
-      "page": "history",
       "group": "result",
       "event": "versions",
       "expand": "versions",
       "source": "client/history.js",
       "outcome": "success",
-      "condition": "分析及修正版本（虛構資料）"
+      "condition": "分析及修正版本（虛構資料）",
+      "feature": "版本紀錄",
+      "pageId": "history"
     },
     {
       "id": "result-delete",
       "title": "刪除紀錄 · 確認",
-      "page": "history",
       "group": "result",
       "event": "manual",
       "setup": "confirm-event",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "刪除紀錄 · 確認（虛構資料）"
+      "condition": "刪除紀錄 · 確認（虛構資料）",
+      "feature": "修正與刪除",
+      "pageId": "history"
     },
     {
       "id": "visit-summary",
       "title": "求診摘要 · 匯出內容",
-      "page": "history",
       "group": "result",
       "setup": "summary",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "由真實摘要 renderer 產生嘅下載內容預覽"
+      "condition": "由真實摘要 renderer 產生嘅下載內容預覽",
+      "feature": "求診摘要",
+      "pageId": "history"
     },
     {
       "id": "care-insufficient",
       "title": "資料未足夠",
-      "page": "history",
       "group": "care",
       "event": "insufficient",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "補充答案未填齊"
+      "condition": "補充答案未填齊",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "care-record",
       "title": "保留紀錄，留意變化",
-      "page": "history",
       "group": "care",
       "event": "record",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "虛構成人答案完整，未觸發求醫提示"
+      "condition": "虛構成人答案完整，未觸發求醫提示",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "care-contact",
       "title": "聯絡醫生跟進",
-      "page": "history",
       "group": "care",
       "event": "contact",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "虛構少量見血報告"
+      "condition": "虛構少量見血報告",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "care-urgent",
       "title": "盡快取得醫療意見",
-      "page": "history",
       "group": "care",
       "event": "urgent",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "虛構腹瀉超過兩日"
+      "condition": "虛構腹瀉超過兩日",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "care-emergency",
       "title": "立即求助",
-      "page": "history",
       "group": "care",
       "event": "emergency",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "虛構大量出血報告"
+      "condition": "虛構大量出血報告",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "care-other",
       "title": "成人以外 · 適用範圍",
-      "page": "history",
       "group": "care",
       "event": "other",
       "expand": "care",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "記錄對象為成人以外"
+      "condition": "記錄對象為成人以外",
+      "feature": "求醫參考",
+      "pageId": "history"
     },
     {
       "id": "insights-empty",
       "title": "未有對照資料",
-      "page": "insights",
       "group": "insights",
       "empty": true,
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "所選範圍沒有對照資料"
+      "condition": "所選範圍沒有對照資料",
+      "feature": "趨勢與線索",
+      "pageId": "insights"
     },
     {
       "id": "insights-candidate",
       "title": "候選模式 · 支持紀錄",
-      "page": "insights",
       "group": "insights",
       "pattern": "candidate",
       "expand": "all",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "虛構資料中有候選模式與支持紀錄"
+      "condition": "虛構資料中有候選模式與支持紀錄",
+      "feature": "趨勢與線索",
+      "pageId": "insights"
     },
     {
       "id": "insights-confounded",
       "title": "食物共現 · 無法分辨",
-      "page": "insights",
       "group": "insights",
       "pattern": "confounded",
       "expand": "all",
       "source": "client/history.js",
       "outcome": "warning",
-      "condition": "虛構食物經常共同出現，無法分辨"
+      "condition": "虛構食物經常共同出現，無法分辨",
+      "feature": "趨勢與線索",
+      "pageId": "insights"
     },
     {
       "id": "insights-intervals",
       "title": "事件間隔與感受變化",
-      "page": "insights",
       "group": "insights",
       "expand": "all",
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "有已記錄事件間隔"
+      "condition": "有已記錄事件間隔",
+      "feature": "趨勢與線索",
+      "pageId": "insights"
     },
     {
       "id": "import-empty",
       "title": "未有飲食紀錄",
-      "page": "import",
       "group": "import",
       "empty": true,
       "source": "client/import.js",
       "outcome": "neutral",
-      "condition": "沒有虛構飲食紀錄"
+      "condition": "沒有虛構飲食紀錄",
+      "feature": "飲食列表",
+      "pageId": "import"
     },
     {
       "id": "import-mapping",
       "title": "CSV 欄位與時間對應",
-      "page": "import",
       "group": "import",
       "setup": "mapping",
       "source": "client/import.js",
       "outcome": "neutral",
-      "condition": "CSV 欄位與時間對應（虛構資料）"
+      "condition": "CSV 欄位與時間對應（虛構資料）",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "import-xlsx",
       "title": "Excel 工作表選擇",
-      "page": "import",
       "group": "import",
       "setup": "xlsx",
       "source": "client/import.js",
       "outcome": "neutral",
-      "condition": "Excel 工作表選擇（虛構資料）"
+      "condition": "Excel 工作表選擇（虛構資料）",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "import-ready",
       "title": "預覽 · 可匯入",
-      "page": "import",
       "group": "import",
       "setup": "import-preview",
       "preview": "ready",
       "source": "client/import.js",
       "outcome": "success",
-      "condition": "預覽 · 可匯入（虛構資料）"
+      "condition": "預覽 · 可匯入（虛構資料）",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "import-duplicate",
       "title": "預覽 · 重複資料",
-      "page": "import",
       "group": "import",
       "setup": "import-preview",
       "preview": "duplicate",
       "source": "client/import.js",
       "outcome": "warning",
-      "condition": "合成預覽辨識所有來源行為重複"
+      "condition": "合成預覽辨識所有來源行為重複",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "import-invalid",
       "title": "預覽 · 日期未能確認",
-      "page": "import",
       "group": "import",
       "setup": "import-preview",
       "preview": "invalid",
       "source": "client/import.js",
       "outcome": "failure",
-      "condition": "合成預覽有未確認日期，提交停用"
+      "condition": "合成預覽有未確認日期，提交停用",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "import-committed",
       "title": "匯入完成",
-      "page": "import",
       "group": "import",
       "setup": "import-preview",
       "preview": "ready",
       "commit": true,
       "source": "client/import.js",
       "outcome": "success",
-      "condition": "匯入完成（虛構資料）"
+      "condition": "匯入完成（虛構資料）",
+      "feature": "匯入",
+      "pageId": "import"
     },
     {
       "id": "meal-delete",
       "title": "刪除飲食 · 確認",
-      "page": "import",
       "group": "import",
       "setup": "confirm-meal",
       "source": "client/import.js",
       "outcome": "neutral",
-      "condition": "刪除飲食 · 確認（虛構資料）"
+      "condition": "刪除飲食 · 確認（虛構資料）",
+      "feature": "飲食列表",
+      "pageId": "import"
     },
     {
       "id": "data-originals",
       "title": "原相選擇與 ZIP 匯出",
-      "page": "data",
       "group": "data",
       "setup": "originals",
       "source": "client/data.js",
       "outcome": "neutral",
-      "condition": "原相選擇與 ZIP 匯出（虛構資料）"
+      "condition": "原相選擇與 ZIP 匯出（虛構資料）",
+      "feature": "原相匯出",
+      "pageId": "data"
     },
     {
       "id": "data-no-originals",
       "title": "未有可匯出原相",
-      "page": "data",
       "group": "data",
       "setup": "originals",
       "empty": true,
       "source": "client/data.js",
       "outcome": "warning",
-      "condition": "所選範圍沒有完整原相"
+      "condition": "所選範圍沒有完整原相",
+      "feature": "原相匯出",
+      "pageId": "data"
     },
     {
       "id": "data-delete",
       "title": "選擇刪除範圍",
-      "page": "data",
       "group": "data",
       "setup": "delete",
       "source": "client/data.js",
       "outcome": "neutral",
-      "condition": "選擇刪除範圍（虛構資料）"
+      "condition": "選擇刪除範圍（虛構資料）",
+      "feature": "刪除資料",
+      "pageId": "data"
     },
     {
       "id": "data-confirm-delete",
       "title": "刪除所選資料 · 確認",
-      "page": "data",
       "group": "data",
       "setup": "confirm-delete",
       "source": "client/data.js",
       "outcome": "neutral",
-      "condition": "刪除所選資料 · 確認（虛構資料）"
+      "condition": "刪除所選資料 · 確認（虛構資料）",
+      "feature": "刪除資料",
+      "pageId": "data"
     },
     {
       "id": "data-profile-created",
       "title": "新增 Profile 完成",
-      "page": "data",
       "group": "data",
       "setup": "profile",
       "source": "client/data.js",
       "outcome": "success",
-      "condition": "新增 Profile 完成（虛構資料）"
+      "condition": "新增 Profile 完成（虛構資料）",
+      "feature": "Profiles",
+      "pageId": "data"
     },
     {
       "id": "data-export-complete",
       "title": "ZIP 匯出完成",
-      "page": "data",
       "group": "data",
       "setup": "zip",
       "source": "client/data.js",
       "outcome": "success",
-      "condition": "ZIP 匯出完成（虛構資料）"
+      "condition": "ZIP 匯出完成（虛構資料）",
+      "feature": "原相匯出",
+      "pageId": "data"
     },
     {
       "id": "component-symptoms",
       "title": "痛楚、用力 · 所有選項",
-      "page": "capture",
       "group": "components",
       "component": "symptoms",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "真實共用元件選項"
+      "condition": "真實共用元件選項",
+      "feature": "共用選項",
+      "pageId": "shared"
     },
     {
       "id": "component-observations",
       "title": "外觀、備註 · 所有選項",
-      "page": "capture",
       "group": "components",
       "component": "observations",
       "source": "client/capture.js",
       "outcome": "neutral",
-      "condition": "真實共用元件選項"
+      "condition": "真實共用元件選項",
+      "feature": "共用選項",
+      "pageId": "shared"
     },
     {
       "id": "component-appearance",
       "title": "Bristol、顏色與紅色似血物",
-      "page": "history",
       "group": "components",
       "component": "appearance",
       "experimental": true,
       "source": "client/history.js",
       "outcome": "neutral",
-      "condition": "真實共用元件選項"
+      "condition": "真實共用元件選項",
+      "feature": "共用選項",
+      "pageId": "shared"
     },
     {
       "id": "auth-checking",
       "title": "正在確認登入身份",
-      "page": "capture",
       "group": "system",
       "auth": "checking",
       "source": "client/capture.js",
       "outcome": "pending",
-      "condition": "身份檢查尚未完成"
+      "condition": "身份檢查尚未完成",
+      "feature": "登入",
+      "pageId": "system"
     },
     {
       "id": "auth-expired",
       "title": "登入已過期",
-      "page": "capture",
       "group": "system",
       "auth": "expired",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "虛構身份驗證回應 401"
+      "condition": "虛構身份驗證回應 401",
+      "feature": "登入",
+      "pageId": "system"
     },
     {
       "id": "auth-denied",
       "title": "未獲邀請",
-      "page": "capture",
       "group": "system",
       "auth": "denied",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "虛構身份回應 403；現有 App 顯示共用重新登入畫面"
+      "condition": "虛構身份回應 403；現有 App 顯示共用重新登入畫面",
+      "feature": "登入",
+      "pageId": "system"
     },
     {
       "id": "error-invalid_care_answers",
       "title": "求醫參考內容未能確認；請檢查選項及日數，未知可留空",
-      "page": "capture",
       "group": "system",
       "error": "invalid_care_answers",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：invalid_care_answers"
+      "condition": "共用錯誤提示範例：invalid_care_answers",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-invalid_image",
       "title": "相片格式未能確認，未完成同步",
-      "page": "capture",
       "group": "system",
       "error": "invalid_image",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：invalid_image"
+      "condition": "共用錯誤提示範例：invalid_image",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-sign_in_required",
       "title": "登入已過期，請重新登入",
-      "page": "capture",
       "group": "system",
       "error": "sign_in_required",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：sign_in_required"
+      "condition": "共用錯誤提示範例：sign_in_required",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-not_invited",
       "title": "呢個 email 未獲邀請",
-      "page": "capture",
       "group": "system",
       "error": "not_invited",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：not_invited"
+      "condition": "共用錯誤提示範例：not_invited",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-storage_capacity",
       "title": "雲端容量已滿，原相保留喺本機待同步",
-      "page": "capture",
       "group": "system",
       "error": "storage_capacity",
       "setup": "photo",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：storage_capacity"
+      "condition": "共用錯誤提示範例：storage_capacity",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-too_large",
       "title": "內容超過呢次操作嘅大小上限",
-      "page": "capture",
       "group": "system",
       "error": "too_large",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：too_large"
+      "condition": "共用錯誤提示範例：too_large",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-integrity_failed",
       "title": "相片完整性檢查失敗",
-      "page": "capture",
       "group": "system",
       "error": "integrity_failed",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：integrity_failed"
+      "condition": "共用錯誤提示範例：integrity_failed",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-event_deleted",
       "title": "呢筆事件已刪除，唔會重新建立",
-      "page": "capture",
       "group": "system",
       "error": "event_deleted",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：event_deleted"
+      "condition": "共用錯誤提示範例：event_deleted",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-revision_conflict",
       "title": "紀錄已喺另一個畫面改過",
-      "page": "capture",
       "group": "system",
       "error": "revision_conflict",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：revision_conflict"
+      "condition": "共用錯誤提示範例：revision_conflict",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-analysis_limit_or_running",
       "title": "分析正在進行或今日分析額度已用完",
-      "page": "capture",
       "group": "system",
       "error": "analysis_limit_or_running",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：analysis_limit_or_running"
+      "condition": "共用錯誤提示範例：analysis_limit_or_running",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-analysis_unavailable",
       "title": "分析暫時不可用，紀錄仍然可以保存",
-      "page": "capture",
       "group": "system",
       "error": "analysis_unavailable",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：analysis_unavailable"
+      "condition": "共用錯誤提示範例：analysis_unavailable",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-provider_unavailable",
       "title": "AI 服務暫時不可用，可稍後手動重試",
-      "page": "capture",
       "group": "system",
       "error": "provider_unavailable",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：provider_unavailable"
+      "condition": "共用錯誤提示範例：provider_unavailable",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-upload_incomplete",
       "title": "相片未同步完成，可重試",
-      "page": "capture",
       "group": "system",
       "error": "upload_incomplete",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：upload_incomplete"
+      "condition": "共用錯誤提示範例：upload_incomplete",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-ambiguous_date",
       "title": "日期未能確認；請用 YYYY-MM-DD HH:mm 格式",
-      "page": "import",
       "group": "system",
       "error": "ambiguous_date",
       "source": "client/import.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：ambiguous_date"
+      "condition": "共用錯誤提示範例：ambiguous_date",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-invalid_import_rows",
       "title": "請先修正預覽中未能確認嘅行",
-      "page": "import",
       "group": "system",
       "error": "invalid_import_rows",
       "source": "client/import.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：invalid_import_rows"
+      "condition": "共用錯誤提示範例：invalid_import_rows",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-service_unavailable",
       "title": "服務暫時不可用",
-      "page": "capture",
       "group": "system",
       "error": "service_unavailable",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：service_unavailable"
+      "condition": "共用錯誤提示範例：service_unavailable",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-conflict",
       "title": "名稱或紀錄已存在，請重新整理",
-      "page": "capture",
       "group": "system",
       "error": "conflict",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：conflict"
+      "condition": "共用錯誤提示範例：conflict",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-narrow_export_range",
       "title": "資料較多，請縮短匯出日期範圍",
-      "page": "capture",
       "group": "system",
       "error": "narrow_export_range",
       "source": "client/capture.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：narrow_export_range"
+      "condition": "共用錯誤提示範例：narrow_export_range",
+      "feature": "服務錯誤",
+      "pageId": "system"
     },
     {
       "id": "error-narrow_date_range",
       "title": "資料較多，請縮短日期範圍",
-      "page": "import",
       "group": "system",
       "error": "narrow_date_range",
       "source": "client/import.js",
       "outcome": "failure",
-      "condition": "共用錯誤提示範例：narrow_date_range"
+      "condition": "共用錯誤提示範例：narrow_date_range",
+      "feature": "服務錯誤",
+      "pageId": "system"
     }
   ],
   "groups": [
@@ -1134,6 +1211,36 @@
       "label": "narrow_date_range",
       "kind": "condition",
       "from": "import-mapping"
+    }
+  ],
+  "pages": [
+    {
+      "id": "capture",
+      "title": "記錄"
+    },
+    {
+      "id": "history",
+      "title": "歷史與詳情"
+    },
+    {
+      "id": "insights",
+      "title": "對照"
+    },
+    {
+      "id": "import",
+      "title": "飲食"
+    },
+    {
+      "id": "data",
+      "title": "資料"
+    },
+    {
+      "id": "shared",
+      "title": "共用元件"
+    },
+    {
+      "id": "system",
+      "title": "登入與系統"
     }
   ]
 }

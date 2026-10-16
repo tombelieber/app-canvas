@@ -43,7 +43,7 @@ Requires Node.js 22+. Use the repository's package manager and lockfile; npm
 examples below are the reference path. No paid API key or model call is needed.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.4.2
+npm install --save-dev github:tombelieber/app-canvas#v0.5.0
 npx app-canvas browsers
 ```
 
@@ -94,7 +94,14 @@ change fixture state and reset cleanly.
 
 Add `ui:review` and `test:ui:review` package scripts. Register source/config watch
 paths, page/state source locations and labeled `flows` edges. Every catalog
-case stays mounted in its own live iframe. Filtering must preserve drafts;
+case must be addressable and render actual code when opened. Declare `pages`
+from the actual router and `pageId` / `feature` on each state; see the
+[page/feature/state and tablet contract](docs/workbench.md). Unopened previews
+load on demand within a four-frame touch / eight-frame desktop budget, including
+playback. Interacted previews stay mounted across filters and modes. Never
+reorder their DOM ancestors or silently evict drafts; retained capacity requires
+an explicit release. Browse locks app controls; Interact is an explicit button.
+Top/left/right panels must remain recoverable after hiding them. Filtering must preserve drafts;
 reset must restore only the selected fixture. The shared bridge namespaces
 both Storage APIs before app code. Supply frame-local substitutes for
 IndexedDB, SDK caches and other persistence too. Do not treat the trusted-code
@@ -118,7 +125,9 @@ Use `outcome: "neutral" | "success" | "failure" | "pending" | "warning"`
 on states. Use `kind: "condition"` or `"reference"` on edges that describe
 fixture variants or component references rather than actual app operations.
 Checked journey transitions are added to the graph automatically. Full-page
-overview and compact state graph share the mounted real-code previews.
+overview and compact state graph use the same real-code preview adapter.
+Test touch navigation and WebKit with `npm run test:touch` and `npm run test:tablet`
+in the tool repository. Emulation does not qualify a physical iPad.
 
 ## 4. Make missing coverage fail
 

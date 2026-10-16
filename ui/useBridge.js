@@ -34,7 +34,7 @@ export function useBridge(onExit) {
   }, []);
   const register = useCallback((id, element, url) => {
     if (element) registry.current.set(id, { element, origin: new URL(url, location.href).origin, epoch: new URL(url, location.href).searchParams.get("__canvas_epoch") });
-    else registry.current.delete(id);
+    else { registry.current.delete(id); setStates(old => { const next = { ...old }; delete next[id]; return next; }); }
   }, []);
   const send = useCallback((id, message) => {
     const frame = registry.current.get(id);

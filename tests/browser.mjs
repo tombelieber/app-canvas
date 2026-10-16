@@ -56,13 +56,15 @@ try {
   await page
     .getByText(`${catalog.length} 個畫面 · ${hostedUrl ? "示範版本" : "已同步"}`, { exact: true })
     .waitFor();
+  await page.getByRole("button", { name: "畫面總覽", exact: true }).click();
+  await page.getByLabel("流程連線範圍").selectOption("all");
   await page.getByRole("button", { name: "全覽", exact: false }).click();
   await page.waitForFunction(
     (n) => document.querySelectorAll(".screen-frame").length === n,
     catalog.length,
   );
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor({ timeout: 45000 });
-  assert.equal(await page.locator(".screen-frame iframe").count(), 77);
+  assert.ok(await page.locator("iframe").count() <= 8, "bounded live previews");
   assert.equal(await page.locator(".screen-frame img").count(), 0);
   assert.deepEqual(downloads, [], "loading all named states must not trigger unsolicited downloads");
   await page.waitForFunction((n) => document.querySelectorAll(".react-flow__minimap-node").length >= n, catalog.length);
@@ -137,16 +139,20 @@ try {
   assert.ok((await stat(await download.path())).size > 100);
   await frame.locator("#message").filter({ hasText: "匯出完成" }).waitFor();
   frame = await openCase("capture-home");
+  await page.locator(".inspector-details summary").click();
   await page.getByRole("button", { name: "重設", exact: true }).click();
   await frame.locator("#manual").click();
   await page.keyboard.press("Escape");
   await page.locator(".screen-frame.is-interactive").waitFor({ state: "hidden" });
-  await page.getByRole("button", { name: "App · 五個主頁" }).click();
+  await page.getByRole("button", { name: "頁面導航", exact: true }).click();
+  await page.getByLabel("搜尋畫面").fill("");
+  await page.getByLabel("頁面範圍").selectOption("all");
+  await page.getByLabel("展開深度").selectOption("0");
   await page.waitForFunction(
-    () => [...document.querySelectorAll(".screen-frame")].filter((el) => getComputedStyle(el).visibility !== "hidden").length === 5,
+    () => [...document.querySelectorAll(".screen-frame")].filter((el) => getComputedStyle(el).visibility !== "hidden").length === 7,
   );
   await page.waitForFunction(
-    () => parseInt(document.querySelector(".zoom-label").textContent) > 25,
+    () => parseInt(document.querySelector(".zoom-label").textContent) > 10,
   );
   await page.screenshot({ path: ".artifacts/browser-proof/main-pages.png" });
   for (const width of [736, 320]) {
