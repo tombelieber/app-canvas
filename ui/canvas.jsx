@@ -153,7 +153,12 @@ function Canvas() {
           <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
-            onPaneClick={() => { browse(); select(null); }} onMove={(_, position) => setZoom(Math.round(position.zoom * 100))}
+            onPaneClick={() => { browse(); select(null); }} onMove={(_, position) => {
+              setZoom(Math.round(position.zoom * 100));
+              // Cull passive documents during a pinch/pan, before WebKit scales
+              // every full-page iframe until the user finally releases touch.
+              setViewport(position);
+            }}
             onMoveStart={() => setMoving(true)} onMoveEnd={(_, position) => { setMoving(false); setViewport(position); }}
             minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>

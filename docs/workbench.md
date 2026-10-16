@@ -74,7 +74,9 @@ fixed, hash-authorized bootstrap to restore the browser's own top layer and
 backdrop. Preview documents are inert and have an opaque origin; application
 scripts and event handlers are stripped, and cannot access the parent app.
 Both the full overview and graph show actual page contents at every zoom.
-Offscreen documents are released; when zoomed out, all visible screens remain
+Offscreen documents are released during viewport changes, including a pinch
+that is still in progress, rather than waiting for touch release. This keeps
+large offscreen iframe surfaces out of the zooming scene. When zoomed out, all visible screens remain
 visible. Source rebuilds refresh both the overview documents and live apps.
 
 Selecting a screen loads the original HTML/CSS/JS. Interact unlocks its real
@@ -131,6 +133,13 @@ complete queue. macOS can use the default headless mode.
 Linux GTK mobile emulation also needs a planned reload after a test changes
 device dimensions. These are counted separately; unexpected app reloads still
 fail. The macOS/Chromium runs retain in-place resize checks.
+
+`npm run test:zoom` adds 20 repeated zoom cycles on the 77-screen demo, including
+the maximum 500% canvas zoom. It checks offscreen documents while each gesture
+is still active, returning to the full overview and rejecting host reloads or
+page errors. This uses DOM touch events through the actual canvas listener;
+it is not a physical-device gesture or a device memory qualification. The
+tablet gate includes this regression check.
 
 These are desktop-engine/device-emulation checks. A physical iPad's Safari,
 memory pressure, virtual keyboard and long-session behavior still require

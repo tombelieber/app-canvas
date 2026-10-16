@@ -43,7 +43,7 @@ Requires Node.js 22+. Use the repository's package manager and lockfile; npm
 examples below are the reference path. No paid API key or model call is needed.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.6.0
+npm install --save-dev github:tombelieber/app-canvas#v0.6.1
 npx app-canvas browsers
 ```
 
