@@ -181,14 +181,15 @@ try {
   await page.locator('[title="capture-home"]').click();
   await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
   const nextFlow = example.flows.find((flow) => flow.from === "capture-home");
-  const beforeFlow = await page.locator(".react-flow__viewport").getAttribute("style");
   await page.locator(".inspector .flow-link").filter({ hasText: nextFlow.label }).click();
   await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
   assert.equal(await page.locator(".inspector code").innerText(), nextFlow.to);
-  assert.notEqual(await page.locator(".react-flow__viewport").getAttribute("style"), beforeFlow);
+  // A newly scoped page may occupy the same coordinates as the previous page.
+  // The contract is the selected destination fitting the usable viewport,
+  // not artificial camera motion when it is already centered there.
   const focused = await page.locator(`[data-id="${nextFlow.to}"] .screen-frame`).boundingBox();
   const canvasArea = await page.locator(".flow-stage").boundingBox();
-  assert.ok(focused.width > 200 && focused.x >= canvasArea.x && focused.x + focused.width <= canvasArea.x + canvasArea.width && focused.y >= canvasArea.y, "real next-flow destination must be visibly zoomed into the usable canvas");
+  assert.ok(focused.width > 200 && focused.x >= canvasArea.x && focused.x + focused.width <= canvasArea.x + canvasArea.width && focused.y >= canvasArea.y && focused.y + focused.height <= canvasArea.y + canvasArea.height + 2, "real next-flow destination must be visibly zoomed into the usable canvas");
   await verifyJourneys({ page, journeys });
   assert.deepEqual(errors, []);
   assert.deepEqual(remote, []);

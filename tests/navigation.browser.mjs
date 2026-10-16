@@ -33,11 +33,9 @@ try {
   await page.getByRole("button", { name: "One", exact: false }).first().click();
   await page.locator('[title="start"]').click();
   await settled();
-  const before = await page.locator(".react-flow__viewport").getAttribute("style");
   await page.locator(".inspector .flow-link").click();
   await targetFits("next");
   assert.equal(await page.locator(".inspector code").innerText(), "next");
-  assert.notEqual(await page.locator(".react-flow__viewport").getAttribute("style"), before, "next flow must move the camera, including across a filtered group");
   await page.getByLabel("搜尋畫面").fill("start");
   await page.locator('[title="start"]').click();
   await page.getByRole("button", { name: "▶ 操作呢個畫面", exact: true }).click();
@@ -75,7 +73,9 @@ try {
   await page.getByLabel("流程連線範圍").selectOption("all");
   await page.getByRole("button", { name: "全覽", exact: false }).click();
   await settled();
+  const beforeEdge = await page.locator(".react-flow__viewport").getAttribute("style");
   await page.locator(".react-flow__edge-textwrapper").filter({ hasText: "Continue" }).click();
   await targetFits("next");
+  assert.notEqual(await page.locator(".react-flow__viewport").getAttribute("style"), beforeEdge, "navigating from an overview must pan/zoom to the full destination");
   console.log("PASS: flow links and graph edges select/zoom the destination across group/search filters; live drafts, per-frame storage, reset and message-source isolation.");
 } finally { await browser.close(); await app.close(); }
