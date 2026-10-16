@@ -67,21 +67,45 @@ try {
   assert.ok(details.x > initialStage.x && details.y <= 52, "playback opens a docked right sidebar on landscape iPad");
   await page.locator('select[aria-label="播放流程"]').selectOption("__all__");
   await page.getByLabel("播放速度").selectOption("0");
+  const playbackEntries = 121;
+  // This is the aggregate budget for all entries, not a per-action timeout.
+  // Keep action/assertion deadlines unchanged on slower rendered Linux runners.
+  const playbackTimeout = Math.max(240000, playbackEntries * 4000);
+  page.on("console", message => { if (message.text().startsWith("CANVAS_QUEUE ")) console.log(message.text()); });
+  await page.evaluate(() => {
+    const panel = document.querySelector(".journey-panel"), started = performance.now();
+    let lastFinished = -1;
+    const observer = new MutationObserver(() => {
+      const finished = Number(panel.dataset.finished), terminal = ["complete", "error"].includes(panel.dataset.status);
+      if (!terminal && (finished === lastFinished || finished % 10 !== 0)) return;
+      lastFinished = finished;
+      console.log("CANVAS_QUEUE " + JSON.stringify({ finished, status: panel.dataset.status, step: panel.dataset.step, screen: document.querySelector(".inspector code")?.textContent, elapsedMs: Math.round(performance.now() - started) }));
+      if (terminal) observer.disconnect();
+    });
+    observer.observe(panel, { attributes: true, attributeFilter: ["data-finished", "data-status", "data-step"] });
+  });
+  const playbackStarted = Date.now();
   await page.getByRole("button", { name: "▶ 播放", exact: true }).tap();
-  await page.waitForFunction(() => ["complete", "error"].includes(document.querySelector(".journey-panel")?.dataset.status), null, { timeout: 240000 });
+  try {
+    await page.waitForFunction(() => ["complete", "error"].includes(document.querySelector(".journey-panel")?.dataset.status), null, { timeout: playbackTimeout });
+  } catch (error) {
+    console.error("Playback deadline:", JSON.stringify(await page.locator(".journey-panel").evaluate(panel => ({ state: { ...panel.dataset }, screen: document.querySelector(".inspector code")?.textContent }))));
+    throw error;
+  }
+  const playbackElapsedMs = Date.now() - playbackStarted;
   if (await page.locator(".journey-panel").getAttribute("data-status") === "error") {
     const preview = await page.frameLocator('iframe[data-screen="journey"]').locator("html").evaluate(el => ({ ready: el.dataset.reviewReady, error: el.dataset.reviewError, previewErrors: window.__review?.errors || window.__appCanvas?.errors || [], text: document.body.innerText.slice(-1600) })).catch(e => ({ inspectionError: e.message }));
     console.error("Synthetic demo failure:", JSON.stringify({ errors, preview }));
   }
   assert.equal(await page.locator(".journey-panel").getAttribute("data-status"), "complete", await page.locator(".journey-panel").innerText());
-  assert.equal(await page.locator(".journey-panel").getAttribute("data-finished"), "121");
+  assert.equal(await page.locator(".journey-panel").getAttribute("data-finished"), String(playbackEntries));
   await ready();
   assert.ok(await page.locator("iframe[data-screen]").count() <= 4);
   const frame = await page.locator(".journey-live").boundingBox(), area = await page.locator(".flow-stage").boundingBox();
   assert.ok(frame.x >= area.x && frame.x + frame.width <= area.x + area.width && frame.y >= area.y && frame.y + frame.height <= area.y + area.height + 2);
   assert.equal(reloads, 1 + plannedViewportReloads, "view/scope/playback must never add unplanned host reloads");
   assert.deepEqual(errors, []); assert.deepEqual(remote, []);
-  const proof = { engine: "WebKit", headed: process.env.APP_CANVAS_HEADED === "1", viewport: "iPad emulation, portrait/landscape", physicalDevice: false, cases: 77, played: 121, liveLimit: 4, hostNavigations: reloads, plannedViewportReloads, errors, remote };
+  const proof = { engine: "WebKit", headed: process.env.APP_CANVAS_HEADED === "1", viewport: "iPad emulation, portrait/landscape", physicalDevice: false, cases: 77, played: playbackEntries, playbackElapsedMs, playbackTimeout, liveLimit: 4, hostNavigations: reloads, plannedViewportReloads, errors, remote };
   await writeFile(".artifacts/tablet/demo-proof.json", JSON.stringify(proof, null, 2));
   await page.screenshot({ path: ".artifacts/tablet/stoolsense-playback.png" });
   console.log("PASS:", JSON.stringify(proof));
