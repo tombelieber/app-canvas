@@ -13,9 +13,21 @@ test("one installer keeps both harness skills identical and preserves local edit
       paths.map((p) => readFile(join(p, "SKILL.md"), "utf8")),
     );
     assert.equal(a, b);
+    // The native and completion contracts must survive a copied skill install;
+    // links into the maintainer's checkout cannot serve installed agents.
+    for (const name of ["completion.md", "native.md"]) {
+      const copies = await Promise.all(paths.map(p => readFile(join(p, "references", name), "utf8")));
+      assert.equal(copies[0], copies[1]);
+      assert.ok(copies[0].length > 0);
+    }
     await install({ home });
     const agentFile = join(paths[1], "agents/openai.yaml");
     const agent = await readFile(agentFile, "utf8");
+    const referenceFile = join(paths[1], "references/native.md");
+    const reference = await readFile(referenceFile, "utf8");
+    await writeFile(referenceFile, reference + "\nLocal native workflow\n");
+    await assert.rejects(() => install({ home }), /Locally edited/);
+    await writeFile(referenceFile, reference);
     await writeFile(agentFile, agent + "\n# Local setting\n");
     await assert.rejects(() => install({ home }), /Locally edited/);
     await writeFile(agentFile, agent);

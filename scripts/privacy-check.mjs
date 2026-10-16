@@ -1,7 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
-const pack = JSON.parse(execFileSync("npm", ["pack", "--dry-run", "--json"], { encoding: "utf8" }))[0];
+const packs = JSON.parse(execFileSync("npm", ["pack", "--dry-run", "--json"], { encoding: "utf8" }));
+const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/app-canvas"];
 const files = new Set(pack.files.map((f) => f.path));
 for (const file of execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean)) files.add(file);
 async function collect(path) {

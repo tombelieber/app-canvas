@@ -54,7 +54,7 @@ try {
       process.cwd(),
     );
     console.log(
-      `PASS: ${project.title}, ${project.catalog.length} registered cases; route coverage valid`,
+      `PASS: ${project.title}, ${project.catalog.length} registered cases; ${project.sourceCoverageReport ? `${project.sourceCoverageReport.items} source inventory items mapped` : "no source inventory configured (catalog/route checks only)"}`,
     );
     process.exit(0);
   }

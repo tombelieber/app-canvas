@@ -10,7 +10,8 @@ const root = await mkdtemp(join(tmpdir(), "app-canvas-onboarding-"));
 let app;
 let browser;
 try {
-  const pack = JSON.parse((await exec("npm", ["pack", "--json", "--pack-destination", root])).stdout)[0];
+  const packs = JSON.parse((await exec("npm", ["pack", "--json", "--pack-destination", root])).stdout);
+  const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/app-canvas"];
   const project = join(root, "project");
   await cp("examples/react-vite", project, { recursive: true });
   await exec("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", "--save-dev", join(root, pack.filename)], { cwd: project, maxBuffer: 1024 * 1024 });
@@ -20,6 +21,21 @@ try {
   const { checkRouteCoverage } = await import(pathToFileURL(join(installed, "lib/routes.mjs")));
   const configPath = "ui-review/canvas.config.mjs";
   const config = await loadProject(configPath, project);
+  // Exercise the shipped export and guard through the installed CLI, not an
+  // import into the tool checkout. This stays separate from the legacy example.
+  const fingerprintScript = "import { inventorySources } from '@tombelieber/app-canvas/inventory'; console.log(JSON.stringify(await inventorySources(process.cwd(), ['src'])));";
+  const files = JSON.parse((await exec(process.execPath, ["--input-type=module", "-e", fingerprintScript], { cwd: project })).stdout);
+  const inventory = { version: 1, files, items: ["tasks", "tasks-empty", "tasks-loading", "tasks-error", "settings", "settings-denied"].map(id => ({ id, kind: "state", sources: files.map(f => f.path), cases: [id] })) };
+  await writeFile(join(project, "ui-review/inventory.json"), JSON.stringify(inventory));
+  await writeFile(join(project, "ui-review/strict.config.mjs"), `import base from './canvas.config.mjs'; export default { ...base, coverage: { requireSourceInventory: true }, sourceCoverage: { roots: ['src'], inventory: 'ui-review/inventory.json' } };`);
+  const cli = join(installed, "bin/app-canvas.mjs");
+  const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
+  assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /6 source inventory items mapped/);
+  inventory.items.pop();
+  await writeFile(join(project, "ui-review/inventory.json"), JSON.stringify(inventory));
+  await assert.rejects(() => exec(process.execPath, strictArgs, { cwd: project }), error => error.code === 1 && /settings-denied/.test(error.stderr));
+  inventory.items.push({ id: "settings-denied", kind: "state", sources: files.map(f => f.path), cases: ["settings-denied"] });
+  await writeFile(join(project, "ui-review/inventory.json"), JSON.stringify(inventory));
   await assert.rejects(() => checkRouteCoverage({ ...config, catalog: config.catalog.filter((s) => s.path !== "/settings") }, project), /Pages missing/);
   const source = join(project, "src/App.jsx"), before = await readFile(source, "utf8");
   await writeFile(source, before.replace("</Routes>", '<Route path="/new" element={<Tasks />} /></Routes>'));
@@ -66,7 +82,7 @@ try {
       try { await fetch("https://unmocked.example.test/private"); return false; } catch { return globalThis.__appCanvas.requests.length === 1; }
     });
     assert.equal(rejected, true, "unknown external requests fail closed");
-  console.log("PASS: fresh packaged install → 2 real routes / 6 states → save/navigation/add/retry/reset → missing-route failure → source refresh → unknown request denied.");
+  console.log("PASS: fresh packaged install → source-inventory export / missing-state failure → 2 real routes / 6 states → save/navigation/add/retry/reset → missing-route failure → source refresh → unknown request denied.");
 } finally {
   await browser?.close();
   await app?.close();
