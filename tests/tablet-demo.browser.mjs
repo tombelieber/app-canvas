@@ -7,6 +7,9 @@ const app = hosted ? { address: hosted, firstBuild: Promise.resolve(), close: as
 const browser = await webkit.launch();
 try {
   await app.firstBuild;
+  const bootManifest = hosted ? await (await fetch(new URL("manifest.json", hosted))).json() : app.getManifest();
+  const fallbackCases = Object.entries(bootManifest.screens).filter(([, value]) => !value.domUrl).map(([id]) => id);
+  assert.deepEqual(fallbackCases, [], "the DOM-compatible demo must keep all 77 full previews without starting fallback apps");
   const page = await browser.newPage({ viewport: { width: 1280, height: 760 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, timezoneId: "Asia/Hong_Kong" });
   page.setDefaultTimeout(15000);
   const errors = [], remote = []; let reloads = 0;
@@ -15,7 +18,13 @@ try {
   page.on("framenavigated", f => { if (f === page.mainFrame()) reloads++; });
   await page.goto(app.address);
   await page.getByText(`77 個畫面 · ${hosted ? "示範版本" : "已同步"}`, { exact: true }).waitFor();
-  const ready = () => page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor();
+  const ready = async () => {
+    try { await page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor(); }
+    catch (error) {
+      console.error("Canvas readiness:", JSON.stringify(await page.locator(".review-workspace").evaluate(el => ({ state: {...el.dataset}, viewport: document.querySelector(".react-flow__viewport")?.getAttribute("style"), stage: document.querySelector(".flow-stage")?.getBoundingClientRect().toJSON(), live: [...document.querySelectorAll("iframe[data-screen]")].map(frame => ({ id: frame.dataset.screen, ready: frame.contentDocument?.documentElement.dataset.reviewReady, error: frame.contentDocument?.documentElement.dataset.reviewError })), documents: document.querySelectorAll("iframe[data-preview]").length }))));
+      throw error;
+    }
+  };
   await ready();
   const initialStage = await page.locator(".flow-stage").boundingBox();
   assert.ok(initialStage.y <= 52 && initialStage.height >= 708, `landscape canvas gets the full height below one compact toolbar: ${JSON.stringify(initialStage)}`);
