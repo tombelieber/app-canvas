@@ -1,7 +1,10 @@
 # Add App Canvas to an existing repository
 
-**For coding agents:** deliver a working overview of this repository's real UI,
-not a proposal, screenshots alone or a second implementation of its design.
+**For coding agents:** deliver the complete UI landscape of this repository.
+Own discovery, fixtures, render setup, population and verification; the user
+does not supply a screen list or repeatedly ask you to continue. A few working
+screens are an intermediate result. Follow the required
+[completion contract](skills/app-canvas/references/completion.md).
 Follow the user's repository instructions and authorization boundaries.
 
 [Try the public StoolSense canvas](https://tombelieber.github.io/app-canvas/) ·
@@ -12,20 +15,28 @@ Follow the user's repository instructions and authorization boundaries.
 
 The developer opens one zoomable canvas, sees the app's pages and named states,
 follows labeled flow connections that pan/zoom to the destination, and uses a
-screen's actual controls directly on the canvas. All cases render live DOM;
-screenshots are not the overview renderer.
+screen's actual controls directly on the canvas for web adapters. Web cases
+render original DOM. Native apps can use full original-runtime captures with
+source/build provenance, or a verified device adapter; follow the
+[native integration contract](skills/app-canvas/references/native.md).
+Capture viewers expose visual evidence; their controls do not become native
+app controls. React and pre-existing previews are not prerequisites.
 They ask their coding agent to edit the corresponding source. Existing screen
 previews regenerate from that source; new pages and conditions get catalog
 entries and coverage checks. No Figma document is required.
 
-This is an agent-assisted integration, not a universal one-command state
-discovery algorithm. Keep one shared canvas engine. Each repository owns its
-catalog, fixtures, preview adapter and interaction checks.
+The coding agent performs the end-to-end integration. The CLI supplies the
+canvas and verification primitives. Each repository owns its independent
+source inventory, catalog, fixtures/harnesses, adapter and checks. Installation
+of the CLI or skill alone does not populate an application; when asked to add
+the canvas to an application, perform that population in the same task.
 
 ## 1. Inspect and establish coverage
 
 - Read the repository's agent instructions, app entry point, router, providers,
-  build configuration, existing Storybook/stories and test/fixture conventions.
+  build configuration, existing stories/previews and test/fixture conventions.
+  For native, include manifests, storyboards, layouts, controllers, navigation
+  and programmatic UI. Follow resource/metadata/import references across UI roots.
 - Inventory all routed pages, redirects, shared UI and meaningful conditions:
   populated/empty, loading, errors and recovery, permissions, dialogs, forms,
   saved/unsaved data and responsive variants where they change the interface.
@@ -33,19 +44,29 @@ catalog, fixtures, preview adapter and interaction checks.
   Otherwise import the real app/router or its real page/provider composition.
   Preserve its stylesheet, theme, assets and layout. Never re-create pages as
   fixture JSX/HTML or maintain a fork of the canvas engine inside the app.
-- Record the coverage denominator in `ui-review/README.md`: pages and named
-  states included, important flows, known omissions and unsupported boundaries.
-  Do not call an uncounted subset "the whole app".
+- Build `ui-review/inventory.json` from source independently of the catalog.
+  Enumerate screens, components, states, variants and navigation with source
+  references, conditions and platform/layout applicability. Cross-check against
+  runtime navigation and resources/tests; route counts are not state counts.
+  Map each discovered item to rendered cases. Resolve every pending item; do
+  not reduce the denominator to the easiest screens. Record scope, counts,
+  evidence-based non-UI classifications and actual blockers in `ui-review/README.md`.
 
 ## 2. Install the tool and optional skill
 
 Requires Node.js 22+. Use the repository's package manager and lockfile; npm
-examples below are the reference path. No paid API key or model call is needed.
+examples below are the reference path. The runtime makes no model calls; the
+user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.6.1
+npm install --save-dev github:tombelieber/app-canvas#v0.7.0
 npx app-canvas browsers
 ```
+
+Version 0.7.0 includes this guide and the `@tombelieber/app-canvas/inventory`
+export. The lockfile records the resolved commit. For another tool revision,
+verify its availability and inventory export before pinning it; do not invent
+an unavailable tag or drop the source gate to use an older build.
 
 The guide works with any agent that can read files, edit code and run commands.
 Codex and Claude Code can additionally install the bundled Agent Skills format:
@@ -70,11 +91,18 @@ ui-review/
   catalog.json         # explicit, stable screen/state IDs
   frame.jsx            # real UI entry with preview-only dependencies
   fixtures.js          # disposable synthetic transport/provider state
+  inventory.json       # independent source items, fingerprints and case mapping
   routes.json          # reviewed route inventory, when supported
   README.md            # coverage, commands, fixture boundaries and omissions
 ```
 
-Read the complete [React/Vite reference](examples/react-vite) for a runnable
+For native applications, implement the [native capture/harness path](skills/app-canvas/references/native.md)
+and adapt this file layout. Keep native rendering checks separate from viewer
+checks and connect them to `verify`. A native repository can keep the CLI's
+package/lockfile under `ui-review/` without adding a root web app. Missing
+isolation, previews or synthetic data are the agent's work to complete.
+
+For web applications, read the complete [React/Vite reference](examples/react-vite) for a runnable
 configuration, the correct import order, fixture isolation and real interaction
 tests. Adapt its integration to the target app; do not copy its Tasks UI.
 
@@ -94,11 +122,12 @@ change fixture state and reset cleanly.
 
 Add `ui:review` and `test:ui:review` package scripts. Register source/config watch
 paths, page/state source locations and labeled `flows` edges. Every catalog
-case must be addressable and render actual code when opened. Declare `pages`
-from the actual router and `pageId` / `feature` on each state; see the
+case must be addressable and show its actual UI when opened. Declare `pages`
+from the actual router/native navigation and `pageId` / `feature` on each state; see the
 [page/feature/state and tablet contract](docs/workbench.md). The overview and
-state graph show full source-rendered HTML/CSS, with no summary cards or raster
-screenshots. Render-only DOM documents keep the whole app visible; selection
+state graph show full real UI with no summary cards. Web uses source-rendered
+HTML/CSS; native captures follow the native provenance contract. Render-only
+DOM documents keep web UI visible; selection
 and playback use the original app code. DOM-compatible content uses four touch
 / eight desktop running-app slots. Unsupported drawing/embedded content and
 legacy manifests retain live rendering; measure that fallback separately. Interacted previews stay mounted across filters and modes. Never
@@ -138,6 +167,25 @@ Test touch navigation and WebKit with `npm run test:touch` and `npm run test:tab
 in the tool repository. Emulation does not qualify a physical iPad.
 
 ## 4. Make missing coverage fail
+
+Require the independent source inventory as well as authored-case coverage:
+
+```js
+coverage: { requireSourceInventory: true, requireAllCases: true, requireConnected: true },
+sourceCoverage: {
+  roots: ['src/ui', 'src/router.tsx'], // use all real UI owners in this app
+  inventory: 'ui-review/inventory.json',
+},
+```
+
+Use `inventorySources(root, roots)` from `@tombelieber/app-canvas/inventory`
+to fingerprint the declared files/directories. Complete the semantic items
+and case mappings using the [inventory schema and completion gate](skills/app-canvas/references/completion.md).
+New/changed/deleted files, unmapped UI sources, missing cases and blocked items
+fail. Keep scope choices auditable: the file scanner does not infer semantics
+or prove the chosen roots include the whole app. Reinspect source changes
+before updating hashes. Existing catalog-only projects stay compatible but
+cannot claim complete population under this contract until migrated.
 
 For supported React Router JSX/object route forms, configure `routeCoverage`
 with source and reviewed snapshot paths. Generate the snapshot with
@@ -180,9 +228,13 @@ on the target app; the 77-case demo does not prove unbounded scalability.
 Deliberately remove a base page once to show the coverage guard can fail, then
 restore it. Connect the gate to the repository's existing relevant checks.
 
-Report the working URL, page/redirect/state counts, interactions exercised,
-source refresh proof and exact omissions. Follow the repo's commit/push policy.
-The integration is done only when the developer can open and use it.
+Report the working URL, discovered/rendered/pending counts by kind/platform,
+actual checks, source/build/content revisions, source refresh/recapture proof
+and refresh commands. Follow the repo's commit/push policy. Completion requires
+the full reconciled inventory, all required cases rendered and checked, and no
+unresolved required items. A limitation report or passing viewer test does not
+convert partial population into completion. Continue all independent work while
+a genuine external blocker is pending.
 
 ## Ongoing edits and sharing
 
@@ -201,5 +253,7 @@ export contract. It does not sanitize private code or data automatically.
 Supported today: a shared browser canvas, a Vite adapter and custom loopback
 preview adapters (the bundled vanilla-JS StoolSense example uses one). A working
 adapter for another web framework must be implemented and verified in that repo.
-Native Swift/Kotlin/Java/device UI and React Native device rendering need their
-own simulator/device adapter; this package does not currently flatten them.
+Native Swift/Kotlin/Java and React Native UI use agent-authored simulator/device
+harnesses and adapters. This package supplies the shared viewer/coverage
+mechanisms and native workflow contract; it does not ship a universal native
+renderer or automatically discover semantic states without the coding agent.

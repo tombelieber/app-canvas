@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -14,6 +14,7 @@
   "exports": {
     ".": "./lib/server.mjs",
     "./preview": "./lib/preview.js",
+    "./inventory": "./lib/inventory.mjs",
     "./routes": "./lib/routes.mjs"
   },
   "files": [

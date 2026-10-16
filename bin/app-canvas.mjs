@@ -4,6 +4,7 @@ import { parseArgs } from "node:util";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
+import { dirname, resolve } from "node:path";
 const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: {
@@ -37,7 +38,9 @@ if (positionals[0] === "install") {
 }
 if (positionals[0] === "browsers") {
   const require = createRequire(import.meta.url);
-  const cli = require.resolve("playwright/cli");
+  const metadata = require.resolve("playwright/package.json");
+  const { bin } = JSON.parse(await readFile(metadata, "utf8"));
+  const cli = resolve(dirname(metadata), typeof bin === "string" ? bin : bin.playwright);
   const r = spawnSync(process.execPath, [cli, "install", "chromium"], {
     stdio: "inherit",
   });
@@ -54,7 +57,7 @@ try {
       process.cwd(),
     );
     console.log(
-      `PASS: ${project.title}, ${project.catalog.length} registered cases; route coverage valid`,
+      `PASS: ${project.title}, ${project.catalog.length} registered cases; ${project.sourceCoverageReport ? `${project.sourceCoverageReport.items} source inventory items mapped` : "no source inventory configured (catalog/route checks only)"}`,
     );
     process.exit(0);
   }

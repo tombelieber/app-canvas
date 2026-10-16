@@ -19,10 +19,12 @@ Open your application repository in your agent and paste:
 
 ```text
 Read https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md
-and add App Canvas to this repository. Inventory all pages, meaningful UI
-states, shared controls and flows. Use the actual application code and CSS,
-with isolated synthetic fixtures. Deliver a working canvas, missing-page
-checks and verified interactions; report counts and any remaining omissions.
+and add a completely populated App Canvas to this repository. Discover all
+screens, components, variants, states and navigation from source. Create the
+missing fixtures and web/native render harnesses yourself. Use original UI
+code. Reconcile an independent source inventory against rendered cases and
+enable the complete-population gates. Continue until the whole UI landscape
+is populated and verified; report genuine blockers as incomplete.
 ```
 
 The [agent guide](AGENT_GUIDE.md) contains installation, integration, coverage,
@@ -31,12 +33,19 @@ is a runnable reference. It does not require Figma or a particular AI vendor.
 An agent that can inspect/edit code and run commands can follow the guide;
 Codex and Claude Code also have a bundled skill installer.
 
+The coding agent owns discovery and population; existing stories, previews or
+component isolation are not required inputs from the user. Web adapters render
+original HTML/CSS/JS. Native UIKit, SwiftUI and Android apps use agent-authored
+harnesses to render/capture original UI and populate the same canvas. See the
+[native workflow](skills/app-canvas/references/native.md). The package does not
+bundle a universal device renderer; viewer checks and native checks are separate.
+
 ## Try the included application
 
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.6.1
+npm install -g github:tombelieber/app-canvas#v0.7.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -140,7 +149,17 @@ case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
 
-UI and CSS edits refresh from source. **New states still need explicit cases.** No tool can infer every business condition, permission combination or backend failure from arbitrary code.
+UI and CSS edits refresh from source. **The agent owns discovering and
+registering new states.** The CLI does not infer business conditions; a complete
+integration must reconcile source-based discovery against its catalog. See the
+required [completion contract](skills/app-canvas/references/completion.md).
+
+Configure `sourceCoverage: { roots: [...], inventory: 'ui-review/inventory.json' }`
+and `coverage.requireSourceInventory: true` with a tool revision exporting
+`@tombelieber/app-canvas/inventory`. The gate rejects new/changed/deleted source
+files, missing item/case mappings and unresolved blockers. Root selection and
+semantic discovery remain the agent's responsibility. A passing self-selected
+catalog is insufficient evidence of whole-app coverage.
 
 For React Router JSX/object routes, add an inventory guard:
 
@@ -220,7 +239,10 @@ This is an existing problem with useful existing solutions, not an empty market:
 | [React Cosmos](https://github.com/react-cosmos/react-cosmos)                      | Component fixtures and isolated development.                                                                                                                                                     |
 | **App Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with bounded actual-code previews, camera-following flows and checked journey playback.                                            |
 
-The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App previews do not require adopting React Flow or Storybook. Native Swift/Kotlin/React Native device previews need a separate adapter and device verification; they are not implemented here.
+The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App previews
+do not require adopting React Flow or Storybook. Native Swift/Kotlin/React Native
+UI needs an agent-authored capture/device adapter and native verification
+following the bundled workflow; a universal native renderer is not implemented here.
 
 ## Develop
 
