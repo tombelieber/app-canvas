@@ -50,8 +50,11 @@ try {
   assert.equal(await page.evaluate(() => document.scrollingElement.scrollTop), 0, "inert native dialogs cannot scroll the host canvas");
   await page.getByRole("button", { name: "▶ 操作 App", exact: true }).click();
   const live = page.frameLocator('iframe[data-screen="html"]');
+  await live.locator('html[data-review-ready="true"]').waitFor();
+  await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
   await live.getByLabel("Value").fill("actual source interaction");
   await live.getByRole("button", { name: "Save", exact: true }).click();
+  await live.locator("output").filter({ hasText: "actual source interaction" }).waitFor();
   assert.equal(await live.locator("output").innerText(), "actual source interaction");
   console.log("PASS: real HTML/CSS overview, form/CSSOM/vector/image fidelity, native modal top layer, no app scripts or parent access, live drawing fallback and original app interactions.");
 } finally { await browser.close(); await app.close(); }
