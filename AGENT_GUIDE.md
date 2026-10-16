@@ -11,7 +11,9 @@ Follow the user's repository instructions and authorization boundaries.
 ## The outcome
 
 The developer opens one zoomable canvas, sees the app's pages and named states,
-follows labeled flow connections, and opens a screen to use its actual controls.
+follows labeled flow connections that pan/zoom to the destination, and uses a
+screen's actual controls directly on the canvas. All cases render live DOM;
+screenshots are not the overview renderer.
 They ask their coding agent to edit the corresponding source. Existing screen
 previews regenerate from that source; new pages and conditions get catalog
 entries and coverage checks. No Figma document is required.
@@ -41,7 +43,7 @@ Requires Node.js 22+. Use the repository's package manager and lockfile; npm
 examples below are the reference path. No paid API key or model call is needed.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.2.0
+npm install --save-dev github:tombelieber/app-canvas#v0.3.0
 npx app-canvas browsers
 ```
 
@@ -91,8 +93,23 @@ Keep external assets local and licensed. Confirm critical interactions really
 change fixture state and reset cleanly.
 
 Add `ui:review` and `test:ui:review` package scripts. Register source/config watch
-paths, page/state source locations and labeled `flows` edges. The overview uses
-generated thumbnails and opens only one live app iframe at a time.
+paths, page/state source locations and labeled `flows` edges. Every catalog
+case stays mounted in its own live iframe. Filtering must preserve drafts;
+reset must restore only the selected fixture. The shared bridge namespaces
+both Storage APIs before app code. Supply frame-local substitutes for
+IndexedDB, SDK caches and other persistence too. Do not treat the trusted-code
+iframe as a hostile-code security sandbox.
+
+The Vite helper and custom HTML served through `handle` receive the bridge
+automatically. Separate-origin custom preview servers must inject
+`ctx.bridgeHtml(html)` before their application scripts. Every preview signals
+`data-review-ready="true"` only after its named state has settled.
+
+Add named `journeys` for important happy, failure and recovery paths using the
+[authoring contract](docs/journeys.md). Playback executes real controls and
+assertions in one persistent preview session; its camera follows confirmed
+states. A flow link navigates between independently seeded cases. Keep those
+two meanings clear. The renderer never infers arbitrary flows automatically.
 
 ## 4. Make missing coverage fail
 
@@ -121,9 +138,14 @@ npm run ui:review
 ```
 
 `--verify` renders every registered case, rejects preview errors and unknown
-requests, checks the canvas controls and runs the config's interaction checks.
-Also verify source edit → regenerated thumbnail → changed live UI, appropriate
+requests, checks live canvas controls, executes every authored journey and runs
+the config's interaction checks.
+Also verify source edit → changed mounted UI, appropriate
 viewport widths, reset and isolation, and no real network/provider mutations.
+Click a next-flow link across group/search filters and a graph edge: selection,
+camera position and zoom must all reach the destination. Test controls inside
+the canvas and scrolling to long-form actions. Measure simultaneous-frame cost
+on the target app; the 77-case demo does not prove unbounded scalability.
 Deliberately remove a base page once to show the coverage guard can fail, then
 restore it. Connect the gate to the repository's existing relevant checks.
 

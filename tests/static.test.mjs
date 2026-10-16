@@ -9,10 +9,10 @@ test("static export contains the same canvas, relative assets and no local previ
   const root = await mkdtemp(join(tmpdir(), "app-canvas-static-"));
   const output = join(root, "cache"), outDir = join(root, "site");
   await mkdir(join(output, "1"), { recursive: true });
-  for (const file of ["canvas.js", "canvas.css", "canvas-LICENSES.txt", "1/home.png"])
+  for (const file of ["canvas.js", "canvas.css", "canvas-LICENSES.txt", "frame-bridge.js"])
     await writeFile(join(output, file), "fixture");
   const project = { title: "Example", groups: [{ id: "pages" }], catalog: [{ id: "home", title: "Home", group: "pages" }], flows: [] };
-  const manifest = { status: "ready", revision: 1, screens: { home: { image: "/thumb/1/home.png", url: "http://127.0.0.1:123/frame?id=home", width: 390, height: 844 } } };
+  const manifest = { status: "ready", revision: 1, screens: { home: { url: "http://127.0.0.1:123/frame?id=home", width: 390, height: 844 } } };
   const preview = { async exportStatic({ outDir }) {
     await mkdir(join(outDir, "frame"));
     await writeFile(join(outDir, "frame/index.html"), "synthetic preview");
@@ -25,7 +25,8 @@ test("static export contains the same canvas, relative assets and no local previ
     assert.equal(JSON.parse(exported).screens.home.url, "./frame/index.html?id=home");
     assert.equal(JSON.parse(await readFile(join(outDir, "project.json"))).static, true);
     assert.match(await readFile(join(outDir, "index.html"), "utf8"), /\.\/assets\/canvas.js/);
-    assert.equal(await readFile(join(outDir, "thumb/home.png"), "utf8"), "fixture");
+    await assert.rejects(() => access(join(outDir, "thumb")), "static canvas never exports screenshot thumbnails");
+    assert.match(await readFile(join(outDir, "frame/index.html"), "utf8"), /frame-bridge.js/);
     await assert.rejects(() => exportCanvas({ output, outDir, project, preview, manifest }), /exist/i);
     await assert.rejects(() => exportCanvas({ output, outDir: join(root, "no-adapter"), project, preview: {}, manifest }), /exportStatic/);
     await assert.rejects(() => access(join(root, "no-adapter")));

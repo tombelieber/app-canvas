@@ -1,0 +1,25 @@
+[
+  {
+    "id": "record-happy", "title": "正常補記 → 保存", "entry": "capture-home",
+    "steps": [
+      { "title": "開啟補記表單", "screen": "capture-manual", "actions": [{ "type": "click", "selector": "#manual" }, { "type": "expect", "selector": "#save-form" }] },
+      { "title": "填寫痛楚並保存", "screen": "result-manual", "actions": [{ "type": "check", "selector": "[name=pain][value='2']" }, { "type": "click", "selector": ".save-capture" }, { "type": "expect", "selector": "#doctor-summary" }, { "type": "expect", "selector": "#view", "text": "已保存今次補記" }] }
+    ]
+  },
+  {
+    "id": "record-offline", "title": "保存失敗 → 草稿保留 → 重試", "entry": "capture-home",
+    "steps": [
+      { "title": "建立有痛楚資料嘅草稿", "screen": "capture-manual", "actions": [{ "type": "click", "selector": "#manual" }, { "type": "check", "selector": "[name=pain][value='2']" }] },
+      { "title": "模擬一次斷線，驗證草稿仍在", "screen": "capture-offline", "actions": [{ "type": "fault", "path": "/api/records", "method": "POST", "network": true, "count": 1 }, { "type": "click", "selector": ".save-capture" }, { "type": "expect", "selector": "#sync-state", "text": "本機副本保留" }, { "type": "expect", "selector": "[name=pain][value='2']", "checked": true }] },
+      { "title": "重試同一份草稿並成功保存", "screen": "result-manual", "actions": [{ "type": "click", "selector": ".save-capture" }, { "type": "expect", "selector": "#doctor-summary" }, { "type": "expect", "selector": "#view", "text": "已保存今次補記" }] }
+    ]
+  },
+  {
+    "id": "analysis-retry", "title": "相片已保存 → 分析請求失敗 → 重試", "entry": "capture-home",
+    "steps": [
+      { "title": "選擇虛構 placeholder 圖片", "screen": "capture-photo", "actions": [{ "type": "file", "selector": "#file", "asset": "./sample.png" }, { "type": "expect", "selector": "#save-form" }] },
+      { "title": "分析請求失敗，但紀錄同原相仍已保存", "screen": "result-failed", "actions": [{ "type": "fault", "path": "/api/records/:id/analyze", "method": "POST", "status": 503, "count": 1 }, { "type": "click", "selector": ".save-capture" }, { "type": "expect", "selector": "#doctor-summary" }, { "type": "expect", "selector": "#reanalyze" }, { "type": "expect", "selector": "#message" }] },
+      { "title": "重試合成分析；未合資格欄位維持未知", "screen": "result-unknown", "actions": [{ "type": "click", "selector": "#reanalyze" }, { "type": "expect", "selector": "#view", "text": "分析 1 個版本" }] }
+    ]
+  }
+]

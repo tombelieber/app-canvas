@@ -1,10 +1,11 @@
 # App Canvas
 
-A zoomable overview of your real application pages, named states and flows. Double-click a screen to use the real UI, then reset its disposable data.
+A zoomable overview of your real application pages, named states and flows. Every screen renders live HTML/CSS/JS. Double-click to interact in place; follow a flow to pan and zoom to its destination.
 
 **[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
 No install, login or API key. Explore **77 named states**, labeled flows and
 working recording/editing/import/export interactions using synthetic data.
+Play the normal-save, offline-recovery and analysis-request-retry journeys.
 
 ![StoolSense on the canvas](docs/stoolsense-canvas.png)
 
@@ -33,7 +34,7 @@ Codex and Claude Code also have a bundled skill installer.
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.2.0
+npm install -g github:tombelieber/app-canvas#v0.3.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -41,6 +42,14 @@ app-canvas demo
 Open <http://127.0.0.1:6106>. The bundled StoolSense example contains **77 authored cases** from a real recording app, with synthetic records. Recording, correction, deletion, import, export, navigation and dialogs work locally. It makes no AI calls and needs no account.
 
 The example is a frozen frontend export. In a live project the adapter imports current application code; the source watcher rebuilds the overview. Changing this frozen example does not modify the original application.
+
+Browse by dragging/zooming. Double-click a screen or choose **▶ 操作 App** to
+use its controls directly on the canvas. **下一步**, **上一步** and graph edges
+select the destination and move the camera there. Esc returns to browsing.
+Filtering keeps drafts; **重設** restores only that named preview.
+Use **播放流程** to run a checked journey, pause, single-step or replay with
+fresh fixtures. Flow links navigate between named cases; playback performs
+actions in one continuing app session. See [journey authoring](docs/journeys.md).
 
 The hosted demo also uses this frozen synthetic export. It has no application
 backend, production session, real health records, AI requests or analytics.
@@ -75,6 +84,7 @@ export default {
     },
   ],
   flows: [], // { from: 'home', to: 'detail', label: 'Open item' }
+  journeys: [], // Optional checked sequences; see docs/journeys.md.
   watchPaths: ["src", "ui-review"],
   preview: (ctx) =>
     ctx.createVitePreview({
@@ -110,7 +120,7 @@ app-canvas --config canvas.config.mjs --check
 app-canvas --config canvas.config.mjs --verify
 ```
 
-`--check` validates the catalog and configured route coverage. `--verify` renders every registered case, rejects preview errors/unmocked requests, tests the canvas controls and runs your optional `verify({ browser, preview, manifest, canvasOrigin })` interaction function. `--port` overrides an occupied canvas port; the tool never stops another service.
+`--check` validates the catalog, journeys and configured route coverage. `--verify` renders every registered case, rejects preview errors/unmocked requests, tests the live canvas and every authored journey, then runs your optional `verify({ browser, preview, manifest, canvasOrigin })` interaction function. `--port` overrides an occupied canvas port; the tool never stops another service.
 
 ## Keep coverage honest
 
@@ -129,14 +139,29 @@ routeCoverage: [{
 
 Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canvas/routes`; store the original route pattern on each base case as `pattern`. A new/changed route, unresolved path expression or page omitted from the catalog fails the check. Redirects are counted separately. This inventory supports the route forms in the repository tests, not every router/framework.
 
-`preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs are trusted local code. Cached thumbnails live under `node_modules/.cache/app-canvas/`; the board uses those images and mounts one interactive iframe at a time. Source changes trigger rebuilding; dependency/configuration changes may require restarting the command.
+`preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs and preview code are trusted local code. The Vite helper and HTML served through `handle` get the shared preview bridge automatically. A custom server on a separate origin must apply `ctx.bridgeHtml(html)` before its application scripts.
+
+All registered cases stay mounted as separate live iframes, including while
+filtered or offscreen. A playback session adds one iframe. No screenshot cache
+is generated or displayed. DOM size probes and compiled canvas files live
+under `node_modules/.cache/app-canvas/`. Source changes reload the actual
+previews; dependency/configuration changes may require restarting the command.
+The bundled demo is checked with 77 simultaneous frames. Cost depends on the
+app: qualify larger catalogs and heavy pages on your target machine.
+
+The bridge namespaces `localStorage` and `sessionStorage` per frame and keeps
+preview values in disposable tab storage. It preserves them across ordinary
+HTML navigation and clears the selected frame on reset. Adapters still own
+SDK caches, IndexedDB, service workers and other persistence; supply disposable
+implementations. This is fixture isolation for trusted app code, not a security
+sandbox for running unknown code.
 
 ## Publish a synthetic canvas
 
 The local development server stays loopback-only. A project can separately
 provide `preview.exportStatic({ outDir })`: it writes explicitly publishable
 frontend assets and returns `{ [caseId]: './frame/index.html?id=case-id' }`.
-The shared exporter adds the same canvas UI, thumbnails and relative manifests:
+The shared exporter adds the same live canvas UI, preview bridge and relative manifests:
 
 ```sh
 app-canvas export --config canvas.config.mjs --out <new-directory>
@@ -163,7 +188,7 @@ This is an existing problem with useful existing solutions, not an empty market:
 | [html-flow-board](https://github.com/snowpact/html-flow-board)                    | Interactive HTML flow boards and FlowML authoring.                                                                                                                                               |
 | [Playroom](https://github.com/seek-oss/playroom)                                  | Composing real components across viewports.                                                                                                                                                      |
 | [React Cosmos](https://github.com/react-cosmos/react-cosmos)                      | Component fixtures and isolated development.                                                                                                                                                     |
-| **App Canvas**                                                                    | Standalone CLI and project adapters for an existing app, including non-React renderers, with an image overview plus one isolated interactive preview.                                            |
+| **App Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with simultaneous live screens, camera-following flows and checked journey playback.                                            |
 
 The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App previews do not require adopting React Flow or Storybook. Native Swift/Kotlin/React Native device previews need a separate adapter and device verification; they are not implemented here.
 
@@ -173,6 +198,8 @@ The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App preview
 npm ci
 npm run check
 npm test
+npm run test:navigation
+npm run test:journeys
 npm run test:browser
 npm run test:onboarding
 npm run build:demo

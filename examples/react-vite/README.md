@@ -7,7 +7,7 @@ providers and data contracts. Do not copy these Tasks pages into your app.
 
 ```sh
 npm install
-npm install --save-dev github:tombelieber/app-canvas#v0.2.0
+npm install --save-dev github:tombelieber/app-canvas#v0.3.0
 npx app-canvas browsers
 npm run ui:review
 npm run test:ui:review

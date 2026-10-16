@@ -8,6 +8,7 @@ import { promisify } from "node:util";
 const exec = promisify(execFile);
 const root = await mkdtemp(join(tmpdir(), "app-canvas-onboarding-"));
 let app;
+let browser;
 try {
   const pack = JSON.parse((await exec("npm", ["pack", "--json", "--pack-destination", root])).stdout)[0];
   const project = join(root, "project");
@@ -28,8 +29,13 @@ try {
   const proof = await app.verify();
   assert.equal(proof.total, 6);
   assert.equal(proof.interactionsVerified, true);
-  // Verify the same page code actually changes both the thumbnail and live UI.
-  const originalImage = Buffer.from(await (await fetch(new URL(app.getManifest().screens.tasks.image, app.address))).arrayBuffer());
+  // Keep the canvas open: source edits must refresh its mounted real UI.
+  const { chromium } = await import(pathToFileURL(join(installed, "node_modules/playwright/index.mjs"))).catch(() => import("playwright"));
+  browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(app.address);
+  const frame = page.frameLocator('iframe[data-screen="tasks"]');
+  await frame.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
   const abort = new AbortController();
   const stream = await fetch(`${app.address}/events`, { signal: abort.signal });
   const reader = stream.body.getReader();
@@ -52,21 +58,16 @@ try {
     await writeFile(source, before.replace("<h1>Tasks</h1>", "<h1>Edited in application source</h1>"));
     updated = await changed;
   } finally { clearTimeout(timer); abort.abort(); }
-  const nextImage = Buffer.from(await (await fetch(new URL(updated.screens.tasks.image, app.address))).arrayBuffer());
-  assert.ok(!originalImage.equals(nextImage), "source update must regenerate the overview");
-  const { chromium } = await import(pathToFileURL(join(installed, "node_modules/playwright/index.mjs"))).catch(() => import("playwright"));
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    await page.goto(updated.screens.tasks.url);
-    await page.getByRole("heading", { name: "Edited in application source" }).waitFor();
-    const rejected = await page.evaluate(async () => {
+  assert.ok(updated.revision > proof.revision);
+  await frame.getByRole("heading", { name: "Edited in application source" }).waitFor();
+  assert.equal(await page.locator(".screen-frame img").count(), 0);
+    const rejected = await frame.locator("html").evaluate(async () => {
       try { await fetch("https://unmocked.example.test/private"); return false; } catch { return globalThis.__appCanvas.requests.length === 1; }
     });
     assert.equal(rejected, true, "unknown external requests fail closed");
-  } finally { await browser.close(); }
   console.log("PASS: fresh packaged install → 2 real routes / 6 states → save/navigation/add/retry/reset → missing-route failure → source refresh → unknown request denied.");
 } finally {
+  await browser?.close();
   await app?.close();
   await rm(root, { recursive: true });
 }

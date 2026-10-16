@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createHash } from "node:crypto";
+import { chromium } from "playwright";
 import { startCanvas } from "../lib/server.mjs";
 const root = await mkdtemp(join(tmpdir(), "app-canvas-watch-"));
 const source = join(root, "screen.html");
@@ -37,20 +37,15 @@ const app = await startCanvas({
   },
 });
 const stop = new AbortController();
+const browser = await chromium.launch({ headless: true });
 try {
   await app.firstBuild;
   assert.equal(app.getManifest().status, "ready");
-  const hash = async () =>
-    createHash("sha256")
-      .update(
-        await (
-          await fetch(`${app.address}${app.getManifest().screens.home.image}`)
-        )
-          .arrayBuffer()
-          .then((b) => Buffer.from(b)),
-      )
-      .digest("hex");
-  const before = await hash();
+  const page = await browser.newPage();
+  await page.goto(app.address);
+  const frame = page.frameLocator('iframe[data-screen="home"]');
+  await frame.getByRole("button", { name: "Before source edit" }).waitFor();
+  const before = app.getManifest().revision;
   const response = await fetch(`${app.address}/events`, {
     signal: stop.signal,
   });
@@ -65,7 +60,7 @@ try {
       buffer = lines.pop();
       for (const line of lines) {
         const current = JSON.parse(line.slice(6));
-        if (current.revision > 1 && current.status === "ready") return current;
+        if (current.revision > before && current.status === "ready") return current;
       }
     }
   })();
@@ -76,15 +71,13 @@ try {
   } finally {
     clearTimeout(timeout);
   }
-  assert.notEqual(
-    await hash(),
-    before,
-    "source edit must regenerate the actual screenshot",
-  );
+  await frame.getByRole("button", { name: "After source edit" }).waitFor();
+  assert.equal(await page.locator(".screen-frame img").count(), 0);
   await app.verify();
-  console.log("PASS: source edit → event → regenerated screenshot and live UI");
+  console.log("PASS: source edit → event → mounted real UI refreshes without screenshot output");
 } finally {
   stop.abort();
+  await browser.close();
   await app.close();
   await rm(root, { recursive: true });
 }

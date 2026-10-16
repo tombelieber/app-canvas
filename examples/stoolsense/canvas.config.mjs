@@ -2,10 +2,12 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import example from "./catalog.json";
 import { exportStoolSense } from "./static.mjs";
+import journeys from "./journeys.json";
 export default {
   title: "StoolSense",
   port: 6106,
   ...example,
+  journeys,
   links: {
     repository: "https://github.com/tombelieber/app-canvas",
     agentGuide: "https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md",
