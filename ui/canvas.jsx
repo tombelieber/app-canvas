@@ -9,6 +9,7 @@ import { cameraFor, screenBounds, overviewBounds } from "./navigation.js";
 import { useBridge } from "./useBridge.js";
 import { project, useManifest } from "./useManifest.js";
 import { LiveFrame } from "./LiveFrame.jsx";
+import { OverviewPlane } from "./OverviewPlane.jsx";
 import { useJourney } from "./useJourney.js";
 import { JourneyPanel } from "./JourneyPanel.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
@@ -30,6 +31,7 @@ function Canvas() {
   const [journeyId, setJourneyId] = useState(""), [view, setView] = useState("overview"), [depth, setDepth] = useState("all");
   const [branches, setBranches] = useState(false), [autoStart, setAutoStart] = useState(false);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);
+  const [previewErrors, setPreviewErrors] = useState({});
   const preferences = usePanelPreferences(`app-canvas:panels:${location.pathname}:${project.title}`);
   const limit = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches ? 4 : 8;
   const cameraRun = useRef(0), previousNodes = useRef(new Map());
@@ -135,7 +137,7 @@ function Canvas() {
   }));
   const linked = displayedFlows.filter(f => f.from === selectedId || f.to === selectedId);
   const rendered = Object.values(manifest.screens || {}).filter(s => !s.error).length;
-  const context = { bridge, selected: selectedId, active, resets, revision: manifest.revision, runId, mounted, previews };
+  const context = { bridge, selected: selectedId, active, resets, revision: manifest.revision, runId, mounted, previews, previewErrors };
   const journeyNode = player.state && nodes.find(node => node.id === player.state.screen), entryUrl = player.state && manifest.screens[player.state.definition.entry]?.url;
   const inspector = preferences.panels.right;
   const toggleRight = () => preferences.toggle("right");
@@ -163,6 +165,7 @@ function Canvas() {
             minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
+            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} revision={manifest.revision} onError={setPreviewErrors} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
               <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} />
             </div></ViewportPortal>}

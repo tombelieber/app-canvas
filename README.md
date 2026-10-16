@@ -45,7 +45,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.7.0
+npm install -g github:tombelieber/app-canvas#v0.7.1
 app-canvas browsers
 app-canvas demo
 ```
@@ -178,7 +178,10 @@ Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canva
 
 The default **畫面總覽** shows complete real HTML/CSS for all named states.
 The measurement pass reuses source-rendered DOM and styles in render-only
-preview documents; it does not generate screenshots or a second UI.
+preview documents; it does not generate screenshots or a second UI. Compatible
+screens share one viewport-sized sandbox with isolated DOM trees, avoiding an
+iframe per state. The demo has four passive contexts for all 77 screens;
+native dialogs retain their own renderer. Zooming reuses the shared DOM.
 Selecting a screen loads its original app code; Interact unlocks real controls.
 The branching **狀態圖** also displays full screens. Page/feature/depth filters
 and playback live in collapsible sidebars, with one 52px toolbar on iPad landscape.

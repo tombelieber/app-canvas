@@ -9,7 +9,7 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
       const h = height * 390 / width;
       const nodeWidth = 390, nodeHeight = h + 48;
       graph.setNode(s.id, { width: nodeWidth, height: nodeHeight + 52 });
-      return { id: s.id, type: "screen", data: { screen: s, width: nodeWidth, compact: false, height: h, viewport: { width, height }, url: manifest.screens?.[s.id]?.url, domUrl: manifest.screens?.[s.id]?.domUrl, error: manifest.screens?.[s.id]?.error }, style: { width: nodeWidth, height: nodeHeight }, initialWidth: nodeWidth, initialHeight: nodeHeight, draggable: false };
+      return { id: s.id, type: "screen", data: { screen: s, width: nodeWidth, compact: false, height: h, viewport: { width, height }, url: manifest.screens?.[s.id]?.url, domUrl: manifest.screens?.[s.id]?.domUrl, sharedUrl: manifest.screens?.[s.id]?.sharedUrl, error: manifest.screens?.[s.id]?.error }, style: { width: nodeWidth, height: nodeHeight }, initialWidth: nodeWidth, initialHeight: nodeHeight, draggable: false };
     });
     for (const f of options.flows || []) if (graph.hasNode(f.from) && graph.hasNode(f.to) && f.from !== f.to) graph.setEdge(f.from, f.to);
     dagre.layout(graph);
@@ -67,6 +67,7 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
           height: h,
           url: m.url,
           domUrl: m.domUrl,
+          sharedUrl: m.sharedUrl,
           viewport: { width: m.width || s.viewport?.width || 390, height: m.height || s.viewport?.height || 844 },
           error: m.error,
         },

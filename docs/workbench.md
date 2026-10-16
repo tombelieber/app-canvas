@@ -72,17 +72,27 @@ text. The remaining canvas is the camera's fit area.
 
 During the existing isolated measurement pass, App Canvas captures the HTML
 and CSS that the **real source app** produced. It preserves form values,
-CSSOM styles, SVG and local image/font assets. The overview displays these
-render-only documents, without raster screenshots or separately written UI.
-Ordinary previews execute no scripts. Open native dialogs/popovers use one
+CSSOM styles, SVG and local image/font assets. Compatible overview documents
+share **one viewport-sized, opaque-origin iframe**, with a shadow tree per
+source screen. Source media queries, `rem` and viewport lengths are resolved
+in the measured source viewport, independent of the viewer's phone width.
+These are complete HTML/CSS trees, without raster screenshots or separately
+written UI. Only the fixed shared renderer runs here; app scripts never run.
+Open native dialogs/popovers keep separate inert documents and use one
 fixed, hash-authorized bootstrap to restore the browser's own top layer and
 backdrop. Preview documents are inert and have an opaque origin; application
 scripts and event handlers are stripped, and cannot access the parent app.
 Both the full overview and graph show actual page contents at every zoom.
-Offscreen documents are released during viewport changes, including a pinch
-that is still in progress, rather than waiting for touch release. This keeps
-large offscreen iframe surfaces out of the zooming scene. When zoomed out, all visible screens remain
-visible. Source rebuilds refresh both the overview documents and live apps.
+Offscreen shared trees stop painting during viewport changes and are reused
+on return. They do not recreate browsing contexts or refetch source DOM on each
+zoom. The shared iframe's physical surface stays the size of the canvas, even
+at 500% zoom. Separate native/legacy passive iframes are released during an
+active pinch. When zoomed out, all visible screens remain visible. The bundled
+77-case demo uses **one shared iframe for 74 states plus three native dialog
+iframes**, rather than 77 separate browsing contexts. This is a measured demo
+count, not a bound for arbitrary unsupported apps. Source rebuilds refresh
+both the overview documents and live apps. A failed shared document shows a
+load error; selection can still open the original app.
 
 Selecting a screen loads the original HTML/CSS/JS. Interact unlocks its real
 controls; playback uses one continuing original app. DOM-compatible previews
@@ -140,15 +150,17 @@ device dimensions. These are counted separately; unexpected app reloads still
 fail. The macOS/Chromium runs retain in-place resize checks.
 
 `npm run test:zoom` adds 20 repeated zoom cycles on the 77-screen demo, including
-the maximum 500% canvas zoom. It checks offscreen documents while each gesture
-is still active, returning to the full overview and rejecting host reloads or
-page errors. This uses DOM touch events through the actual canvas listener;
+the maximum 500% canvas zoom. It checks the total browsing-context count,
+viewport-sized shared surface, single DOM load per case and native offscreen
+documents while each gesture is active. It returns to the full overview and
+rejects host reloads or page errors. This uses DOM touch events through the actual canvas listener;
 it is not a physical-device gesture or a device memory qualification. The
 tablet gate includes this regression check.
 
 These are desktop-engine/device-emulation checks. A physical iPad's Safari,
 memory pressure, virtual keyboard and long-session behavior still require
 device validation. Static metadata from the previous runtime remains supported
-during a cached upgrade. The reported iPad crash has not been reproduced on physical
-hardware; resource bounds and stable iframe ordering address observed
-implementation risks without establishing a device-specific crash cause.
+during a cached upgrade. Static entry points version the actual JS/CSS and
+metadata requests so a new page does not silently reuse the previous runtime.
+The reported physical Safari crash remains a separate device check; a desktop
+engine or Simulator passing does not establish the phone's termination cause.

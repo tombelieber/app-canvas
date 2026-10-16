@@ -41,7 +41,10 @@ try {
   await page.getByRole("button", { name: "收起右側資料", exact: true }).tap(); await ready();
   assert.equal(await page.locator(".details-panel").count(), 0);
   assert.ok((await page.locator(".flow-stage").boundingBox()).width >= 1060, "hiding the right sidebar gives its width back to the canvas");
-  await page.frameLocator('iframe[data-preview="capture-home"]').getByText("記低，然後繼續生活。", { exact: true }).first().waitFor();
+  await page.frameLocator('iframe[data-overview]').locator('[data-preview="capture-home"]').getByText("記低，然後繼續生活。", { exact: true }).first().waitFor();
+  const sharedCount = Object.values(bootManifest.screens).filter(s => s.sharedUrl).length;
+  await page.frameLocator('iframe[data-overview]').locator('[data-preview][data-ready="true"]').nth(sharedCount - 1).waitFor({ state: "attached" });
+  assert.ok(page.frames().length - 1 <= 5, "full demo overview uses one shared renderer plus native top-layer previews");
   await page.waitForFunction(() => [...document.querySelectorAll('iframe[data-preview]')].every(el => el.dataset.ready === "true"));
   await mkdir(".artifacts/tablet", { recursive: true });
   await page.screenshot({ path: ".artifacts/tablet/landscape-overview.png" });

@@ -59,7 +59,7 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.7.0
+npm install --save-dev github:tombelieber/app-canvas#v0.7.1
 npx app-canvas browsers
 ```
 
@@ -126,7 +126,11 @@ case must be addressable and show its actual UI when opened. Declare `pages`
 from the actual router/native navigation and `pageId` / `feature` on each state; see the
 [page/feature/state and tablet contract](docs/workbench.md). The overview and
 state graph show full real UI with no summary cards. Web uses source-rendered
-HTML/CSS; native captures follow the native provenance contract. Render-only
+HTML/CSS; native captures follow the native provenance contract. Compatible
+web DOM shares one viewport-sized opaque sandbox with isolated shadow trees
+and source-viewport CSS. Count all browsing contexts and verify that zooming
+reuses DOM instead of rebuilding every context. Native top-layer previews keep
+their original isolated renderer. Render-only
 DOM documents keep web UI visible; selection
 and playback use the original app code. DOM-compatible content uses four touch
 / eight desktop running-app slots. Unsupported drawing/embedded content and

@@ -6,7 +6,7 @@ const browser=await chromium.launch();
 try{
  await app.firstBuild;
  const page=await browser.newPage();
- await page.route("**/project.json",async route=>{
+ await page.route(/\/project\.json(?:\?.*)?$/,async route=>{
   const response=await route.fetch(), project=await response.json();
   delete project.pages;
   for(const s of project.catalog){delete s.pageId;delete s.feature;}
@@ -14,7 +14,7 @@ try{
  });
  await page.route("**/events",async route=>{
   const manifest=structuredClone(app.getManifest());
-  for(const screen of Object.values(manifest.screens))delete screen.domUrl;
+  for(const screen of Object.values(manifest.screens)){delete screen.domUrl;delete screen.sharedUrl;}
   await route.fulfill({contentType:"text/event-stream",body:`data: ${JSON.stringify(manifest)}\n\n`});
  });
  const failure=page.waitForEvent("pageerror").then(e=>({error:e.message}));

@@ -18,7 +18,9 @@ try {
   await page.getByRole("button", {name:"畫面總覽",exact:true}).click();
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
   await page.evaluate(() => new Promise((resolve) => { let count = 0; const frame = () => ++count === 12 ? resolve() : requestAnimationFrame(frame); requestAnimationFrame(frame); }));
-  assert.equal(await page.locator('iframe[data-preview="home"]').evaluate((el) => parseFloat(el.style.height)), measured, "overview retains the measured full-document height");
+  const overview = page.frameLocator('iframe[data-overview]').locator('[data-preview="home"]');
+  await overview.waitFor();
+  assert.equal(await overview.evaluate((el) => parseFloat(el.style.height)), measured, "overview retains the measured full-document height");
   await page.getByRole("button", { name: "▶ 操作 App", exact: true }).click();
   await page.frameLocator('iframe[data-screen="home"]').locator("main").waitFor();
   await page.evaluate(() => new Promise(resolve => { let count=0; const tick=()=>++count===12?resolve():requestAnimationFrame(tick); requestAnimationFrame(tick); }));

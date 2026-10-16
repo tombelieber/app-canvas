@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { pageModel } from "../lib/pages.mjs";
-const resource = (name) => new URL(`../${name}`, import.meta.url);
+const assetVersion = new URL(import.meta.url).searchParams.get("v");
+const resource = name => { const url = new URL(`../${name}`, import.meta.url); if (assetVersion) url.searchParams.set("v", assetVersion); return url; };
 const sourceProject = await (await fetch(resource("project.json"), { cache: "no-store" })).json();
 // A static host/browser can briefly retain the previous project.json after a
 // deployment. Normalize that valid public contract before rendering new chrome.

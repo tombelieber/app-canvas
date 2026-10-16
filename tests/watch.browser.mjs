@@ -45,7 +45,7 @@ try {
   await page.goto(app.address);
   const overview = await browser.newPage();
   await overview.goto(app.address);
-  await overview.frameLocator('iframe[data-preview="home"]').getByRole("button", { name: "Before source edit" }).waitFor();
+  await overview.frameLocator('iframe[data-overview]').locator('[data-preview="home"]').getByRole("button", { name: "Before source edit" }).waitFor();
   await page.getByRole("button", {name:"▶ 操作 App",exact:true}).click();
   const frame = page.frameLocator('iframe[data-screen="home"]');
   await frame.getByRole("button", { name: "Before source edit" }).waitFor();
@@ -76,7 +76,7 @@ try {
     clearTimeout(timeout);
   }
   await frame.getByRole("button", { name: "After source edit" }).waitFor();
-  await overview.frameLocator('iframe[data-preview="home"]').getByRole("button", { name: "After source edit" }).waitFor();
+  await overview.frameLocator('iframe[data-overview]').locator('[data-preview="home"]').getByRole("button", { name: "After source edit" }).waitFor();
   assert.equal(await page.locator(".screen-frame img").count(), 0);
   await app.verify();
   console.log("PASS: source edit → event → mounted real UI refreshes without screenshot output");
