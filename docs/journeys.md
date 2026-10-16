@@ -37,7 +37,7 @@ actions through the same player, failing on a journey error.
 | `fill` | `selector`, `value` | Set an input/textarea and dispatch input/change. |
 | `check` | `selector`, optional boolean `value` | Check a radio/checkbox; false unchecks. |
 | `select` | `selector`, `value` | Select an option and dispatch input/change. |
-| `file` | `selector`, `asset`, optional `name`, `mime` | Load a reviewed same-origin `./` synthetic asset. |
+| `file` | `selector`, `asset`, optional `name`, `mime`, `replaces` | Load a reviewed same-origin `./` synthetic asset; optionally wait for a replacement DOM node. |
 | `expect` | `selector`, optional `text`, `value`, `checked`, `hidden` | Wait for a matching DOM state. |
 | `fault` | `path`, `method`, optional `network`, `status`, `error`, `count` | Fail a bounded synthetic API request. |
 
@@ -46,6 +46,11 @@ extensions. Actions wait for DOM changes, with an optional `timeout` in
 milliseconds (default 8000). Values/files are public fixture data if exported.
 The runner performs DOM actions, not browser-level user-input simulation;
 keep real pointer, keyboard, layout and application E2E checks in the adapter.
+When selecting a file replaces an existing form asynchronously, set
+`replaces: "#map-form"` on the file action. It waits for a different visible
+node after dispatching the file change, so a still-visible old form cannot
+be mistaken for the new mapping. For in-place updates, assert a distinguishing
+value or output before the next operation. Do not use fixed sleeps as readiness.
 
 Fault injection requires `window.__appCanvas.synthetic === true` (set by
 `installPreview`) or `window.__review.synthetic === true`. It wraps the current

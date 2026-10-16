@@ -5,7 +5,7 @@ const expect = (selector, text) => ({ type: "expect", selector, ...(text ? { tex
 const fill = (selector, value) => ({ type: "fill", selector, value });
 const select = (selector, value) => ({ type: "select", selector, value });
 const check = (selector, value = true) => ({ type: "check", selector, value });
-const file = (selector, asset = "./sample.png", name = "synthetic-preview.png", mime = "image/png") => ({ type: "file", selector, asset, name, mime });
+const file = (selector, asset = "./sample.png", name = "synthetic-preview.png", mime = "image/png") => ({ type: "file", selector, asset, name, mime, replaces: selector === "#diet-file" ? "#map-form" : "#save-form" });
 const step = (screen, title, ...actions) => ({ screen, title, actions });
 const flow = (id, title, entry, ...steps) => ({ id, title, kind: "flow", entry, steps });
 const csv = () => file("#diet-file", "./diet-template.csv", "synthetic-meals.csv", "text/csv");
@@ -79,6 +79,7 @@ export function createJourneys(catalog) {
   const journeys = baseline.map(j => ({ ...structuredClone(j), kind: "flow" }));
   // Each destination must have an explicit DOM assertion.
   journeys[1].steps[0].actions.push(expect("#save-form"));
+  journeys[2].steps[0].actions[0].replaces = "#save-form";
   journeys.push(
     flow("main-navigation", "五個主頁 → 返回記錄", "capture-home",
       ...["history", "insights", "import", "data"].flatMap(page => [step(`${page}-home`, `開啟 ${page} 主頁`, click(`[data-tab=${page}]`), expect(page === "data" ? "#profile-form" : page === "history" ? "#history-list" : page === "insights" ? "#insights .readings" : "#meal-list")), step("capture-home", "返回記錄", click("[data-tab=capture]"), expect("#manual"))])),

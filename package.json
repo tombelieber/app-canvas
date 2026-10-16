@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -48,7 +48,8 @@
     "test:live": "node tests/live.browser.mjs",
     "test:height": "node tests/height.browser.mjs",
     "test:queue": "node tests/queue.browser.mjs",
-    "test:all-cases": "node tests/all-cases.browser.mjs"
+    "test:all-cases": "node tests/all-cases.browser.mjs",
+    "test:file": "node tests/file.browser.mjs"
   },
   "engines": {
     "node": ">=22"

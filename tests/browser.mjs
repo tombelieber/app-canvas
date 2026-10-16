@@ -88,6 +88,7 @@ try {
   await mkdir(".artifacts/browser-proof", { recursive: true });
   await page.screenshot({ path: ".artifacts/browser-proof/overview.png" });
   await page.getByRole("button", { name: "▶ 操作 App", exact: true }).click();
+  await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
   let frame = page.frameLocator('iframe[data-screen="capture-home"]');
   await frame.locator("#manual").click();
   await frame.locator('label:has(input[name=pain][value="2"])').click();
