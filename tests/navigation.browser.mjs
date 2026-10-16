@@ -10,7 +10,7 @@ const config = {
     handle(req, res, url) {
       if (url.pathname !== "/frame") return false;
       res.setHeader("Content-Type", "text/html");
-      res.end(`<!doctype html><html data-review-ready="true"><head></head><body><h1>Real DOM</h1><label>Name<input id="name" oninput="localStorage.setItem('draft',this.value)"></label><button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button><a id="navigate" href="/frame?id=${url.searchParams.get("id")}&after=1">Navigate</a><output></output><script>document.querySelector('input').value=localStorage.getItem('draft')||''</script></body></html>`); return true;
+      res.end(`<!doctype html><html data-review-ready="true"><head></head><body><h1>Real DOM</h1><label>Name<input id="name" oninput="localStorage.setItem('draft',this.value)"></label><button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button><a id="navigate" href="/frame?id=${url.searchParams.get("id")}&after=1">Navigate</a><output></output><input id="bottom" aria-label="Bottom field" style="display:block;margin-top:1400px"><script>document.querySelector('input').value=localStorage.getItem('draft')||''</script></body></html>`); return true;
     },
   }),
 };
@@ -44,6 +44,7 @@ try {
   await settled();
   const first = page.frameLocator('iframe[data-screen="start"]'), second = page.frameLocator('iframe[data-screen="next"]');
   await first.locator("#name").fill("draft survives filters");
+  assert.ok(await first.locator("#bottom").evaluate((el) => { el.focus(); return document.scrollingElement.scrollTop; }) > 0, "normal focus must scroll the interactive app to an offscreen field");
   assert.equal(await second.locator("#name").inputValue(), "", "sibling fixture starts independently");
   await page.locator(".inspector .flow-link").click();
   await targetFits("next");

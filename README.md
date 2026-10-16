@@ -148,6 +148,9 @@ under `node_modules/.cache/app-canvas/`. Source changes reload the actual
 previews; dependency/configuration changes may require restarting the command.
 The bundled demo is checked with 77 simultaneous frames. Cost depends on the
 app: qualify larger catalogs and heavy pages on your target machine.
+Overview heights are measured once per source build, avoiding resize feedback
+in `vh`/scroll-area layouts. Interactive frames use the configured native
+viewport and normal app scrolling, including keyboard focus.
 
 The bridge namespaces `localStorage` and `sessionStorage` per frame and keeps
 preview values in disposable tab storage. It preserves them across ordinary

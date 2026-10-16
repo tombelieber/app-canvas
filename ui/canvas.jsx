@@ -26,20 +26,21 @@ function Canvas() {
   const definition = project.journeys.find((j) => j.id === journeyId);
   const journeyScreens = useMemo(() => definition ? [...new Set([definition.entry, ...definition.steps.map((s) => s.screen)])] : null, [definition]);
   const stage = useRef(null), camera = useReactFlow();
-  const bridge = useBridge(() => setActive(null));
+  const bridge = useBridge(() => { setActive(null); player.stop(); });
   const visible = useMemo(() => catalog.filter((s) => (group === "all" || s.group === group) && (!query || `${s.title} ${s.id}`.toLowerCase().includes(query.toLowerCase())) && (!journeyScreens || journeyScreens.includes(s.id))), [group, query, journeyScreens]);
   const selected = catalog.find((s) => s.id === selectedId);
   const nodes = useMemo(() => {
     const ids = new Set(visible.map((s) => s.id)), groupIds = new Set(visible.map((s) => `group-${s.group}`));
-    const liveManifest = { ...manifest, screens: Object.fromEntries(Object.entries(manifest.screens).map(([id, screen]) => [id, { ...screen, height: bridge.states[id]?.ready ? Math.max(screen.height, bridge.states[id].height || 0) : screen.height }])) };
-    return layoutScreens(catalog, liveManifest, groups).map((node) => {
+    // Freeze each overview at its source-build measurement. Feeding live scroll
+    // height back into vh-based apps can grow the iframe on every resize.
+    return layoutScreens(catalog, manifest, groups).map((node) => {
       if (journeyScreens?.includes(node.id) || node.id === active) {
         const height = node.data.screen.viewport?.height || 844;
         node = { ...node, initialHeight: height * 390 / node.data.viewport.width + 48, position: journeyScreens?.includes(node.id) ? { x: journeyScreens.indexOf(node.id) * 560, y: 90 } : node.position, data: { ...node.data, viewport: { ...node.data.viewport, height }, height: height * 390 / node.data.viewport.width }, style: { ...node.style, height: height * 390 / node.data.viewport.width + 48 } };
       }
       return { ...node, style: { ...node.style, visibility: ids.has(node.id) || (!journeyScreens && groupIds.has(node.id)) ? "visible" : "hidden" } };
     });
-  }, [visible, manifest, journeyScreens, active, bridge.states]);
+  }, [visible, manifest, journeyScreens, active]);
   const navigate = useCallback((id, interact = false) => {
     if (!catalog.some((s) => s.id === id)) return;
     select(id); setActive(interact ? id : null);
@@ -75,7 +76,7 @@ function Canvas() {
   const search = (value) => { player.stop(); setJourneyId(""); setQuery(value); select(null); setActive(null); fit(); };
   useEffect(() => {
     const key = (event) => {
-      if (event.key === "Escape") { setActive(null); return; }
+      if (event.key === "Escape") { setActive(null); player.stop(); return; }
       if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
       if (event.key === "1") { event.preventDefault(); fit(); }
       if (event.key === "2" && selectedId) { event.preventDefault(); navigate(selectedId, !!active); }

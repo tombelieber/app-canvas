@@ -34,5 +34,9 @@ try {
  await page.locator('.journey-panel[data-status="error"]').waitFor();
  assert.match(await page.locator(".journey-panel").innerText(), /deliberately-absent-control/);
  assert.equal(await page.locator(".journey-panel").getAttribute("data-step"), "0");
+ await page.frameLocator('iframe[data-screen="journey"]').locator("#manual").focus();
+ await page.keyboard.press("Escape");
+ await page.locator('iframe[data-screen="journey"]').waitFor({ state: "hidden", timeout: 2000 });
+ assert.equal(await page.locator(".journey-panel").getAttribute("data-status"), "idle");
  console.log("PASS: single-step, fresh replay and a red-capable failure that stops before claiming the target state.");
 } finally { await browser.close(); await app.close(); }
