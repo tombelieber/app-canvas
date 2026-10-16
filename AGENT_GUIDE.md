@@ -59,14 +59,14 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev 'github:tombelieber/app-canvas#<verified-tool-commit>'
+npm install --save-dev github:tombelieber/app-canvas#v0.7.0
 npx app-canvas browsers
 ```
 
-Resolve an available tool commit containing this guide and the
-`@tombelieber/app-canvas/inventory` export; pin its actual SHA in the command
-and lockfile. Do not invent an unavailable release tag or drop the source gate
-to use an older build.
+Version 0.7.0 includes this guide and the `@tombelieber/app-canvas/inventory`
+export. The lockfile records the resolved commit. For another tool revision,
+verify its availability and inventory export before pinning it; do not invent
+an unavailable tag or drop the source gate to use an older build.
 
 The guide works with any agent that can read files, edit code and run commands.
 Codex and Claude Code can additionally install the bundled Agent Skills format:
