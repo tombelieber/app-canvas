@@ -1,0 +1,177 @@
+{
+  "date": "2026-10-18",
+  "device": {
+    "model": "iPhone 13 Pro",
+    "os": "iOS 18.6.2",
+    "physical": true,
+    "physicalIPadTested": false
+  },
+  "baselineCommit": "cb2b936b1e498cb4230b4e5a99214c04a0214be3",
+  "candidateCommit": "b8432d88ca4125dc6a1663cf704b2c0cb09ee371",
+  "decision": "Candidate not admitted; retain the already deployed runtime.",
+  "method": {
+    "order": [
+      "A",
+      "B",
+      "B",
+      "A",
+      "A",
+      "B"
+    ],
+    "repetitionsPerVariant": 3,
+    "sourceCases": 77,
+    "sharedDomDocuments": 74,
+    "isolatedHtmlDocuments": 3,
+    "sourceSha256": "b8f3954120967121ef8c33cf484fe881524499d63b5a14abd18264c2239fe1ee",
+    "sourceFingerprint": "SHA256 of sorted manifest URL string bytes, NUL, and corresponding file bytes for each selected sharedUrl or domUrl.",
+    "originalAppFrameCodeIdentical": true,
+    "input": "Scripted DOM touch events through the actual canvas gesture handler; not trusted native multitouch.",
+    "cyclesPerTrial": 3,
+    "phasesPerCycle": 4,
+    "phaseDurationMs": 1500,
+    "viewportCss": [
+      390,
+      663
+    ],
+    "devicePixelRatio": 3,
+    "memorySampleIntervalMs": 500,
+    "nativeFps": "Whole-display Core Animation FPS sampled about once per second; excludes one second at each motion-window edge.",
+    "memory": "Sampled physical footprint of the WebContent process dominating CPU during the workload; not exact per-page heap or an absolute memory ceiling.",
+    "alignment": "Sampler and beacon receipt timestamps on the same host.",
+    "configuration": "Existing Safari profile and extensions retained across both variants; thermal state and power mode not recorded.",
+    "configuredZoomRange": [
+      0.015,
+      5
+    ],
+    "observedMaximumZoom": 5,
+    "phaseDescription": "Two-stage zoom-in (second stage adds horizontal pan), zoom-out, return."
+  },
+  "summary": {
+    "baseline": {
+      "displayFpsMean": {
+        "median": 49.06,
+        "min": 48.88,
+        "max": 49.31
+      },
+      "cadenceFps": {
+        "median": 49.47,
+        "min": 49.27,
+        "max": 49.6
+      },
+      "p99ms": {
+        "median": 130,
+        "min": 124,
+        "max": 138
+      },
+      "activeWebContentPeakMiB": {
+        "median": 1703.02,
+        "min": 1515.22,
+        "max": 1911.31
+      }
+    },
+    "optimized": {
+      "displayFpsMean": {
+        "median": 49.75,
+        "min": 49.69,
+        "max": 50.38
+      },
+      "cadenceFps": {
+        "median": 49.66,
+        "min": 49.52,
+        "max": 50.11
+      },
+      "p99ms": {
+        "median": 146,
+        "min": 129,
+        "max": 153
+      },
+      "activeWebContentPeakMiB": {
+        "median": 1971.08,
+        "min": 1781.63,
+        "max": 2049.92
+      }
+    }
+  },
+  "trials": [
+    {
+      "label": "A1",
+      "variant": "A",
+      "displayFpsMean": 49.06,
+      "cadenceFps": 49.6,
+      "p99ms": 124,
+      "activeWebContentPeakMiB": 1515.22,
+      "nativeMemorySamples": 35,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1038
+    },
+    {
+      "label": "B1",
+      "variant": "B",
+      "displayFpsMean": 50.38,
+      "cadenceFps": 49.66,
+      "p99ms": 153,
+      "activeWebContentPeakMiB": 1971.08,
+      "nativeMemorySamples": 34,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1045
+    },
+    {
+      "label": "B2",
+      "variant": "B",
+      "displayFpsMean": 49.69,
+      "cadenceFps": 50.11,
+      "p99ms": 129,
+      "activeWebContentPeakMiB": 2049.92,
+      "nativeMemorySamples": 35,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1048
+    },
+    {
+      "label": "A2",
+      "variant": "A",
+      "displayFpsMean": 49.31,
+      "cadenceFps": 49.27,
+      "p99ms": 138,
+      "activeWebContentPeakMiB": 1703.02,
+      "nativeMemorySamples": 34,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1035
+    },
+    {
+      "label": "A3",
+      "variant": "A",
+      "displayFpsMean": 48.88,
+      "cadenceFps": 49.47,
+      "p99ms": 130,
+      "activeWebContentPeakMiB": 1911.31,
+      "nativeMemorySamples": 34,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1036
+    },
+    {
+      "label": "B3",
+      "variant": "B",
+      "displayFpsMean": 49.75,
+      "cadenceFps": 49.52,
+      "p99ms": 146,
+      "activeWebContentPeakMiB": 1781.63,
+      "nativeMemorySamples": 35,
+      "nativeFpsSamples": 16,
+      "inputEvents": 1041
+    }
+  ],
+  "coverage": {
+    "completedMotionWindows": 6,
+    "motionReloads": 0,
+    "motionErrors": 0,
+    "sharedDocumentsReadyAtEachStart": 74,
+    "isolatedHtmlDocumentsReadyAtEachStart": 3
+  },
+  "limitations": [
+    "Single physical device, three repetitions per variant; descriptive measurements, not a population estimate.",
+    "rAF intervals measure callback cadence; they are not panel scanout intervals.",
+    "WebContent footprint can include retained contexts, shared graphics charges and browser caches. Other WebContent processes were not charged to this result.",
+    "GPU process footprint was not added to WebContent footprint.",
+    "No physical iPad result and no state-of-the-art or universal crash-free claim."
+  ]
+}

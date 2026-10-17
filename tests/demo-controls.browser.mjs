@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { chromium, webkit } from "playwright";
 import { startCanvas } from "../lib/server.mjs";
 
+let holdFixture = false;
 const config = {
   title: "Player controls", groups: [{ id: "app" }],
   pages: [{ id: "record", title: "Record" }, { id: "settings", title: "Settings" }, { id: "reference", title: "Reference" }],
@@ -27,7 +28,7 @@ const config = {
   preview: async ({ canvasOrigin }) => ({ url: s => `${canvasOrigin}/frame?id=${s.id}`, handle(req, res, url) {
     if (url.pathname !== "/frame") return false;
     res.setHeader("Content-Type", "text/html");
-    res.end(`<!doctype html><html data-review-ready="true"><head></head><body><h1>${url.searchParams.get("id")}</h1>
+    res.end(`<!doctype html><html data-review-ready="${!holdFixture}"><head></head><body><h1>${url.searchParams.get("id")}</h1>
       <input oninput="localStorage.setItem('draft',this.value)"><button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button>
       <a id="next" href="/frame?id=detail">Next</a><button id="update" onclick="document.querySelector('output').textContent='Updated'">Update</button><output>Initial</output>
       <script>document.querySelector('input').value=localStorage.getItem('draft')||'';</script></body></html>`);
@@ -101,11 +102,17 @@ try {
       await demo.getByRole("button", { name: "退出 Demo", exact: true }).click();
 
       await page.getByLabel("播放流程").selectOption("__all__");
+      // Keep the first real app in loading until Pause has landed. Otherwise
+      // fast playback can finish it before WebKit delivers the pause click,
+      // and a later queue=1 wait can match that previous paused state.
+      holdFixture = true;
       await page.getByRole("button", { name: "自動播放 Demo", exact: true }).click();
+      await live.locator('html[data-review-ready="false"]').waitFor({ state: "attached" });
       await demo.getByRole("button", { name: "暫停 Demo", exact: true }).click();
-      await page.locator('.demo-player[data-status="paused"]').waitFor();
+      await page.locator('.demo-player[data-status="paused"][data-queue="0"][data-finished="0"]').waitFor();
+      holdFixture = false;
       await demo.getByRole("button", { name: "下一個 Demo", exact: true }).click();
-      await page.locator('.demo-player[data-status="paused"][data-queue="1"]').waitFor();
+      await page.locator('.demo-player[data-status="paused"][data-queue="1"][data-skipped="1"][data-finished="0"]').waitFor();
       assert.equal(await demo.getAttribute("data-skipped"), "1", "skipping a demo is reported separately from completion");
       assert.equal(await demo.getAttribute("data-finished"), "0");
       assert.equal(await live.locator("input").inputValue(), "", "next demo receives a fresh fixture");
