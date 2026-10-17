@@ -290,6 +290,13 @@ The included StoolSense adapter is already synthetic and exportable. Its
 specific to that frozen frontend. This repo's GitHub Pages workflow builds and
 tests that example on main; it never reads the private StoolSense repository.
 
+## Safari performance measurements
+
+The [physical iPhone Safari benchmark](docs/safari-benchmark-2026-10-18.md)
+includes native FPS, sampled process memory and per-trial results. The tested
+optimization bundle was not adopted: its footprint increased. The hosted demo
+retains the already deployed runtime; no state-of-the-art performance claim is made.
+
 ## Related OSS
 
 This is an existing problem with useful existing solutions, not an empty market:
