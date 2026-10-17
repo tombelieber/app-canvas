@@ -71,6 +71,38 @@ their own state. Manually following a flow leaves playback and focuses that
 named case. Escape exits in-canvas interaction; reset restores the selected
 case, or restarts the current journey with fresh fixtures.
 
+## One-click audience demo
+
+Press **▶ Demo** in the top toolbar without opening the journey controls.
+An explicitly selected journey or nonempty queue is honored. Otherwise Demo
+plays all authored interaction flows in their configured order, starting each
+flow with fresh fixtures and retaining state inside each flow. If the project
+only has standalone cases, it presents those with an **獨立情境** label. A
+project without journeys keeps Demo disabled; graph edges do not invent app
+operations. Existing configs need no new fields.
+
+Demo temporarily hides the editing panels, other screens and graph edges.
+The same continuing app and camera remain in use, with a visible target cue
+before each operation, pauses for the audience, step captions, progress,
+speed, pause/resume, replay and exit controls. Entry screens are held before
+the first action. These delays control presentation pace; readiness still
+depends on the existing DOM checks. Reduced-motion settings suppress cue
+animations and camera motion.
+
+In Demo, pause finishes the in-flight action and stops before the next action.
+The regular journey controls retain their step-level pause and single-step
+behavior. Replay resets the selected queue's fixtures. A failed action or
+assertion stops at the last confirmed screen and shows its error without
+counting the destination. **退出** or **Esc**, including from a focused frame
+or open dialog, cancels playback and restores the previous browsing scope,
+selection and panel preferences. Audience pointer input cannot change the app
+or pan the presentation. The normal Browse/Interact and journey controls
+remain available after exit.
+
+Full-document navigation keeps the same isolated session and checks the new
+ready document. Outstanding read-only assertions can follow that document
+within their original timeout; clicks and other mutations are never retried.
+
 ## Whole-app state graph and complete playback
 
 The **畫面總覽** view exposes every registered case as a complete real UI.

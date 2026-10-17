@@ -1,11 +1,12 @@
 import React from "react";
 import { outcomes } from "../lib/coverage.mjs";
 
-export function WorkspaceDock({ preferences, menu, setMenu, drawer, setDrawer, active, browse, interact, retained, release, catalog, notice, limit, brand, view, setView, fit, rightOpen, toggleRight }) {
+export function WorkspaceDock({ preferences, menu, setMenu, drawer, setDrawer, active, browse, interact, retained, release, catalog, notice, limit, brand, view, setView, fit, rightOpen, toggleRight, startDemo, demoReady, hasJourneys }) {
   const { panels } = preferences;
   return <div className="workspace-dock">
     <button aria-label="面板" aria-expanded={menu} onClick={() => setMenu(!menu)}>☷ 面板</button>
     {panels.top && <><button aria-label="切換左側導航" title="顯示／收起左側導航" aria-pressed={panels.left} onClick={() => preferences.toggle("left")}>◧</button>{brand}<div className="canvas-view-controls" role="group" aria-label="畫布檢視">{[["overview", "畫面總覽"], ["machine", "狀態圖"]].map(([id, title]) => <button key={id} aria-pressed={view === id} onClick={() => setView(id)}>{title}</button>)}</div><button className="fit-button" aria-label="全覽" onClick={fit}>全覽</button></>}
+    <button className="present demo-start" aria-label="自動播放 Demo" title={hasJourneys ? "一鍵示範已選流程；未選則播放全部互動流程" : "未有可播放嘅互動流程"} disabled={!demoReady} onClick={startDemo}>▶ Demo</button>
     <button className="playback-toggle" aria-label="開啟流程控制" title="播放流程" aria-expanded={rightOpen} onClick={toggleRight}>▷ <span>流程</span></button>
     {panels.left && <button aria-label="導航" aria-expanded={drawer} className="drawer-toggle" onClick={() => setDrawer(!drawer)}>頁面</button>}
     <div className="mode-switch" role="group" aria-label="操作模式">

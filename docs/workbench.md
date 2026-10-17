@@ -68,6 +68,15 @@ and details use a bottom panel. Pointer type does not force landscape tablets
 into the narrow layout. Controls have 44px touch targets and inputs use 16px
 text. The remaining canvas is the camera's fit area.
 
+**▶ Demo** remains in the dock even when the top toolbar is collapsed. It
+starts an audience presentation of the selected journey/queue, defaulting to
+all interaction flows. Editing chrome and other screens are temporarily
+hidden without changing saved panel preferences. The continuing app keeps
+the native viewport, the camera follows confirmed states, and the footer
+shows action captions, progress, speed and pause/replay/exit controls. Exit
+or Esc cancels playback and returns to the previous browsing scope. See
+[Demo playback](journeys.md#one-click-audience-demo) for pacing and errors.
+
 ## Full UI without starting every app
 
 During the existing isolated measurement pass, App Canvas captures the HTML

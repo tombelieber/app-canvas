@@ -1,5 +1,14 @@
 # App Canvas
 
+## Unreleased
+
+- Add **▶ Demo** for one-click audience presentations of existing journeys,
+  including real app interactions, visible action cues, camera follow,
+  captions/progress, speed, pause/resume, replay and exit/Esc. Keep the
+  existing Browse/Interact and journey controls, with no config migration.
+- Keep the shared preview surface and touch culling synchronized with the
+  actual canvas camera during gestures and presentation transitions.
+
 ## 0.8.0
 
 - Own the canonical skill, completion/native references, CLI and releases in

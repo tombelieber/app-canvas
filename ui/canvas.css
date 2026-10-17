@@ -142,3 +142,36 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
  .canvas-hint {font-size:10px;left:65px}
 }
 @media(prefers-reduced-motion:reduce) {.react-flow__edge-path {animation:none!important}}
+
+/* Presentation uses the same canvas and continuing app. Panel preferences
+   remain untouched, so leaving the demo restores the editing workspace. */
+.review-workspace.is-presenting {--nav:0px;--detail:0px;--bar:0px;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);background:#e9edf1}
+.is-presenting > header,.is-presenting > .layers-panel,.is-presenting > .details-panel,.is-presenting > .drawer-backdrop {display:none}
+.is-presenting .canvas-area {grid-column:1;grid-row:1}
+.is-presenting .react-flow__controls,.is-presenting .react-flow__minimap,.is-presenting .canvas-hint,.is-presenting .zoom-label {display:none}
+.is-presenting .screen-frame,.is-presenting .board-group,.is-presenting .overview-plane {visibility:hidden;pointer-events:none}
+.is-presenting .react-flow__edge {display:none}
+.is-presenting .journey-live {outline:2px solid #287b83;box-shadow:0 12px 48px #163b4525;border-radius:8px}
+.demo-shield {position:absolute;inset:0;z-index:30;cursor:default}
+.demo-player {position:relative;flex:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;background:#fff;border-top:1px solid #d2dce2;padding:14px max(20px,env(safe-area-inset-right)) 17px max(20px,env(safe-area-inset-left));z-index:40}
+.demo-heading {display:flex;align-items:baseline;gap:12px;min-width:0}
+.demo-heading > span {font-size:11px;color:#788490;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.demo-heading strong {font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.demo-heading small {font-size:11px;color:#788490;white-space:nowrap}
+.demo-caption {grid-column:1;margin:0;color:#47616b;font-size:13px;overflow-wrap:anywhere}
+.demo-error {grid-column:1/-1;color:#a54641;margin:3px 0;overflow-wrap:anywhere;max-height:12dvh;overflow:auto}
+.demo-controls {grid-column:2;grid-row:1/3;display:flex;align-items:center;gap:8px}
+.demo-controls button {min-height:44px;white-space:nowrap}
+.demo-controls label {display:flex;align-items:center;gap:6px;font-size:11px;color:#65707b}
+.demo-controls select {border:1px solid #d9dde3;border-radius:7px;background:white;padding:8px;min-height:44px}
+.demo-progress {position:absolute;bottom:0;left:0;right:0;height:4px;background:#e8eef1}
+.demo-progress span {display:block;height:100%;background:#287b83}
+.demo-player[data-status="error"] .demo-progress span {background:#a54641}
+@media (max-width:850px) {
+ .demo-player {grid-template-columns:minmax(0,1fr);gap:8px;padding:12px 14px 16px}
+ .demo-heading {flex-wrap:wrap;gap:4px 10px}
+ .demo-heading > span {display:none}
+ .demo-heading strong {max-width:100%;font-size:14px}
+ .demo-controls {grid-column:1;grid-row:auto;flex-wrap:wrap;gap:6px}
+ .demo-exit {margin-left:auto}
+}

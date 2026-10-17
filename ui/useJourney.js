@@ -13,10 +13,10 @@ export function useJourney({ definitions, bridge, navigate }) {
   useEffect(() => { stop(); }, [planKey]);
   useEffect(() => () => { if (current.current) { current.current.cancelled = true; current.current.resume?.(); } }, []);
 
-  const start = async (single = false) => {
+  const start = async (single = false, { presentation = false } = {}) => {
     if (!definitions.length) return;
     stop();
-    const run = { paused: single, allowance: single ? 1 : Infinity, cancelled: false, finished: [], trace: [], queueLength: definitions.length };
+    const run = { paused: single, allowance: single ? 1 : Infinity, cancelled: false, finished: [], trace: [], queueLength: definitions.length, presentation };
     current.current = run;
     const publish = (status) => update({ ...run, finished: [...run.finished], trace: [...run.trace], status });
     const permission = async () => {
@@ -25,6 +25,11 @@ export function useJourney({ definitions, bridge, navigate }) {
       }
       return !run.cancelled;
     };
+    const hold = (duration) => new Promise(resolve => {
+      if (!duration || run.paused || run.cancelled) return resolve();
+      const wake = () => { clearTimeout(timer); if (run.resume === wake) run.resume = null; resolve(); };
+      const timer = setTimeout(wake, duration); run.resume = wake;
+    });
     try {
       for (let q = 0; q < definitions.length; q++) {
         if (q && !(await permission())) return;
@@ -33,13 +38,21 @@ export function useJourney({ definitions, bridge, navigate }) {
         publish("loading"); context.current.navigate(run.screen);
         await context.current.bridge.whenReady("journey", run.key);
         if (run.cancelled) return;
+        if (presentation) { publish(run.paused ? "paused" : "playing"); await hold(context.current.speed); }
         for (let i = 0; i < run.definition.steps.length; i++) {
           if (!(await permission())) return;
           run.index = i; run.inStep = true; publish("playing");
           const step = run.definition.steps[i];
           for (const action of step.actions) {
+            if (run.cancelled || (presentation && !(await permission()))) return;
+            run.inStep = true;
+            const performed = !["expect", "fault"].includes(action.type);
+            await context.current.bridge.command("journey", presentation && performed ? { ...action, presentation: { delay: Math.min(900, context.current.speed / 2) } } : action);
             if (run.cancelled) return;
-            await context.current.bridge.command("journey", action);
+            if (presentation && performed) {
+              run.inStep = false; publish(run.paused ? "paused" : "playing");
+              await hold(context.current.speed / 2);
+            }
           }
           if (run.cancelled) return;
           run.trace.push({ from: run.screen, to: step.screen });
@@ -49,10 +62,7 @@ export function useJourney({ definitions, bridge, navigate }) {
           if (end) run.finished.push(run.definition.id);
           if (end && q === definitions.length - 1) { publish("complete"); return; }
           publish(run.paused ? "paused" : "playing");
-          if (!run.paused && context.current.speed) await new Promise(resolve => {
-            const timer = setTimeout(resolve, context.current.speed);
-            run.resume = () => { clearTimeout(timer); resolve(); };
-          });
+          await hold(context.current.speed);
         }
       }
     } catch (error) { if (!run.cancelled) { run.error = error.message; publish("error"); } }
