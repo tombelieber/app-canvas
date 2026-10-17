@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -25,6 +25,7 @@
     "examples/",
     ".claude-plugin/",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "docs/*.png",
@@ -38,6 +39,7 @@
     "test:browser": "node tests/browser.mjs",
     "demo": "node bin/app-canvas.mjs --config examples/stoolsense/canvas.config.mjs",
     "pack:check": "npm pack --dry-run --json",
+    "release:pack": "node scripts/package-release.mjs",
     "test:layout": "node tests/wide.browser.mjs",
     "test:watch": "node tests/watch.browser.mjs",
     "build:demo": "node scripts/build-demo.mjs",

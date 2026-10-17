@@ -29,6 +29,15 @@ try {
   await writeFile(join(project, "ui-review/inventory.json"), JSON.stringify(inventory));
   await writeFile(join(project, "ui-review/strict.config.mjs"), `import base from './canvas.config.mjs'; export default { ...base, coverage: { requireSourceInventory: true }, sourceCoverage: { roots: ['src'], inventory: 'ui-review/inventory.json' } };`);
   const cli = join(installed, "bin/app-canvas.mjs");
+  const home = join(root, "agent-home");
+  await exec(process.execPath, [cli, "install"], { env: { ...process.env, HOME: home } });
+  for (const harness of ["codex", "claude"])
+    for (const file of ["SKILL.md", "agents/openai.yaml", "references/completion.md", "references/native.md"])
+      assert.deepEqual(
+        await readFile(join(home, `.${harness}/skills/app-canvas`, file)),
+        await readFile(join(installed, "skills/app-canvas", file)),
+        `the public installer must ship the canonical ${file} to ${harness}`,
+      );
   const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
   assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /6 source inventory items mapped/);
   inventory.items.pop();
@@ -82,7 +91,7 @@ try {
       try { await fetch("https://unmocked.example.test/private"); return false; } catch { return globalThis.__appCanvas.requests.length === 1; }
     });
     assert.equal(rejected, true, "unknown external requests fail closed");
-  console.log("PASS: fresh packaged install → source-inventory export / missing-state failure → 2 real routes / 6 states → save/navigation/add/retry/reset → missing-route failure → source refresh → unknown request denied.");
+  console.log("PASS: fresh packaged install → canonical Codex/Claude skills and references → source-inventory export / missing-state failure → 2 real routes / 6 states → save/navigation/add/retry/reset → missing-route failure → source refresh → unknown request denied.");
 } finally {
   await browser?.close();
   await app?.close();

@@ -1,0 +1,39 @@
+name: Release App Canvas
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Verify tag and package version
+        run: test "$RELEASE_TAG" = "v$(node -p 'JSON.parse(require("fs").readFileSync("package.json")).version')"
+      - run: npm ci
+      - run: npm run check && npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:onboarding
+      - run: npm run check:privacy
+      - run: npm run release:pack
+      - name: Publish checksummed package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$RELEASE_TAG"
+          .artifacts/release/*.tgz .artifacts/release/SHA256SUMS
+          --verify-tag --title "App Canvas $RELEASE_TAG"
+          --notes-file .artifacts/release/release-notes.md

@@ -59,9 +59,12 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.7.1
+npm install --save-dev github:tombelieber/app-canvas#v0.8.0
 npx app-canvas browsers
 ```
+
+On npm 12, Git admission may require `--allow-git=root` on that install command.
+Keep the exception scoped to the direct requested dependency and command.
 
 Version 0.7.0 includes this guide and the `@tombelieber/app-canvas/inventory`
 export. The lockfile records the resolved commit. For another tool revision,
@@ -79,6 +82,11 @@ Targets are `codex`, `claude`, or `both`. The installer preserves unmanaged or
 locally edited skills. Other agents can read this guide and `skills/app-canvas/SKILL.md`
 directly or use their own supported skill loader; they do not need a Claude
 plugin. Do not claim untested clients or frameworks are certified.
+
+This repository owns the canonical skill, its references, CLI and releases.
+Use this source for skill updates; no separate skill repository is required.
+For Claude's standalone marketplace or migration from an older installation,
+follow the [installation instructions](README.md#connect-a-project).
 
 ## 3. Integrate the actual app
 

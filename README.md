@@ -45,10 +45,14 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.7.1
+npm install -g github:tombelieber/app-canvas#v0.8.0
 app-canvas browsers
 app-canvas demo
 ```
+
+On npm 12, if Git admission blocks the install, add `--allow-git=root` to that
+`npm install` command. This admits only the requested direct Git dependency;
+do not change global npm policy.
 
 Open <http://127.0.0.1:6106>. The bundled StoolSense example contains **77 authored cases** from a real recording app, with synthetic records. Recording, correction, deletion, import, export, navigation and dialogs work locally. It makes no AI calls and needs no account.
 
@@ -83,7 +87,43 @@ Install the agent skill once, then invoke `$app-canvas` in the target repository
 app-canvas install --target both
 ```
 
-Targets: `codex`, `claude`, or `both` (default). Existing unmanaged or edited skills are preserved. The canonical skill lives in [tomstack](https://github.com/tombelieber/tomstack/tree/main/skills/engineering/app-canvas); this package includes an installer compatibility snapshot.
+Targets: `codex`, `claude`, or `both` (default). The installer copies the canonical
+[skill](skills/app-canvas/SKILL.md), metadata and references into
+`~/.codex/skills/app-canvas` and `~/.claude/skills/app-canvas`. Existing unmanaged
+or edited skills are preserved.
+
+This repository owns the canvas, CLI, canonical skill and releases together.
+No other skill collection or marketplace is required.
+
+### Standalone Claude plugin
+
+Claude Code users can install the same skill through App Canvas's own marketplace:
+
+```sh
+claude plugin marketplace add tombelieber/app-canvas
+claude plugin install app-canvas@app-canvas
+```
+
+The plugin supplies the skill; install the CLI with npm as shown above. Choose
+either the Claude plugin or `app-canvas install --target claude` to avoid duplicate
+Claude skills. The Codex CLI installer works independently of the Claude plugin.
+
+### Existing Tomstack installations
+
+The complete skill now lives here. Tomstack no longer bundles another copy.
+Install the standalone skill before updating the Tomstack bundle:
+
+- For the Tomstack Claude bundle, use the standalone Claude plugin commands above.
+- For a skill installed with `skills`, change its source with
+  `npx skills@latest add tombelieber/app-canvas --skill app-canvas` and select the
+  same target agents.
+- CLI-managed copies upgrade with `app-canvas install --target both` after the
+  CLI update. For a manually copied or locally linked skill, preserve the old
+  directory or link before installing; the CLI deliberately refuses to overwrite it.
+
+The existing `app-canvas@tomstack` marketplace listing remains a compatibility
+entry pointing directly to this repository. New installations can use
+`app-canvas@app-canvas` without Tomstack. See [release maintenance](docs/releasing.md).
 
 For manual integration, start with `canvas.config.mjs`:
 
