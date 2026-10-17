@@ -43,7 +43,7 @@ try {
       const stage = document.querySelector(".flow-stage").getBoundingClientRect();
       const frames = [...document.querySelectorAll("iframe[data-preview]")];
       const plane = document.querySelector("iframe[data-overview]").getBoundingClientRect();
-      return { count: frames.length, offscreen: frames.filter(frame => { const rect = frame.getBoundingClientRect(); return rect.right <= stage.left || rect.left >= stage.right || rect.bottom <= stage.top || rect.top >= stage.bottom; }).length, surfaceWidth: plane.width, surfaceHeight: plane.height, stageWidth: stage.width, stageHeight: stage.height, moving: document.querySelector(".review-workspace").dataset.cameraReady === "false" };
+      return { count: frames.length, offscreen: frames.filter(frame => { const rect = frame.getBoundingClientRect(); return rect.right <= stage.left || rect.left >= stage.right || rect.bottom <= stage.top || rect.top >= stage.bottom; }).length, surfaceWidth: plane.width, surfaceHeight: plane.height, stageWidth: stage.width, stageHeight: stage.height, moving: document.querySelector(".review-workspace").dataset.cameraReady === "false", camera: document.querySelector('.react-flow__viewport').style.transform, frames: frames.map(frame => { const rect=frame.getBoundingClientRect();return {id:frame.dataset.preview,x:rect.x,y:rect.y,width:rect.width,height:rect.height};}) };
     });
     proof.samples++; proof.maxOffscreen = Math.max(proof.maxOffscreen, result.offscreen);
     assert.equal(result.offscreen, 0, `release offscreen preview documents during the gesture, before touchend: ${JSON.stringify(result)}`);

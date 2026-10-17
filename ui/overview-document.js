@@ -3,7 +3,12 @@
 // original running apps remain separate, bounded LiveFrames.
 function renderOverview() {
   const world = document.getElementById("world"), documents = new Map(), fonts = new Map();
-  let token, layout = [];
+  let token, layout = [], lowDetail = true, detailTimer;
+  const detail = reduced => {
+    if (reduced === lowDetail) return;
+    lowDetail = reduced;
+    for (const host of documents.values()) host.dataset.lowDetail = String(reduced);
+  };
   const remove = id => {
     const host = documents.get(id);
     if (!host) return;
@@ -15,6 +20,7 @@ function renderOverview() {
     for (const item of layout) {
       const host = documents.get(item.id);
       if (!host) continue;
+      host.dataset.lowDetail = String(lowDetail);
       host.hidden = !item.visible;
       host.dataset.visible = String(item.visible);
       Object.assign(host.style, { left: `${item.x}px`, top: `${item.y + 4}px`, width: `${item.width}px`, height: `${item.height}px`, transform: `scale(${390 / item.width})` });
@@ -25,11 +31,19 @@ function renderOverview() {
     const message = event.data;
     if (token && token !== message.token) return;
     token = message.token;
-    if (message.command === "clear") { world.replaceChildren(); documents.clear(); document.querySelectorAll("style[data-font]").forEach(el => el.remove()); fonts.clear(); }
+    if (message.command === "clear") {
+      clearTimeout(detailTimer); lowDetail = true;
+      world.replaceChildren(); documents.clear();
+      document.querySelectorAll("style[data-font]").forEach(el => el.remove()); fonts.clear();
+    }
     if (message.command === "evict") remove(message.id);
     if (message.command === "camera") {
       const { x, y, zoom } = message.viewport;
       world.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`;
+      // Preserve source layout: CSS zoom reflows native controls differently
+      // across engines. Only defer backdrop effects while moving or tiny.
+      clearTimeout(detailTimer); detail(true);
+      if (zoom * 390 >= 120) detailTimer = setTimeout(() => detail(false), 150);
     }
     if (message.command === "layout") { layout = message.items; place(); }
     if (message.command === "document") {
@@ -49,7 +63,7 @@ function renderOverview() {
       host.style.background = message.document.background;
       const shadow = host.attachShadow({ mode: "open" });
       const reset = document.createElement("style");
-      reset.textContent = ":host{all:initial;display:block}*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}html{min-height:100%;overflow:hidden}";
+      reset.textContent = ":host{all:initial;display:block}*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}:host([data-low-detail=true]) *,:host([data-low-detail=true]) *::before,:host([data-low-detail=true]) *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}html{min-height:100%;overflow:hidden}";
       shadow.append(reset, document.importNode(parsed.documentElement, true));
       documents.set(message.id, host); world.append(host); place();
       Promise.all([...shadow.querySelectorAll("img")].map(img => img.decode().catch(() => {}))).then(async () => {

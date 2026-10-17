@@ -23,6 +23,7 @@ const nodeTypes = { screen: ScreenNode, section: GroupNode };
 const { catalog, pages } = project;
 const flows = graphFlows(project), coverage = caseCoverage(project);
 const runId = crypto.randomUUID();
+const initialViewport = { x: 0, y: 0, zoom: .05 };
 
 function Canvas() {
   // Use the graph's actual transform for preview culling and the shared
@@ -179,7 +180,7 @@ function Canvas() {
       </PageNavigator></>}
       <main className="canvas-area">
         <div className="flow-stage" ref={stage}>
-          <ReactFlow nodes={cardNodes} edges={edges} nodeTypes={nodeTypes}
+          <ReactFlow defaultViewport={initialViewport} nodes={cardNodes} edges={edges} nodeTypes={nodeTypes}
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
             onPaneClick={() => { browse(); select(null); }}
@@ -187,7 +188,7 @@ function Canvas() {
             minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
-            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} revision={manifest.revision} onError={setPreviewErrors} />
+            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
               <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} presentation={presenting} />
             </div></ViewportPortal>}
