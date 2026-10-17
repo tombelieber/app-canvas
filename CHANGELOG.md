@@ -1,5 +1,11 @@
 # App Canvas
 
+## 0.9.0
+
+- Discover source files, regions, branches, native presentation sites and data records before choosing Canvas cases. Keep unresolved and changed source visible in the population worklist.
+- Add `--complete`: require source review, connected cases and source-linked runtime assertions. Native evidence includes build and fixture identities plus checksummed captures. Registered-case verification alone cannot claim complete population.
+- Ship the source walkthrough with the canonical skill and exercise the installed CLI completion gate during onboarding and Pages regression checks.
+
 ## 0.8.0
 
 - Own the canonical skill, completion/native references, CLI and releases in

@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
