@@ -1,5 +1,10 @@
 # App Canvas
 
+## 0.10.1
+
+- Keep large catalogs responsive by bounding detailed card contents while preserving every case, connection, camera target and retained live app instance.
+- Resolve Demo page selection with one catalog pass so opening controls remains responsive at 20,000 cases.
+
 ## 0.10.0
 
 - Add **▶ Demo** for one-click audience presentations of existing journeys,

@@ -59,7 +59,7 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.10.0
+npm install --save-dev github:tombelieber/app-canvas#v0.10.1
 npx app-canvas browsers
 ```
 
