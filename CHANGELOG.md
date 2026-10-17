@@ -5,6 +5,7 @@
 - Bound passive source DOM loading and retention to 128 documents for large landscapes. Evict their DOM/font resources and cancel obsolete requests while keeping every case addressable.
 - Preserve edited live app instances during navigation and keep fallback app renderers within the existing live-frame budget.
 - Wait for an explicit true readiness signal before capturing passive source UI; a loading marker cannot become a successful snapshot.
+- Keep recognized IDE XML configuration in the source review queue without misclassifying its tags as application controls; native UI XML still requires UI evidence.
 - Add a 260-case browser regression and a 15,000-state selection/eviction check; retain the complete ordinary overview and Chromium/WebKit regression gates.
 
 ## 0.9.0
