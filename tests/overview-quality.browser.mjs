@@ -62,6 +62,26 @@ for (const engine of [chromium, webkit]) {
     assert.equal(await effect(), "none", "an old idle callback must not restore effects at overview zoom");
     await camera(1); await full();
     assert.equal(await effect(), "blur(12px)", "idle detail restores the original CSS effect");
+    // A camera update must not dirty every source tree when its layout and
+    // visibility are unchanged. These redundant attributes invalidate styles.
+    await camera(.05);
+    await frame.evaluate(() => new Promise(resolve => setTimeout(resolve, 220)));
+    await frame.locator('[data-preview]').evaluate(host => {
+      globalThis.sourceMutations = [];
+      new MutationObserver(records => sourceMutations.push(...records.map(r => r.attributeName))).observe(host, { attributes: true });
+    });
+    for (let step = 0; step < 20; step++) await send([
+      { command: "camera", viewport: { x: step, y: step, zoom: .05 } },
+      { command: "layout", items: [{ id: "source", x: 0, y: 0, width: 390, height: 844, visible: true }] },
+    ]);
+    await frame.waitForFunction(() => document.querySelector('#world').style.transform.includes('19px'));
+    assert.deepEqual(await frame.evaluate(() => sourceMutations), [], "moving the camera or repeating a layout must not rewrite unchanged source attributes");
+    await send([{ command: "layout", items: [{ id: "source", x: 100, y: 200, width: 390, height: 844, visible: false }] }]);
+    await frame.waitForFunction(() => document.querySelector('[data-preview]').hidden);
+    assert.equal(await frame.locator('[data-preview]').evaluate(host => host.style.left), "100px", "actual layout changes still apply");
+    await send([{ command: "layout", items: [{ id: "source", x: 100, y: 200, width: 390, height: 844, visible: true }] }]);
+    await frame.waitForFunction(() => !document.querySelector('[data-preview]').hidden);
+    assert.equal(await frame.locator('[data-preview]').evaluate(host => host.style.top), "204px");
     console.log(`PASS ${engine.name()}: unchanged source text/form layout from 1.5% to 500%; thumbnail/motion effects and idle recovery.`);
   } finally { await browser.close(); }
 }

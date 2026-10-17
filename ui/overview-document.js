@@ -3,7 +3,7 @@
 // original running apps remain separate, bounded LiveFrames.
 function renderOverview() {
   const world = document.getElementById("world"), documents = new Map(), fonts = new Map();
-  let token, layout = [], lowDetail = true, detailTimer;
+  let token, layout = new Map(), lowDetail = true, detailTimer;
   const detail = reduced => {
     if (reduced === lowDetail) return;
     lowDetail = reduced;
@@ -16,15 +16,17 @@ function renderOverview() {
     if (font && --font.references === 0) { font.style.remove(); fonts.delete(host.fontKey); }
     host.remove(); documents.delete(id);
   };
-  const place = () => {
-    for (const item of layout) {
-      const host = documents.get(item.id);
-      if (!host) continue;
-      host.dataset.lowDetail = String(lowDetail);
+  const place = (host, item) => {
+    if (!host || !item) return;
+    const visible = String(item.visible);
+    if (host.dataset.visible !== visible) {
       host.hidden = !item.visible;
-      host.dataset.visible = String(item.visible);
-      Object.assign(host.style, { left: `${item.x}px`, top: `${item.y + 4}px`, width: `${item.width}px`, height: `${item.height}px`, transform: `scale(${390 / item.width})` });
+      host.dataset.visible = visible;
     }
+    const geometry = `${item.x},${item.y},${item.width},${item.height}`;
+    if (host.geometry === geometry) return;
+    host.geometry = geometry;
+    Object.assign(host.style, { left: `${item.x}px`, top: `${item.y + 4}px`, width: `${item.width}px`, height: `${item.height}px`, transform: `scale(${390 / item.width})` });
   };
   window.addEventListener("message", event => {
     if (event.source !== parent || event.data?.channel !== "app-canvas-overview") return;
@@ -45,7 +47,10 @@ function renderOverview() {
       clearTimeout(detailTimer); detail(true);
       if (zoom * 390 >= 120) detailTimer = setTimeout(() => detail(false), 150);
     }
-    if (message.command === "layout") { layout = message.items; place(); }
+    if (message.command === "layout") {
+      layout = new Map(message.items.map(item => [item.id, item]));
+      for (const [id, item] of layout) place(documents.get(id), item);
+    }
     if (message.command === "document") {
       const parsed = new DOMParser().parseFromString(message.document.html, "text/html");
       // Defense in depth for older capture documents. Only the renderer's own
@@ -60,12 +65,13 @@ function renderOverview() {
       const host = document.createElement("div");
       host.fontKey = fontKey; fonts.get(fontKey).references++;
       host.dataset.preview = message.id; host.hidden = true;
+      host.dataset.lowDetail = String(lowDetail);
       host.style.background = message.document.background;
       const shadow = host.attachShadow({ mode: "open" });
       const reset = document.createElement("style");
       reset.textContent = ":host{all:initial;display:block}*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}:host([data-low-detail=true]) *,:host([data-low-detail=true]) *::before,:host([data-low-detail=true]) *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}html{min-height:100%;overflow:hidden}";
       shadow.append(reset, document.importNode(parsed.documentElement, true));
-      documents.set(message.id, host); world.append(host); place();
+      documents.set(message.id, host); world.append(host); place(host, layout.get(message.id));
       Promise.all([...shadow.querySelectorAll("img")].map(img => img.decode().catch(() => {}))).then(async () => {
         await document.fonts.ready;
         if (!host.isConnected) return;

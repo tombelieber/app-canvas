@@ -49,3 +49,13 @@ test("a complete native catalog bounds card DOM and preserves offscreen running 
   assert.equal(moved.at(-1).data.shellOnly,false);
   assert.deepEqual(result.map(n=>n.id),catalog.map(n=>n.id),"camera/filter changes preserve sibling order for running frames");
 });
+
+test("camera motion reuses unchanged preview memberships but never hides a same-size replacement", async () => {
+  const { preserveMembers } = await import("../ui/preview-pool.js");
+  const old = new Set(["source-a", "source-b"]);
+  assert.equal(preserveMembers(old, new Set(["source-b", "source-a"])), old, "unchanged membership must not invalidate every screen consumer");
+  const next = new Set(["source-b", "source-c"]);
+  assert.equal(preserveMembers(old, next), next, "camera culling must publish entering/leaving sources even at the same count");
+  assert.deepEqual([...old], ["source-a", "source-b"], "retained membership cannot be mutated by a later camera");
+  assert.equal(preserveMembers(old, new Set()).size, 0);
+});

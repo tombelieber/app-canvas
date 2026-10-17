@@ -16,7 +16,7 @@ import { DemoPlayer } from "./DemoPlayer.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
 import { scopedScreens } from "../lib/pages.mjs";
 import { journeyPlan } from "../lib/playback.mjs";
-import { previewPool, visiblePreviews, renderedNodes } from "./preview-pool.js";
+import { previewPool, visiblePreviews, renderedNodes, preserveMembers } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
@@ -101,13 +101,14 @@ function Canvas() {
     const byId = new Map(placed.map(n => [n.id, n]));
     return [...placed.filter(n => n.type !== "screen"), ...catalog.map(s => byId.get(s.id))];
   }, [visible, manifest, view, selectedId, active, player.state?.screen, journeyScreens, depth, area]);
-  const previews = useMemo(() => visiblePreviews(nodes, viewport, area), [nodes, viewport, area]);
+  const previewMembership = useRef(new Set()), mountedMembership = useRef(new Set());
+  const previews = useMemo(() => previewMembership.current = preserveMembers(previewMembership.current, visiblePreviews(nodes, viewport, area)), [nodes, viewport, area]);
   const mounted = useMemo(() => {
     const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
     // Legacy manifests and drawing surfaces that cannot be represented by
     // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
     if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
-    return ids;
+    return mountedMembership.current = preserveMembers(mountedMembership.current, ids);
   }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
   const cardNodes = useMemo(() => renderedNodes(nodes, previews, mounted), [nodes, previews, mounted]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
@@ -165,7 +166,7 @@ function Canvas() {
   }));
   const linked = displayedFlows.filter(f => f.from === selectedId || f.to === selectedId);
   const rendered = Object.values(manifest.screens || {}).filter(s => !s.error).length;
-  const context = { bridge, selected: selectedId, active, resets, revision: manifest.revision, runId, mounted, previews, previewErrors };
+  const context = useMemo(() => ({ bridge, selected: selectedId, active, resets, revision: manifest.revision, runId, mounted, previews, previewErrors }), [bridge, selectedId, active, resets, manifest.revision, mounted, previews, previewErrors]);
   const journeyNode = player.state && nodes.find(node => node.id === player.state.screen), entryUrl = player.state && manifest.screens[player.state.definition.entry]?.url;
   const inspector = preferences.panels.right;
   const toggleRight = () => preferences.toggle("right");

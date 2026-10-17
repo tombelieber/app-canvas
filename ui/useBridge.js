@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export function useBridge(onExit) {
   const registry = useRef(new Map()), pending = useRef(new Map()), waiting = useRef(new Map()), exit = useRef(onExit);
   exit.current = onExit;
@@ -81,5 +81,5 @@ export function useBridge(onExit) {
     for (const waiter of waiting.current.get(id) || []) { clearTimeout(waiter.timer); waiter.reject(Error("Journey stopped")); }
     waiting.current.delete(id);
   }, []);
-  return { states, registry, register, send, command, whenReady, cancel };
+  return useMemo(() => ({ states, registry, register, send, command, whenReady, cancel }), [states, register, send, command, whenReady, cancel]);
 }

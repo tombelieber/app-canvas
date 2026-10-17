@@ -1,6 +1,10 @@
 // Keep edited app instances alive. Unvisited/offscreen previews are disposable;
 // never serialize/replay arbitrary app input events to pretend to restore state.
 import { OVERVIEW_LIMIT } from "./overview-loader.js";
+// A camera tick is not a new screen state when the same sources remain visible.
+export function preserveMembers(previous, next) {
+  return previous.size === next.size && [...next].every(id => previous.has(id)) ? previous : next;
+}
 export function renderedNodes(nodes, previews, mounted) {
   if (nodes.length <= OVERVIEW_LIMIT) return nodes;
   // Keep graph geometry, handles and sibling ordering for every source case.
