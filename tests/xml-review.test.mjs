@@ -27,6 +27,7 @@ test('native UI XML and JSX elements cannot use the structural-configuration exp
     ['ios/App-Info.plist', '<plist><dict><key>UILaunchStoryboardName</key><string>Launch</string></dict></plist>', '.plist'],
     ['ios/ArchivedView.plist', '<plist><dict><key>$classname</key><string>UIView</string></dict></plist>', '.plist'],
     ['ios/ArchivedNavigation.plist', '<plist><dict><key>$classname</key><string>UINavigationController</string></dict></plist>', '.plist'],
+    ['ios/Permission.plist', '<plist><dict><key>NSUserTrackingUsageDescription</key><string>Allow tracking</string></dict></plist>', '.plist'],
     ['android/res/layout/embedded-policy.xml', '<LinearLayout><data-extraction-rules/></LinearLayout>', '.xml'],
   ]) {
     const found = discovered(path, content, extension);
@@ -38,6 +39,7 @@ test('native UI XML and JSX elements cannot use the structural-configuration exp
 test('property-list data and platform backup policy retain explicit non-UI review', () => {
   for (const [path, content, extension] of [
     ['ios/SavedPreferences.plist', '<plist><dict><key>Enabled</key><true/></dict></plist>', '.plist'],
+    ['ios/UnitTests-Info.plist', '<plist><dict><key>CFBundlePackageType</key><string>BNDL</string></dict></plist>', '.plist'],
     ['android/res/xml/data_rules.xml', '<data-extraction-rules><cloud-backup><exclude domain="file" path="."/></cloud-backup></data-extraction-rules>', '.xml'],
   ]) {
     const found = discovered(path, content, extension);
