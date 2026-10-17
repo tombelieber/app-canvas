@@ -12,6 +12,11 @@
 - Keep the shared preview surface and touch culling synchronized with the
   actual canvas camera during gestures and presentation transitions.
 
+## 0.9.2
+
+- Recognize parameterized Objective-C superclass initializers when reviewing the nil-construction outcome; actual UI construction and fallback branches still require evidence.
+- Identify Android lint configuration by its filename, location and allowed XML tags. Keep native resource XML and unrelated files protected by the rendering-source gate.
+
 ## 0.9.1
 
 - Bound passive source DOM loading and retention to 128 documents for large landscapes. Evict their DOM/font resources and cancel obsolete requests while keeping every case addressable.

@@ -29,10 +29,23 @@ test('native UI XML and JSX elements cannot use the structural-configuration exp
     ['ios/ArchivedNavigation.plist', '<plist><dict><key>$classname</key><string>UINavigationController</string></dict></plist>', '.plist'],
     ['ios/Permission.plist', '<plist><dict><key>NSUserTrackingUsageDescription</key><string>Allow tracking</string></dict></plist>', '.plist'],
     ['android/res/layout/embedded-policy.xml', '<LinearLayout><data-extraction-rules/></LinearLayout>', '.xml'],
+    ['android/res/layout/lint.xml', '<lint><issue/></lint>', '.xml'],
+    ['android/lint.xml', '<lint><button/></lint>', '.xml'],
+    ['android/layout.xml', '<lint><issue/></lint>', '.xml'],
   ]) {
     const found = discovered(path, content, extension);
     const inventory = { obligations: found.obligations, items: [], reviews: found.obligations.map(item => ({ id: item.id, nonUiReason: 'Configuration' })) };
     assert.throws(() => checkDiscoveryCoverage(found, inventory), /Rendering source cannot be dismissed/, path);
+  }
+});
+
+test('Android lint configuration needs source review without a fabricated UI case', () => {
+  for(const content of ['<lint/>','<lint><issue id="UnusedResources"><ignore path="generated/**"/></issue></lint>']) {
+    const found=discovered('android/app/lint.xml',content,'.xml');
+    const inventory={obligations:found.obligations,items:[],reviews:[]};
+    assert.throws(()=>checkDiscoveryCoverage(found,inventory),/unreviewed/);
+    inventory.reviews=found.obligations.map(item=>({id:item.id,nonUiReason:'Android static lint analysis configuration outside runtime resources; source inspected, no view/layout declarations'}));
+    assert.doesNotThrow(()=>checkDiscoveryCoverage(found,inventory));
   }
 });
 
