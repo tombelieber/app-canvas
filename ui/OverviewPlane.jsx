@@ -4,23 +4,20 @@ import { createOverviewLoader, OVERVIEW_LIMIT } from "./overview-loader.js";
 
 export function OverviewPlane({ nodes, area, previews, mounted, liveScreen, revision, onError }) {
   const viewport = useViewport();
-  const frame = useRef(null), latest = useRef(null), jobs = useRef(null), lastLayout = useRef(null), [loaded, setLoaded] = useState(0);
+  const frame = useRef(null), latest = useRef(null), jobs = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
   const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
   const sourceKey = useMemo(() => JSON.stringify(sources.length <= OVERVIEW_LIMIT ? sources : sources.filter(source => previews.has(source.id) && !mounted.has(source.id))), [sources, previews, mounted]);
   const layout = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen })), [nodes, previews, mounted, liveScreen]);
-  const layoutKey = useMemo(() => JSON.stringify(layout), [layout]);
   latest.current = { viewport, layout };
   useEffect(() => {
     if (!loaded) return;
-    const changed = lastLayout.current?.loaded !== loaded || lastLayout.current?.key !== layoutKey;
     // Culling and camera movement are one transaction: WebKit must not paint
     // the previous visible set at the new, potentially much larger scale.
-    send({ command: "camera", viewport, ...(changed ? { items: layout } : {}) });
-    lastLayout.current = { loaded, key: layoutKey };
-  }, [loaded, viewport, layoutKey, send]);
+    send({ command: "camera", viewport, items: layout });
+  }, [loaded, viewport, layout, send]);
   useEffect(() => {
     if (!loaded) return;
     const loader = createOverviewLoader({
