@@ -1,5 +1,10 @@
 # App Canvas
 
+## 0.10.2
+
+- Keep only the latest pending manifest for a slow event-stream client, avoiding unbounded server memory growth while measuring large catalogs.
+- Keep Safari shared previews visible through canvas zoom gestures and preserve Demo action focus inside the app frame.
+
 ## 0.10.1
 
 - Keep large catalogs responsive by bounding detailed card contents while preserving every case, connection, camera target and retained live app instance.

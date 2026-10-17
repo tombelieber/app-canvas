@@ -45,7 +45,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.10.1
+npm install -g github:tombelieber/app-canvas#v0.10.2
 app-canvas browsers
 app-canvas demo
 ```
