@@ -1,5 +1,9 @@
 # App Canvas
 
+## 0.10.3
+
+- Verify every addressable case in large catalogs while keeping rendered card contents bounded. The public verification path now supports catalogs larger than the overview rendering budget.
+
 ## 0.10.2
 
 - Keep only the latest pending manifest for a slow event-stream client, avoiding unbounded server memory growth while measuring large catalogs.
