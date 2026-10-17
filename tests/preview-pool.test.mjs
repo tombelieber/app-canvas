@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { previewPool, visiblePreviews } from "../ui/preview-pool.js";
+import { previewPool, visiblePreviews, renderedNodes } from "../ui/preview-pool.js";
 const nodes = Array.from({length:30},(_,i)=>({id:String(i),type:"screen",position:{x:i*10,y:0},data:{visible:true,height:844}}));
 const base={nodes,viewport:{x:0,y:0,zoom:1},area:{width:820,height:900},retained:[],limit:4,playing:false};
 test("full DOM previews stay visible even at overview zoom, and offscreen documents are released",()=>{
@@ -27,4 +27,25 @@ test("zoomed-out and collapsed previews do not start background apps",()=>{
   assert.equal(previewPool({...base,viewport:{x:0,y:0,zoom:.02}}).size,0);
   assert.equal(previewPool({...base,nodes:nodes.map(n=>({...n,data:{...n.data,compact:true}}))}).size,0);
   assert.equal(previewPool(base).size,4);
+});
+test("a fifteen-thousand-state overview bounds passive work without removing catalog nodes",()=>{
+  const landscape=Array.from({length:15000},(_,i)=>({id:`case-${i}`,type:"screen",position:{x:(i%20)*490,y:Math.floor(i/20)*900},data:{visible:true,height:844}}));
+  const visible=visiblePreviews(landscape,{x:0,y:0,zoom:.001},base.area);
+  assert.ok(visible.size<=128,`${visible.size} simultaneous passive previews exceed the document budget`);
+  assert.equal(landscape.length,15000);
+  const target=landscape.at(-1);
+  assert.ok(visiblePreviews(landscape,{x:-target.position.x,y:-target.position.y,zoom:1},base.area).has(target.id),"the final case stays addressable by camera navigation");
+});
+test("a complete native catalog bounds card DOM and preserves offscreen running drafts",()=>{
+  const catalog=Array.from({length:20637},(_,i)=>({id:`native-${i}`,type:"screen",data:{visible:true}}));
+  const previews=new Set(catalog.slice(0,128).map(n=>n.id));
+  const retained=new Set([catalog.at(-1).id]);
+  const result=renderedNodes(catalog,previews,retained);
+  assert.equal(result.length,catalog.length,"source IDs remain in the graph model");
+  assert.equal(result.filter(n=>!n.data.shellOnly).length,129,"offscreen card DOM is bounded separately from preview documents");
+  assert.equal(result.at(-1).data.shellOnly,false,"retained native app ancestors must never unmount");
+  const moved=renderedNodes(catalog,new Set([catalog[19000].id]),retained);
+  assert.equal(moved.find(n=>n.id==='native-19000').data.shellOnly,false,"camera navigation can address a case outside the original viewport");
+  assert.equal(moved.at(-1).data.shellOnly,false);
+  assert.deepEqual(result.map(n=>n.id),catalog.map(n=>n.id),"camera/filter changes preserve sibling order for running frames");
 });

@@ -52,6 +52,13 @@ first successful screens are not stopping conditions.
 
 ## Machine-checked inventory
 
+Full population requires the generated **version 2** worklist and `--complete`:
+follow the [source walkthrough](source-audit.md). `discover` supplies `files`,
+`obligations` and `sourceRoot`; `reviews` resolve each obligation into semantic
+items or a specific non-UI explanation. Process every region and candidate.
+The version 1 schema below remains compatible for construction/legacy checks,
+but cannot pass full-population acceptance.
+
 Use an installed tool revision that exports `@tombelieber/app-canvas/inventory`.
 Pin that verified commit and lockfile. An older CLI must be updated rather than
 silently omitting the gate. The fingerprint helper scans declared files and
@@ -113,10 +120,11 @@ output inspection remain required work.
 1. Reconcile the source inventory against the complete catalog. Resolve every
    pending UI item and inspect every rendered state, including layout/platform
    variants and long/off-screen content. No unexplained omissions remain.
-2. Enable all three coverage flags. Run `--check`, `--verify` and project-native
+2. Resolve the version 2 worklist. Run `--complete` and project-native
    render/capture checks. Every case needs a distinguishing assertion; generic
    "body exists" or "image exists" checks cannot establish its intended state.
-3. Demonstrate a removed mapping and a new/changed source fail the gate, then
+3. Demonstrate removing a state from both inventory and catalog still fails,
+   and a new/changed source fails the gate, then
    restore them. Verify original-source edits refresh web UI or trigger native
    rebuild/recapture; a stale screenshot cannot prove the current source.
 4. Deliver the working URL, discovered/rendered/pending counts by kind and

@@ -12,9 +12,11 @@ import { LiveFrame } from "./LiveFrame.jsx";
 import { OverviewPlane } from "./OverviewPlane.jsx";
 import { useJourney } from "./useJourney.js";
 import { JourneyPanel } from "./JourneyPanel.jsx";
+import { DemoPlayer } from "./DemoPlayer.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
 import { scopedScreens } from "../lib/pages.mjs";
-import { previewPool, visiblePreviews } from "./preview-pool.js";
+import { journeyPlan } from "../lib/playback.mjs";
+import { previewPool, visiblePreviews, renderedNodes } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
@@ -24,25 +26,25 @@ const runId = crypto.randomUUID();
 const initialViewport = { x: 0, y: 0, zoom: .05 };
 
 function Canvas() {
-  const manifest = useManifest(), stage = useRef(null), camera = useReactFlow();
-  // Internal transforms and touch gestures need not emit onMove. Subscribe to
-  // the actual graph camera so previews and offscreen eviction cannot lag it.
-  const viewport = useViewport(), zoom = Math.round(viewport.zoom * 100);
+  // Use the graph's actual transform for preview culling and the shared
+  // surface; a separately copied viewport can lag during touch gestures.
+  const manifest = useManifest(), stage = useRef(null), camera = useReactFlow(), viewport = useViewport();
   const [page, setPage] = useState("all"), [query, setQuery] = useState("");
   const [selectedId, select] = useState(null), [active, setActive] = useState(null), [resets, setResets] = useState({});
   const [lines, setLines] = useState("related"), [request, setRequest] = useState(null);
   const [moving, setMoving] = useState(false), [area, setArea] = useState({ width: 800, height: 600 });
   const [journeyId, setJourneyId] = useState(""), [view, setView] = useState("overview"), [depth, setDepth] = useState("all");
   const [branches, setBranches] = useState(false), [autoStart, setAutoStart] = useState(false);
+  const [presenting, setPresenting] = useState(false), demoSnapshot = useRef(null);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);
   const [previewErrors, setPreviewErrors] = useState({});
   const preferences = usePanelPreferences(`app-canvas:panels:${location.pathname}:${project.title}`);
   const limit = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches ? 4 : 8;
   const cameraRun = useRef(0), previousNodes = useRef(new Map());
   const definition = project.journeys.find(j => j.id === journeyId);
-  const plan = useMemo(() => journeyId === "__all__" ? project.journeys : journeyId === "__flows__" ? project.journeys.filter(j => j.kind !== "case") : journeyId === "__cases__" ? project.journeys.filter(j => j.kind === "case") : definition ? [definition] : [], [journeyId, definition]);
+  const plan = useMemo(() => journeyPlan(project, journeyId), [journeyId]);
   const journeyScreens = useMemo(() => definition && !branches ? [...new Set([definition.entry, ...definition.steps.map(s => s.screen)])] : null, [definition, branches]);
-  const bridge = useBridge(() => { setActive(null); player.stop(); });
+  const bridge = useBridge(() => { if (presenting) exitDemo(); else { setActive(null); player.stop(); } });
   const selected = catalog.find(s => s.id === selectedId);
   const visible = useMemo(() => scopedScreens(catalog, { page: journeyId ? "all" : page, query, depth: journeyId ? "all" : depth, selected: selectedId, journey: journeyScreens }), [page, query, depth, selectedId, journeyId, journeyScreens]);
   const navigate = useCallback((id, interact = false) => {
@@ -61,8 +63,19 @@ function Canvas() {
   const browse = () => { setActive(null); player.stop(); };
   const goTo = (id, interact = false) => { player.stop(); navigate(id, interact); };
   const interact = (id = selectedId || catalog[0].id) => goTo(id, true);
-  useEffect(() => { if (autoStart && plan.length) { player.start(); setAutoStart(false); } }, [autoStart, plan]);
-  const chooseJourney = (id, autoplay = false) => { player.stop(); select(null); setActive(null); setPage("all"); setQuery(""); setJourneyId(id); setBranches(id.startsWith("__")); setAutoStart(autoplay); };
+  useEffect(() => { if (autoStart && plan.length) { player.start(false, { presentation: autoStart === "demo" }); setAutoStart(false); } }, [autoStart, plan]);
+  const chooseJourney = (id, autoplay = false, demo = false) => { player.stop(); select(null); setActive(null); setPage("all"); setQuery(""); setJourneyId(id); setBranches(id.startsWith("__")); setAutoStart(autoplay ? demo ? "demo" : "journey" : false); };
+  const startDemo = () => {
+    demoSnapshot.current = { page, query, selectedId, active, journeyId, branches, viewport: camera.getViewport() };
+    setPresenting(true); setMenu(false); setDrawer(false);
+    const pageScope = `__page__:${page}`;
+    chooseJourney(plan.length ? journeyId : page !== "all" && journeyPlan(project, pageScope).length ? pageScope : "__all__", true, true);
+  };
+  const exitDemo = () => {
+    player.stop(); setAutoStart(false); setPresenting(false);
+    const saved = demoSnapshot.current;
+    if (saved) { setPage(saved.page); setQuery(saved.query); select(saved.selectedId); setActive(saved.active); setJourneyId(saved.journeyId); setBranches(saved.branches); }
+  };
   const nodes = useMemo(() => {
     const groups = pages.map((p, i) => ({ ...p, color: project.groups[i % project.groups.length].color }));
     const grouped = visible.map(s => ({ ...s, group: s.pageId }));
@@ -93,28 +106,38 @@ function Canvas() {
     const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
     // Legacy manifests and drawing surfaces that cannot be represented by
     // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
-    for (const node of nodes) if (previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
+    if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
     return ids;
   }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
+  const cardNodes = useMemo(() => renderedNodes(nodes, previews, mounted), [nodes, previews, mounted]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
   useEffect(() => {
-    const observer = new ResizeObserver(entries => { const r = entries[0].contentRect; setArea({ width: r.width, height: r.height }); setRequest({ id: selectedId, nonce: performance.now() }); });
+    const observer = new ResizeObserver(entries => {
+      const r = entries[0].contentRect, restore = !presenting && demoSnapshot.current;
+      setArea({ width: r.width, height: r.height });
+      setRequest({ id: selectedId, viewport: restore?.viewport, nonce: performance.now() });
+      if (restore) demoSnapshot.current = null;
+    });
     if (stage.current) observer.observe(stage.current);
     return () => observer.disconnect();
-  }, [selectedId]);
+  }, [selectedId, presenting]);
   useLayoutEffect(() => {
     if (!request || !camera.viewportInitialized || !stage.current || !nodes.length) return;
     const node = request.id && nodes.find(n => n.id === request.id);
     if (request.id && !node) return;
     const visibleNodes = nodes.filter(n => n.type === "screen" && n.data.visible);
     if (!node && !visibleNodes.length) { setRequest(null); return; }
-    const position = cameraFor(node ? screenBounds(node) : overviewBounds(visibleNodes), stage.current.getBoundingClientRect(), { padding: node ? 40 : 35, maxZoom: node ? 4 : 1 });
+    const bounds = node && presenting ? { x: node.position.x, y: node.position.y - 42, width: 390, height: node.data.height + 60 } : node ? screenBounds(node) : overviewBounds(visibleNodes);
+    const position = request.viewport || cameraFor(bounds, stage.current.getBoundingClientRect(), { padding: node ? 40 : 35, maxZoom: node ? 4 : 1 });
     const currentCamera = ++cameraRun.current; setMoving(true);
     camera.setViewport(position, { duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240 }).finally(() => { if (cameraRun.current === currentCamera) setMoving(false); });
     setRequest(null);
   }, [request, nodes, camera]);
   useEffect(() => { if (!selectedId) fit(); }, [manifest.status, fit]);
   useEffect(fit, [journeyId, view, depth, branches]);
+  useEffect(() => {
+    if (!presenting && demoSnapshot.current) setRequest({ viewport: demoSnapshot.current.viewport, nonce: performance.now() });
+  }, [presenting]);
   const selectPage = id => { browse(); setJourneyId(""); setPage(id); setQuery(""); select(null); setDrawer(false); fit(); };
   const search = value => { browse(); setJourneyId(""); setPage("all"); setQuery(value); select(null); fit(); };
   const changeView = next => { setView(next);  if (next === "machine") setBranches(true); };
@@ -124,13 +147,14 @@ function Canvas() {
   };
   useEffect(() => {
     const key = event => {
-      if (event.key === "Escape") { setActive(null); player.stop(); setMenu(false); setDrawer(false); return; }
+      if (event.key === "Escape") { if (presenting) exitDemo(); else { setActive(null); player.stop(); } setMenu(false); setDrawer(false); return; }
+      if (presenting) return;
       if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
       if (event.key === "1") { event.preventDefault(); fit(); }
       if (event.key === "2" && selectedId) { event.preventDefault(); navigate(selectedId, !!active); }
     };
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
-  }, [fit, navigate, selectedId, active]);
+  }, [fit, navigate, selectedId, active, presenting]);
   const shown = new Set(visible.map(s => s.id));
   const journeyFlows = !branches && definition?.steps.map((step, i) => ({ from: i ? definition.steps[i - 1].screen : definition.entry, to: step.screen, label: step.title })).filter(edge => edge.from !== edge.to);
   const displayedFlows = journeyFlows || flows;
@@ -146,9 +170,9 @@ function Canvas() {
   const inspector = preferences.panels.right;
   const toggleRight = () => preferences.toggle("right");
   return <PreviewContext.Provider value={context}>
-    <div className={`review-workspace ${inspector ? "has-inspector" : ""} ${preferences.panels.left ? "has-navigation" : ""} ${preferences.panels.top ? "has-top" : ""} ${drawer ? "drawer-open" : ""}`} data-view={view} data-mode={active ? "interact" : "browse"} data-preview-limit={limit} data-live-count={mounted.size + (player.state ? 1 : 0)} data-camera-ready={!moving && !request} data-live-ready={manifest.status === "ready" && [...mounted].every(id => bridge.states[id]?.ready && !bridge.states[id]?.error)}>
+    <div className={`review-workspace ${presenting ? "is-presenting" : ""} ${inspector ? "has-inspector" : ""} ${preferences.panels.left ? "has-navigation" : ""} ${preferences.panels.top ? "has-top" : ""} ${drawer ? "drawer-open" : ""}`} data-view={view} data-mode={active ? "interact" : "browse"} data-preview-limit={limit} data-live-count={mounted.size + (player.state ? 1 : 0)} data-camera-ready={!moving && !request} data-live-ready={manifest.status === "ready" && [...mounted].every(id => bridge.states[id]?.ready && !bridge.states[id]?.error)}>
       <header className={preferences.panels.top ? "workspace-bar" : "workspace-floating"}>
-        <WorkspaceDock preferences={preferences} menu={menu} setMenu={setMenu} drawer={drawer} setDrawer={setDrawer} active={active} browse={browse} interact={() => interact()} retained={retained} release={release} catalog={catalog} notice={notice} limit={limit} view={view} setView={changeView} fit={fit} rightOpen={inspector} toggleRight={toggleRight}
+        <WorkspaceDock preferences={preferences} menu={menu} setMenu={setMenu} drawer={drawer} setDrawer={setDrawer} active={active} browse={browse} interact={() => interact()} retained={retained} release={release} catalog={catalog} notice={notice} limit={limit} view={view} setView={changeView} fit={fit} rightOpen={inspector} toggleRight={toggleRight} startDemo={startDemo} demoReady={manifest.status === "ready" && !!project.journeys.length} hasJourneys={!!project.journeys.length}
           brand={<div className="workspace-identity"><a className="workspace-brand" href="./">{project.title}</a><span className={`sync-status ${manifest.status === "ready" ? "ready" : ""}`}><i />{manifest.status === "ready" ? `${rendered} 個畫面 · ${project.static ? "示範版本" : "已同步"}` : manifest.status === "error" ? "載入失敗" : `正在載入 ${rendered} / ${catalog.length}`}</span></div>} />
       </header>
       {preferences.panels.left && <><button className="drawer-backdrop" aria-label="收起導航" onClick={() => setDrawer(false)} /><PageNavigator pages={pages} catalog={catalog} page={page} query={query} selectPage={selectPage} selectedId={selectedId} goTo={goTo} lines={lines} setLines={setLines} links={project.links} close={() => { setDrawer(false); preferences.toggle("left"); }}>
@@ -156,7 +180,7 @@ function Canvas() {
       </PageNavigator></>}
       <main className="canvas-area">
         <div className="flow-stage" ref={stage}>
-          <ReactFlow defaultViewport={initialViewport} nodes={nodes} edges={edges} nodeTypes={nodeTypes}
+          <ReactFlow defaultViewport={initialViewport} nodes={cardNodes} edges={edges} nodeTypes={nodeTypes}
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
             onPaneClick={() => { browse(); select(null); }}
@@ -166,14 +190,16 @@ function Canvas() {
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
             <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
-              <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} />
+              <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} presentation={presenting} />
             </div></ViewportPortal>}
           </ReactFlow>
-          <div className="canvas-hint">{player.state ? "播放中 · 鏡頭跟隨流程" : active ? "Interact · 按 Browse 鎖定畫面" : "Browse · 拖動畫布，雙指縮放；選取畫面後按 Interact"}</div><div className="zoom-label">{zoom}%</div>
+          <div className="canvas-hint">{player.state ? "播放中 · 鏡頭跟隨流程" : active ? "Interact · 按 Browse 鎖定畫面" : "Browse · 拖動畫布，雙指縮放；選取畫面後按 Interact"}</div><div className="zoom-label">{Math.round(viewport.zoom * 100)}%</div>
+          {presenting && <div className="demo-shield" aria-hidden="true" />}
         </div>
+        {presenting && <DemoPlayer player={player} definitions={plan} title={project.title} catalog={catalog} pages={pages} journeys={project.journeys} selected={journeyId} onSelect={id => chooseJourney(id, true, true)} onReplay={() => player.start(false, { presentation: true })} onExit={exitDemo} />}
       </main>
       {inspector && <aside className="details-panel" aria-label="流程與資料"><div className="details-heading">流程與資料<button className="close" aria-label="收起右側資料" onClick={toggleRight}>›</button></div>
-        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} />
+        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />
         {selected ? <Inspector selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} /> : <p className="selection-hint">點選畫面放大，或揀選流程播放。<br />Browse 可拖動畫布；Interact 可操作畫面。</p>}
       </aside>}
     </div>

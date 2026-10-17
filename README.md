@@ -45,7 +45,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.8.0
+npm install -g github:tombelieber/app-canvas#v0.10.1
 app-canvas browsers
 app-canvas demo
 ```
@@ -62,10 +62,22 @@ Browse by dragging/zooming. Select a screen and press **Interact** or **▶ 操�
 use its controls directly on the canvas. **下一步**, **上一步** and graph edges
 select the destination and move the camera there. Esc returns to browsing.
 Filtering keeps drafts; **重設** restores only that named preview.
+Press **▶ Demo** in the toolbar for a hands-free presentation. It plays the
+selected journey or queue; with no selection it plays every authored flow and
+standalone case, or the flows related to the page you are browsing.
+The audience sees the continuing app, visible action cues, step captions and
+progress while the camera follows confirmed screens. Choose all demos, a page
+or one flow in the player. Its video-style controls include elapsed time,
+approximate remaining time, a step timeline, 0.5×–4× speed, next step and
+previous/next Demo. Pause, replay or exit with **Esc**; exiting restores your
+browsing scope and panels. Timeline positioning rebuilds the target flow's
+required state; skipped demos are labeled separately from completed ones.
+Projects with only standalone cases present those conditions with clear labels;
+projects without journeys need authored interactions before Demo is available.
 Use **播放流程** to run a checked journey, pause, single-step or replay with
 fresh fixtures. Flow links navigate between named cases; playback performs
 actions in one continuing app session. See [journey authoring](docs/journeys.md).
-Choose **全部流程與情境** to play the entire reviewed set. Each flow keeps its
+Choose **全部 Demo** to play the entire reviewed set. Each flow keeps its
 own continuing session; the next flow or standalone case starts fresh. A
 standalone case starts from its declared fixture condition and checks that
 view, including states that require an external login or provider outcome.
@@ -188,6 +200,14 @@ Existing integrations can adopt this incrementally; the UI shows missing
 case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
+
+For complete-population acceptance, use the [source walkthrough](skills/app-canvas/references/source-audit.md):
+`app-canvas discover --source-root <application> --out .artifacts/app-canvas/inventory.json`,
+resolve the `pending --inventory <file>` queue, then run `--complete` with
+source-linked runtime evidence. The gate recomputes the whole recorded scope,
+checks every source region/candidate and case, and rejects viewer-only native
+evidence. It forces the coverage flags even if the config disables them.
+Legacy `--check` / `--verify` results qualify registered cases only.
 
 UI and CSS edits refresh from source. **The agent owns discovering and
 registering new states.** The CLI does not infer business conditions; a complete

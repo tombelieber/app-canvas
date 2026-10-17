@@ -71,6 +71,61 @@ their own state. Manually following a flow leaves playback and focuses that
 named case. Escape exits in-canvas interaction; reset restores the selected
 case, or restarts the current journey with fresh fixtures.
 
+## One-click audience demo
+
+Press **▶ Demo** in the top toolbar without opening the journey controls.
+An explicitly selected journey or nonempty queue is honored. Otherwise Demo
+plays all authored flows and standalone cases in their configured order,
+starting each with fresh fixtures and retaining state inside each flow. When
+browsing one page, it defaults to that page's related journeys instead. Each
+standalone case keeps its **獨立情境** label. A project without journeys keeps
+Demo disabled; graph edges do not invent app operations. Existing configs
+need no new fields.
+
+**播放範圍** in the player or journey panel offers all demos, flows only,
+standalone cases only, a page or a single flow/case. Page scopes include any
+journey whose entry or confirmed destination belongs to that page. They keep
+the entire cross-page journey, including prerequisites on other pages. Pages
+without authored journeys have a disabled option; if the browsed page has
+none, the toolbar uses the full app playlist. Changing scope restarts that
+playlist and preserves the browsing snapshot for exit.
+
+Demo temporarily hides the editing panels, other screens and graph edges.
+The same continuing app and camera remain in use, with a visible target cue
+before each operation, pauses for the audience, step captions, progress,
+speed, pause/resume, replay and exit controls. Entry screens are held before
+the first action. These delays control presentation pace; readiness still
+depends on the existing DOM checks. Reduced-motion settings suppress cue
+animations and camera motion.
+
+The footer has an active elapsed clock, approximate remaining pacing time,
+and a keyboard/touch accessible step timeline. Pausing stops the clock;
+replaying or changing scope resets it. Remaining time responds to 0.5×, 1×,
+1.5×, 2×, 4× or instant speed. It estimates authored presentation delays,
+not app loading or asynchronous response times.
+
+**下一步** fast-forwards the necessary actions and assertions in the current
+step, then pauses. It does not omit operations that later steps depend on.
+The timeline starts the target flow from fresh fixtures and quickly replays
+its prerequisite steps before landing; paused playback stays paused.
+**上一個 Demo** and **下一個 Demo** start the neighboring flow with fresh
+fixtures. Skipped flows stay separate from verified completions, including
+in the final summary. Seeking backward clears later completion results.
+
+In Demo, pause finishes the in-flight action and stops before the next action.
+The regular journey controls retain their step-level pause and single-step
+behavior. Replay resets the selected queue's fixtures. A failed action or
+assertion stops at the last confirmed screen and shows its error without
+counting the destination. **退出** or **Esc**, including from a focused frame
+or open dialog, cancels playback and restores the previous browsing scope,
+selection and panel preferences. Audience pointer input cannot change the app
+or pan the presentation. The normal Browse/Interact and journey controls
+remain available after exit.
+
+Full-document navigation keeps the same isolated session and checks the new
+ready document. Outstanding read-only assertions can follow that document
+within their original timeout; clicks and other mutations are never retried.
+
 ## Whole-app state graph and complete playback
 
 The **畫面總覽** view exposes every registered case as a complete real UI.

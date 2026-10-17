@@ -68,6 +68,19 @@ and details use a bottom panel. Pointer type does not force landscape tablets
 into the narrow layout. Controls have 44px touch targets and inputs use 16px
 text. The remaining canvas is the camera's fit area.
 
+**▶ Demo** remains in the dock even when the top toolbar is collapsed. It
+starts an audience presentation of the selected journey/queue, defaulting to
+all authored demos, or related journeys when browsing a page. The player
+offers all/page/flow scope selection. Editing chrome and other screens are temporarily
+hidden without changing saved panel preferences. The continuing app keeps
+the native viewport, the camera follows confirmed states, and the footer
+shows action captions, a step timeline, elapsed/approximate remaining time,
+0.5×–4× speed, next step, previous/next Demo and pause/replay/exit controls.
+Positioning replays prerequisites from fresh fixtures; skipped demos stay
+separate from completed ones. Exit
+or Esc cancels playback and returns to the previous browsing scope. See
+[Demo playback](journeys.md#one-click-audience-demo) for pacing and errors.
+
 ## Full UI without starting every app
 
 During the existing isolated measurement pass, App Canvas captures the HTML
@@ -105,6 +118,11 @@ controls; playback uses one continuing original app. DOM-compatible previews
 keep at most **four running app frames on touch devices / eight on desktop**,
 including the player. Passive overview documents are not running app instances.
 During playback only the continuing app and retained drafts run.
+
+Large catalogs also defer card contents outside the preview and retained-app
+sets. Every source ID, graph position and connection handle stays addressable;
+only nearby cards and retained running apps mount their full contents. Page
+playlist selection scans the catalog once, rather than once per journey.
 
 Canvas/video/embedded/shadow-root content, imported or inaccessible styles,
 and assets that cannot be safely embedded fall back to the original live app.

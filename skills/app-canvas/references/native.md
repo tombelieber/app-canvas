@@ -57,6 +57,10 @@ the app in HTML. Reuse the shared canvas; keep the viewer and capture scripts
 inside the target repository's `ui-review/`. In a non-JS repository the CLI can
 be installed in that directory without inventing a root web application.
 
+Large landscapes retain every catalog case while loading a bounded set of
+passive source previews. Use page ownership, search and camera navigation to
+inspect each state; the preview cache is not a coverage denominator.
+
 Use `preview(ctx)` with `handle`/`url` or another verified loopback adapter.
 Call ready only after the intended image is loaded. Serve only allowlisted
 viewer assets and captures; never expose native source, databases, build
@@ -87,8 +91,9 @@ Bound native runtime concurrency and close task-owned processes after the batch.
 Reconcile the entire independent inventory, including all implemented native
 branches, against captures and native assertions. Native state/provenance
 failures must fail the project's verification command. Connect that command
-to the adapter's `verify` hook so `--verify` cannot pass from image existence
-alone. Enable the source inventory and all-case gates before handover. Deliver
+to the adapter's `verify` hook and return the source-linked native records
+required by the [source walkthrough](source-audit.md). Final acceptance uses
+`--complete`; image existence and viewer-only checks cannot satisfy it. Deliver
 the working populated canvas and separate viewer/native results. Report actual
 blockers without marking the full population complete, and continue all work
 that does not depend on them.

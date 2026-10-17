@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 
@@ -9,7 +10,9 @@ try {
   for (const engine of [chromium, webkit]) {
     const browser = await engine.launch({ headless: process.env.APP_CANVAS_HEADED !== "1" });
     try {
-      const page = await browser.newPage({ viewport: { width: 393, height: 852 }, hasTouch: true, isMobile: true, deviceScaleFactor: 3 });
+      // Compare source pixels at rest. Camera animation has its own zoom gate;
+      // a resize tween must not run between the two color comparison captures.
+      const page = await browser.newPage({ viewport: { width: 393, height: 852 }, hasTouch: true, isMobile: true, deviceScaleFactor: 3, reducedMotion: "reduce" });
       page.on("pageerror", error => console.error("PAGE:", error.message));
       page.on("console", message => { if (message.type() === "error") console.error("CONSOLE:", message.text()); });
       await page.goto(app.address);
@@ -37,6 +40,7 @@ try {
           return now - previous.since >= 80 && document.querySelector('.review-workspace').dataset.cameraReady === 'true';
         });
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        await overview.locator("html").first().evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
         const frame = await page.locator('iframe[data-overview]').boundingBox();
         const surfaces = await page.locator('.react-flow__node-screen').evaluateAll(nodes => Object.fromEntries(nodes.map(node => {
           const rect = node.querySelector('.screen-surface').getBoundingClientRect();
@@ -64,9 +68,31 @@ try {
       await checkAlignment();
       const surface = await page.locator('[data-id="capture-home"] .screen-surface').boundingBox();
       const clip = { x: Math.ceil(surface.x + 2), y: Math.ceil(surface.y + 2), width: Math.floor(surface.width - 4), height: Math.floor(surface.height - 4) };
-      const painted = await page.screenshot({ clip });
+      // Headed mobile emulation can use different clipping coordinates after
+      // resizing. Decode the same source area from the full page in both shots.
+      const capture = async () => {
+        const image = await page.screenshot({ fullPage: true });
+        const pixels = await page.evaluate(async ({ png, clip }) => {
+          const image = new Image(); image.src = `data:image/png;base64,${png}`; await image.decode();
+          const scale = image.width / document.documentElement.scrollWidth;
+          const x = Math.round(clip.x * scale), y = Math.round(clip.y * scale);
+          const width = Math.round(clip.width * scale), height = Math.round(clip.height * scale);
+          if (x < 0 || y < 0 || width <= 0 || height <= 0 || x + width > image.width || y + height > image.height) throw Error("Source comparison region is outside the full page");
+          const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height;
+          const context = canvas.getContext("2d"); context.drawImage(image, x, y, width, height, 0, 0, width, height);
+          return [...context.getImageData(0, 0, width, height).data];
+        }, { png: image.toString("base64"), clip });
+        return { image, pixels: Buffer.from(pixels) };
+      };
+      const painted = await capture();
       const clearGroups = await page.addStyleTag({ content: '.board-group{background:transparent!important}' });
-      assert.ok(painted.equals(await page.screenshot({ clip })), "group backgrounds must paint behind the source UI without tinting it");
+      const withoutGroups = await capture();
+      if (!painted.pixels.equals(withoutGroups.pixels)) {
+        await mkdir(".artifacts/shared-preview", { recursive: true });
+        await writeFile(`.artifacts/shared-preview/${engine.name()}-before.png`, painted.image);
+        await writeFile(`.artifacts/shared-preview/${engine.name()}-after.png`, withoutGroups.image);
+      }
+      assert.ok(painted.pixels.equals(withoutGroups.pixels), `${engine.name()}: group backgrounds must paint behind the source UI without tinting it`);
       await clearGroups.evaluate(el => el.remove());
       if (!await page.getByLabel("播放流程", { exact: true }).isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
       await page.getByLabel("播放流程", { exact: true }).selectOption("case-capture-home");

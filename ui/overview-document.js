@@ -2,12 +2,19 @@
 // never run here. Shadow trees isolate each source document's selectors/IDs;
 // original running apps remain separate, bounded LiveFrames.
 function renderOverview() {
-  const world = document.getElementById("world"), documents = new Map(), fonts = new Set();
+  const world = document.getElementById("world"), documents = new Map(), fonts = new Map();
   let token, layout = [], lowDetail = true, detailTimer;
   const detail = reduced => {
     if (reduced === lowDetail) return;
     lowDetail = reduced;
     for (const host of documents.values()) host.dataset.lowDetail = String(reduced);
+  };
+  const remove = id => {
+    const host = documents.get(id);
+    if (!host) return;
+    const font = fonts.get(host.fontKey);
+    if (font && --font.references === 0) { font.style.remove(); fonts.delete(host.fontKey); }
+    host.remove(); documents.delete(id);
   };
   const place = () => {
     for (const item of layout) {
@@ -29,6 +36,7 @@ function renderOverview() {
       world.replaceChildren(); documents.clear();
       document.querySelectorAll("style[data-font]").forEach(el => el.remove()); fonts.clear();
     }
+    if (message.command === "evict") remove(message.id);
     if (message.command === "camera") {
       const { x, y, zoom } = message.viewport;
       world.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`;
@@ -44,17 +52,20 @@ function renderOverview() {
       // nonce-authorized script may execute; the CSP also blocks connections.
       parsed.querySelectorAll("script,meta,base,link,iframe,object,embed").forEach(el => el.remove());
       for (const el of parsed.querySelectorAll("*")) for (const attr of [...el.attributes]) if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
-      if (!fonts.has(message.document.fonts)) {
-        const style = document.createElement("style"); style.dataset.font = ""; style.textContent = message.document.fonts; document.head.append(style); fonts.add(message.document.fonts);
+      remove(message.id);
+      const fontKey = message.document.fonts || "";
+      if (!fonts.has(fontKey)) {
+        const style = document.createElement("style"); style.dataset.font = ""; style.textContent = fontKey; document.head.append(style); fonts.set(fontKey, { style, references: 0 });
       }
       const host = document.createElement("div");
+      host.fontKey = fontKey; fonts.get(fontKey).references++;
       host.dataset.preview = message.id; host.hidden = true;
       host.style.background = message.document.background;
       const shadow = host.attachShadow({ mode: "open" });
       const reset = document.createElement("style");
       reset.textContent = ":host{all:initial;display:block}*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}:host([data-low-detail=true]) *,:host([data-low-detail=true]) *::before,:host([data-low-detail=true]) *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}html{min-height:100%;overflow:hidden}";
       shadow.append(reset, document.importNode(parsed.documentElement, true));
-      documents.get(message.id)?.remove(); documents.set(message.id, host); world.append(host); place();
+      documents.set(message.id, host); world.append(host); place();
       Promise.all([...shadow.querySelectorAll("img")].map(img => img.decode().catch(() => {}))).then(async () => {
         await document.fonts.ready;
         if (!host.isConnected) return;
