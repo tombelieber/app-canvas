@@ -83,6 +83,12 @@ fixed, hash-authorized bootstrap to restore the browser's own top layer and
 backdrop. Preview documents are inert and have an opaque origin; application
 scripts and event handlers are stripped, and cannot access the parent app.
 Both the full overview and graph show actual page contents at every zoom.
+The passive overview defers backdrop filters while the camera moves and in
+previews narrower than 120 canvas CSS pixels. Larger idle previews restore
+source effects after 150 ms; text and form layout do not change. Selection
+and playback keep the original application's effects. See
+[Safari rendering measurements](rendering-performance.md) for the experiments,
+quality tradeoff and device-qualification limits.
 Offscreen shared trees stop painting during viewport changes and are reused
 on return. They do not recreate browsing contexts or refetch source DOM on each
 zoom. The shared iframe's physical surface stays the size of the canvas, even

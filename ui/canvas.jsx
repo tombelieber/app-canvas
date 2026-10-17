@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, MarkerType, ViewportPortal, useReactFlow } from "@xyflow/react";
+import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, MarkerType, ViewportPortal, useReactFlow, useViewport } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "./canvas.css";
 import { ScreenNode, GroupNode, PreviewContext } from "./ScreenNode.jsx";
@@ -21,13 +21,17 @@ const nodeTypes = { screen: ScreenNode, section: GroupNode };
 const { catalog, pages } = project;
 const flows = graphFlows(project), coverage = caseCoverage(project);
 const runId = crypto.randomUUID();
+const initialViewport = { x: 0, y: 0, zoom: .05 };
 
 function Canvas() {
   const manifest = useManifest(), stage = useRef(null), camera = useReactFlow();
+  // Internal transforms and touch gestures need not emit onMove. Subscribe to
+  // the actual graph camera so previews and offscreen eviction cannot lag it.
+  const viewport = useViewport(), zoom = Math.round(viewport.zoom * 100);
   const [page, setPage] = useState("all"), [query, setQuery] = useState("");
   const [selectedId, select] = useState(null), [active, setActive] = useState(null), [resets, setResets] = useState({});
-  const [lines, setLines] = useState("related"), [zoom, setZoom] = useState(100), [request, setRequest] = useState(null);
-  const [moving, setMoving] = useState(false), [viewport, setViewport] = useState({ x: 0, y: 0, zoom: .05 }), [area, setArea] = useState({ width: 800, height: 600 });
+  const [lines, setLines] = useState("related"), [request, setRequest] = useState(null);
+  const [moving, setMoving] = useState(false), [area, setArea] = useState({ width: 800, height: 600 });
   const [journeyId, setJourneyId] = useState(""), [view, setView] = useState("overview"), [depth, setDepth] = useState("all");
   const [branches, setBranches] = useState(false), [autoStart, setAutoStart] = useState(false);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);
@@ -106,7 +110,7 @@ function Canvas() {
     if (!node && !visibleNodes.length) { setRequest(null); return; }
     const position = cameraFor(node ? screenBounds(node) : overviewBounds(visibleNodes), stage.current.getBoundingClientRect(), { padding: node ? 40 : 35, maxZoom: node ? 4 : 1 });
     const currentCamera = ++cameraRun.current; setMoving(true);
-    camera.setViewport(position, { duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240 }).finally(() => { if (cameraRun.current === currentCamera) { setMoving(false); setViewport(camera.getViewport()); } });
+    camera.setViewport(position, { duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240 }).finally(() => { if (cameraRun.current === currentCamera) setMoving(false); });
     setRequest(null);
   }, [request, nodes, camera]);
   useEffect(() => { if (!selectedId) fit(); }, [manifest.status, fit]);
@@ -152,20 +156,15 @@ function Canvas() {
       </PageNavigator></>}
       <main className="canvas-area">
         <div className="flow-stage" ref={stage}>
-          <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}
+          <ReactFlow defaultViewport={initialViewport} nodes={nodes} edges={edges} nodeTypes={nodeTypes}
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
-            onPaneClick={() => { browse(); select(null); }} onMove={(_, position) => {
-              setZoom(Math.round(position.zoom * 100));
-              // Cull passive documents during a pinch/pan, before WebKit scales
-              // every full-page iframe until the user finally releases touch.
-              setViewport(position);
-            }}
-            onMoveStart={() => setMoving(true)} onMoveEnd={(_, position) => { setMoving(false); setViewport(position); }}
+            onPaneClick={() => { browse(); select(null); }}
+            onMoveStart={() => setMoving(true)} onMoveEnd={() => setMoving(false)}
             minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
-            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} revision={manifest.revision} onError={setPreviewErrors} />
+            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
               <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} />
             </div></ViewportPortal>}

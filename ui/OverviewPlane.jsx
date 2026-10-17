@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ViewportPortal } from "@xyflow/react";
 
-export function OverviewPlane({ nodes, viewport, area, previews, mounted, revision, onError }) {
+export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError }) {
   const frame = useRef(null), latest = useRef(null), jobs = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
   const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
   const sourceKey = JSON.stringify(sources);
-  const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) }));
+  const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen }));
   latest.current = { viewport, layout };
   useEffect(() => { if (loaded) send({ command: "camera", viewport }); }, [loaded, viewport, send]);
-  useEffect(() => { if (loaded) send({ command: "layout", items: layout }); }, [loaded, nodes, previews, mounted, send]);
+  useEffect(() => { if (loaded) send({ command: "layout", items: layout }); }, [loaded, nodes, previews, mounted, liveScreen, send]);
   useEffect(() => {
     if (!loaded) return;
     const controller = new AbortController();
@@ -49,9 +48,9 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, revisi
     const available = Math.min(4 - batch.active, batch.queue.length);
     for (let i = 0; i < available; i++) load();
   }, [loaded, sourceKey, revision, send, onError]);
-  // Counter the graph transform so the single iframe ALWAYS has a physical
-  // viewport-sized surface, even at 500% zoom. Its DOM world follows the camera.
-  return <ViewportPortal><div className="overview-plane" style={{ width: area.width, height: area.height, transform: `translate(${-viewport.x / viewport.zoom}px, ${-viewport.y / viewport.zoom}px) scale(${1 / viewport.zoom})` }}>
+  // Keep the iframe outside the transformed graph. An inverse scale produces
+  // small final bounds but can still allocate large intermediate WebKit layers.
+  return <div className="overview-plane" style={{ width: area.width, height: area.height }}>
     <iframe ref={frame} data-overview title="所有完整 UI · 共用隔離渲染" src={source} sandbox="allow-scripts" inert tabIndex={-1} onLoad={() => setLoaded(old => old + 1)} />
-  </div></ViewportPortal>;
+  </div>;
 }
