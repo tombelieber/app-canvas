@@ -6,6 +6,9 @@
   including real app interactions, visible action cues, camera follow,
   captions/progress, speed, pause/resume, replay and exit/Esc. Keep the
   existing Browse/Interact and journey controls, with no config migration.
+- Add whole-app, page and flow Demo playlists with video-style controls:
+  0.5×–4× speed, active elapsed/approximate remaining time, a step timeline,
+  state-preserving next step, previous/next Demo and explicit skip counts.
 - Keep the shared preview surface and touch culling synchronized with the
   actual canvas camera during gestures and presentation transitions.
 

@@ -70,6 +70,8 @@ try {
       const page = await browser.newPage({ viewport: { width: 1194, height: 834 }, hasTouch: engine === webkit });
       await page.goto(app.address);
       await page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor();
+      await page.getByLabel("播放流程").selectOption("__flows__");
+      await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
       await page.locator(".react-flow__controls-zoomin").click();
       await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
       const priorCamera = await page.locator(".react-flow__viewport").getAttribute("style");
@@ -96,7 +98,7 @@ try {
       await demo.getByLabel("Demo 播放速度").selectOption("0");
       await demo.getByRole("button", { name: "繼續 Demo", exact: true }).click();
       await finishDemo();
-      assert.equal(await demo.getAttribute("data-finished"), "2", "one-click defaults to flows and excludes standalone conditions");
+      assert.equal(await demo.getAttribute("data-finished"), "2", "the selected flows-only playlist excludes standalone conditions");
       assert.equal(await live.locator("h1").innerText(), "fresh", "the next flow gets its own fixture");
       assert.equal(await demo.getByRole("progressbar").getAttribute("aria-valuenow"), "100");
       await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
@@ -106,7 +108,7 @@ try {
       await demo.waitFor({ state: "hidden" });
       await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
       assert.equal(await page.getByRole("complementary", { name: "頁面導航" }).isVisible(), true);
-      assert.equal(await page.getByLabel("播放流程").inputValue(), "", "exit restores the previous browsing scope");
+      assert.equal(await page.getByLabel("播放流程").inputValue(), "__flows__", "exit restores the previous browsing scope");
       assert.equal(await page.locator('iframe[data-screen="journey"]').count(), 0);
       await page.waitForFunction(expected => document.querySelector(".react-flow__viewport")?.getAttribute("style") === expected, priorCamera);
       assert.equal(await page.locator(".react-flow__viewport").getAttribute("style"), priorCamera, "exit restores the browsing camera as well as panel preferences");

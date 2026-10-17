@@ -63,16 +63,21 @@ use its controls directly on the canvas. **下一步**, **上一步** and graph 
 select the destination and move the camera there. Esc returns to browsing.
 Filtering keeps drafts; **重設** restores only that named preview.
 Press **▶ Demo** in the toolbar for a hands-free presentation. It plays the
-selected journey or queue; with no selection it plays all interaction flows.
+selected journey or queue; with no selection it plays every authored flow and
+standalone case, or the flows related to the page you are browsing.
 The audience sees the continuing app, visible action cues, step captions and
-progress while the camera follows confirmed screens. Pause, change speed,
-replay or exit with **Esc**; exiting restores your browsing scope and panels.
+progress while the camera follows confirmed screens. Choose all demos, a page
+or one flow in the player. Its video-style controls include elapsed time,
+approximate remaining time, a step timeline, 0.5×–4× speed, next step and
+previous/next Demo. Pause, replay or exit with **Esc**; exiting restores your
+browsing scope and panels. Timeline positioning rebuilds the target flow's
+required state; skipped demos are labeled separately from completed ones.
 Projects with only standalone cases present those conditions with clear labels;
 projects without journeys need authored interactions before Demo is available.
 Use **播放流程** to run a checked journey, pause, single-step or replay with
 fresh fixtures. Flow links navigate between named cases; playback performs
 actions in one continuing app session. See [journey authoring](docs/journeys.md).
-Choose **全部流程與情境** to play the entire reviewed set. Each flow keeps its
+Choose **全部 Demo** to play the entire reviewed set. Each flow keeps its
 own continuing session; the next flow or standalone case starts fresh. A
 standalone case starts from its declared fixture condition and checks that
 view, including states that require an external login or provider outcome.

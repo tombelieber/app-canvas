@@ -15,6 +15,7 @@ import { JourneyPanel } from "./JourneyPanel.jsx";
 import { DemoPlayer } from "./DemoPlayer.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
 import { scopedScreens } from "../lib/pages.mjs";
+import { journeyPlan } from "../lib/playback.mjs";
 import { previewPool, visiblePreviews } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
@@ -40,7 +41,7 @@ function Canvas() {
   const limit = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches ? 4 : 8;
   const cameraRun = useRef(0), previousNodes = useRef(new Map());
   const definition = project.journeys.find(j => j.id === journeyId);
-  const plan = useMemo(() => journeyId === "__all__" ? project.journeys : journeyId === "__flows__" ? project.journeys.filter(j => j.kind !== "case") : journeyId === "__cases__" ? project.journeys.filter(j => j.kind === "case") : definition ? [definition] : [], [journeyId, definition]);
+  const plan = useMemo(() => journeyPlan(project, journeyId), [journeyId]);
   const journeyScreens = useMemo(() => definition && !branches ? [...new Set([definition.entry, ...definition.steps.map(s => s.screen)])] : null, [definition, branches]);
   const bridge = useBridge(() => { if (presenting) exitDemo(); else { setActive(null); player.stop(); } });
   const selected = catalog.find(s => s.id === selectedId);
@@ -66,7 +67,8 @@ function Canvas() {
   const startDemo = () => {
     demoSnapshot.current = { page, query, selectedId, active, journeyId, branches, viewport: camera.getViewport() };
     setPresenting(true); setMenu(false); setDrawer(false);
-    chooseJourney(plan.length ? journeyId : project.journeys.some(j => j.kind !== "case") ? "__flows__" : "__cases__", true, true);
+    const pageScope = `__page__:${page}`;
+    chooseJourney(plan.length ? journeyId : page !== "all" && journeyPlan(project, pageScope).length ? pageScope : "__all__", true, true);
   };
   const exitDemo = () => {
     player.stop(); setAutoStart(false); setPresenting(false);
@@ -192,10 +194,10 @@ function Canvas() {
           <div className="canvas-hint">{player.state ? "播放中 · 鏡頭跟隨流程" : active ? "Interact · 按 Browse 鎖定畫面" : "Browse · 拖動畫布，雙指縮放；選取畫面後按 Interact"}</div><div className="zoom-label">{Math.round(viewport.zoom * 100)}%</div>
           {presenting && <div className="demo-shield" aria-hidden="true" />}
         </div>
-        {presenting && <DemoPlayer player={player} definitions={plan} title={project.title} onReplay={() => player.start(false, { presentation: true })} onExit={exitDemo} />}
+        {presenting && <DemoPlayer player={player} definitions={plan} title={project.title} catalog={catalog} pages={pages} journeys={project.journeys} selected={journeyId} onSelect={id => chooseJourney(id, true, true)} onReplay={() => player.start(false, { presentation: true })} onExit={exitDemo} />}
       </main>
       {inspector && <aside className="details-panel" aria-label="流程與資料"><div className="details-heading">流程與資料<button className="close" aria-label="收起右側資料" onClick={toggleRight}>›</button></div>
-        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} />
+        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />
         {selected ? <Inspector selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} /> : <p className="selection-hint">點選畫面放大，或揀選流程播放。<br />Browse 可拖動畫布；Interact 可操作畫面。</p>}
       </aside>}
     </div>

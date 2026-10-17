@@ -70,10 +70,14 @@ text. The remaining canvas is the camera's fit area.
 
 **▶ Demo** remains in the dock even when the top toolbar is collapsed. It
 starts an audience presentation of the selected journey/queue, defaulting to
-all interaction flows. Editing chrome and other screens are temporarily
+all authored demos, or related journeys when browsing a page. The player
+offers all/page/flow scope selection. Editing chrome and other screens are temporarily
 hidden without changing saved panel preferences. The continuing app keeps
 the native viewport, the camera follows confirmed states, and the footer
-shows action captions, progress, speed and pause/replay/exit controls. Exit
+shows action captions, a step timeline, elapsed/approximate remaining time,
+0.5×–4× speed, next step, previous/next Demo and pause/replay/exit controls.
+Positioning replays prerequisites from fresh fixtures; skipped demos stay
+separate from completed ones. Exit
 or Esc cancels playback and returns to the previous browsing scope. See
 [Demo playback](journeys.md#one-click-audience-demo) for pacing and errors.
 
