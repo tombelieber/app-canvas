@@ -1,6 +1,6 @@
 {
   "name": "app-canvas",
-  "version": "0.8.0",
+  "version": "0.10.0",
   "description": "An interactive overview of real application pages, states and flows",
   "author": {
     "name": "tombelieber",

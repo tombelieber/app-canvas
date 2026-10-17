@@ -200,3 +200,4 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
 @media (max-width:850px),(pointer:coarse) {
  .demo-player select {font-size:16px}
 }
+.preview-deferred{height:100%;display:grid;place-items:center;padding:24px;box-sizing:border-box;color:#66717a;background:#f4f5f6;font:14px/1.5 system-ui;pointer-events:none}

@@ -105,7 +105,7 @@ function Canvas() {
     const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
     // Legacy manifests and drawing surfaces that cannot be represented by
     // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
-    for (const node of nodes) if (previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
+    if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
     return ids;
   }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
