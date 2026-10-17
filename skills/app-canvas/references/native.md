@@ -57,6 +57,10 @@ the app in HTML. Reuse the shared canvas; keep the viewer and capture scripts
 inside the target repository's `ui-review/`. In a non-JS repository the CLI can
 be installed in that directory without inventing a root web application.
 
+Large landscapes retain every catalog case while loading a bounded set of
+passive source previews. Use page ownership, search and camera navigation to
+inspect each state; the preview cache is not a coverage denominator.
+
 Use `preview(ctx)` with `handle`/`url` or another verified loopback adapter.
 Call ready only after the intended image is loaded. Serve only allowlisted
 viewer assets and captures; never expose native source, databases, build

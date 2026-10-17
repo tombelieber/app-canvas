@@ -1,11 +1,19 @@
 // Keep edited app instances alive. Unvisited/offscreen previews are disposable;
 // never serialize/replay arbitrary app input events to pretend to restore state.
+import { OVERVIEW_LIMIT } from "./overview-loader.js";
 export function visiblePreviews(nodes, viewport, area) {
-  return new Set(nodes.filter(n => {
+  const visible = nodes.filter(n => {
     if (n.type !== "screen" || !n.data.visible) return false;
     const x = n.position.x * viewport.zoom + viewport.x, y = n.position.y * viewport.zoom + viewport.y;
     return x + 390 * viewport.zoom > 0 && y + n.data.height * viewport.zoom > 0 && x < area.width && y < area.height;
-  }).map(n => n.id));
+  });
+  // Keep ordinary landscapes complete at overview zoom. Large landscapes load
+  // the nearest source documents; camera navigation can address every case.
+  if (visible.length > OVERVIEW_LIMIT) visible.sort((a, b) => {
+    const distance = n => Math.hypot((n.position.x + 195) * viewport.zoom + viewport.x - area.width / 2, (n.position.y + n.data.height / 2) * viewport.zoom + viewport.y - area.height / 2);
+    return distance(a) - distance(b);
+  });
+  return new Set(visible.slice(0, OVERVIEW_LIMIT).map(n => n.id));
 }
 export function previewPool({ nodes, viewport, area, selected, active, retained, limit, playing }) {
   const ids = new Set(retained);

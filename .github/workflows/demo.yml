@@ -30,6 +30,7 @@ jobs:
       - run: npm run test:touch && xvfb-run -a env APP_CANVAS_HEADED=1 npm run test:tablet
       - run: npm run test:onboarding
       - run: npm run test:population
+      - run: npm run test:shared && npm run test:overview-budget && npm run test:readiness
       - run: npm run build:demo
       - run: npm run test:static
       - run: npm run check:privacy -- .artifacts/site

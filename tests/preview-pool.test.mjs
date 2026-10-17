@@ -28,3 +28,11 @@ test("zoomed-out and collapsed previews do not start background apps",()=>{
   assert.equal(previewPool({...base,nodes:nodes.map(n=>({...n,data:{...n.data,compact:true}}))}).size,0);
   assert.equal(previewPool(base).size,4);
 });
+test("a fifteen-thousand-state overview bounds passive work without removing catalog nodes",()=>{
+  const landscape=Array.from({length:15000},(_,i)=>({id:`case-${i}`,type:"screen",position:{x:(i%20)*490,y:Math.floor(i/20)*900},data:{visible:true,height:844}}));
+  const visible=visiblePreviews(landscape,{x:0,y:0,zoom:.001},base.area);
+  assert.ok(visible.size<=128,`${visible.size} simultaneous passive previews exceed the document budget`);
+  assert.equal(landscape.length,15000);
+  const target=landscape.at(-1);
+  assert.ok(visiblePreviews(landscape,{x:-target.position.x,y:-target.position.y,zoom:1},base.area).has(target.id),"the final case stays addressable by camera navigation");
+});

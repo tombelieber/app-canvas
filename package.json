@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -59,7 +59,9 @@
     "test:zoom": "node tests/zoom.browser.mjs",
     "test:legacy": "node tests/legacy.browser.mjs",
     "test:dom": "node tests/dom-preview.browser.mjs",
-    "test:shared": "node tests/shared-preview.browser.mjs"
+    "test:shared": "node tests/shared-preview.browser.mjs",
+    "test:overview-budget": "node tests/overview-budget.browser.mjs",
+    "test:readiness": "node tests/readiness.browser.mjs"
   },
   "engines": {
     "node": ">=22"
