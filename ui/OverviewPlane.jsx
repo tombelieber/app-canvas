@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useViewport } from "@xyflow/react";
 import { createOverviewLoader, OVERVIEW_LIMIT } from "./overview-loader.js";
 
-export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError }) {
+export function OverviewPlane({ nodes, area, previews, mounted, liveScreen, revision, onError }) {
+  const viewport = useViewport();
   const frame = useRef(null), latest = useRef(null), jobs = useRef(null), lastLayout = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
   const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
-  const sourceKey = JSON.stringify(sources.length <= OVERVIEW_LIMIT ? sources : sources.filter(source => previews.has(source.id) && !mounted.has(source.id)));
-  const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen }));
-  const layoutKey = JSON.stringify(layout);
+  const sourceKey = useMemo(() => JSON.stringify(sources.length <= OVERVIEW_LIMIT ? sources : sources.filter(source => previews.has(source.id) && !mounted.has(source.id))), [sources, previews, mounted]);
+  const layout = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen })), [nodes, previews, mounted, liveScreen]);
+  const layoutKey = useMemo(() => JSON.stringify(layout), [layout]);
   latest.current = { viewport, layout };
   useEffect(() => {
     if (!loaded) return;
@@ -53,4 +55,9 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
   return <div className="overview-plane" style={{ width: area.width, height: area.height }}>
     <iframe ref={frame} data-overview title="所有完整 UI · 共用隔離渲染" src={source} sandbox="allow-scripts" inert tabIndex={-1} onLoad={() => setLoaded(old => old + 1)} />
   </div>;
+}
+
+export function ZoomLabel() {
+  const { zoom } = useViewport();
+  return <div className="zoom-label">{Math.round(zoom * 100)}%</div>;
 }

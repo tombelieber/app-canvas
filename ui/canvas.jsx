@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, MarkerType, ViewportPortal, useReactFlow, useViewport } from "@xyflow/react";
+import { ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, MarkerType, ViewportPortal, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "./canvas.css";
 import { ScreenNode, GroupNode, PreviewContext } from "./ScreenNode.jsx";
@@ -9,14 +9,15 @@ import { cameraFor, screenBounds, overviewBounds } from "./navigation.js";
 import { useBridge } from "./useBridge.js";
 import { project, useManifest } from "./useManifest.js";
 import { LiveFrame } from "./LiveFrame.jsx";
-import { OverviewPlane } from "./OverviewPlane.jsx";
+import { OverviewPlane, ZoomLabel } from "./OverviewPlane.jsx";
+import { usePreviewMembership } from "./usePreviewMembership.js";
 import { useJourney } from "./useJourney.js";
 import { JourneyPanel } from "./JourneyPanel.jsx";
 import { DemoPlayer } from "./DemoPlayer.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
 import { scopedScreens } from "../lib/pages.mjs";
 import { journeyPlan } from "../lib/playback.mjs";
-import { previewPool, visiblePreviews, renderedNodes, preserveMembers } from "./preview-pool.js";
+import { renderedNodes } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
@@ -26,9 +27,7 @@ const runId = crypto.randomUUID();
 const initialViewport = { x: 0, y: 0, zoom: .05 };
 
 function Canvas() {
-  // Use the graph's actual transform for preview culling and the shared
-  // surface; a separately copied viewport can lag during touch gestures.
-  const manifest = useManifest(), stage = useRef(null), camera = useReactFlow(), viewport = useViewport();
+  const manifest = useManifest(), stage = useRef(null), camera = useReactFlow();
   const [page, setPage] = useState("all"), [query, setQuery] = useState("");
   const [selectedId, select] = useState(null), [active, setActive] = useState(null), [resets, setResets] = useState({});
   const [lines, setLines] = useState("related"), [request, setRequest] = useState(null);
@@ -101,15 +100,7 @@ function Canvas() {
     const byId = new Map(placed.map(n => [n.id, n]));
     return [...placed.filter(n => n.type !== "screen"), ...catalog.map(s => byId.get(s.id))];
   }, [visible, manifest, view, selectedId, active, player.state?.screen, journeyScreens, depth, area]);
-  const previewMembership = useRef(new Set()), mountedMembership = useRef(new Set());
-  const previews = useMemo(() => previewMembership.current = preserveMembers(previewMembership.current, visiblePreviews(nodes, viewport, area)), [nodes, viewport, area]);
-  const mounted = useMemo(() => {
-    const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
-    // Legacy manifests and drawing surfaces that cannot be represented by
-    // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
-    if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
-    return mountedMembership.current = preserveMembers(mountedMembership.current, ids);
-  }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
+  const { previews, mounted } = usePreviewMembership({ nodes, area, selected: selectedId, active, retained, limit, playing: !!player.state });
   const cardNodes = useMemo(() => renderedNodes(nodes, previews, mounted), [nodes, previews, mounted]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
   useEffect(() => {
@@ -189,12 +180,12 @@ function Canvas() {
             minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
-            <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
+            <OverviewPlane nodes={nodes} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
               <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} presentation={presenting} />
             </div></ViewportPortal>}
           </ReactFlow>
-          <div className="canvas-hint">{player.state ? "播放中 · 鏡頭跟隨流程" : active ? "Interact · 按 Browse 鎖定畫面" : "Browse · 拖動畫布，雙指縮放；選取畫面後按 Interact"}</div><div className="zoom-label">{Math.round(viewport.zoom * 100)}%</div>
+          <div className="canvas-hint">{player.state ? "播放中 · 鏡頭跟隨流程" : active ? "Interact · 按 Browse 鎖定畫面" : "Browse · 拖動畫布，雙指縮放；選取畫面後按 Interact"}</div><ZoomLabel />
           {presenting && <div className="demo-shield" aria-hidden="true" />}
         </div>
         {presenting && <DemoPlayer player={player} definitions={plan} title={project.title} catalog={catalog} pages={pages} journeys={project.journeys} selected={journeyId} onSelect={id => chooseJourney(id, true, true)} onReplay={() => player.start(false, { presentation: true })} onExit={exitDemo} />}
