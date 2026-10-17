@@ -39,6 +39,10 @@ function renderOverview() {
       document.querySelectorAll("style[data-font]").forEach(el => el.remove()); fonts.clear();
     }
     if (message.command === "evict") remove(message.id);
+    if ((message.command === "camera" || message.command === "layout") && message.items) {
+      layout = new Map(message.items.map(item => [item.id, item]));
+      for (const [id, item] of layout) place(documents.get(id), item);
+    }
     if (message.command === "camera") {
       const { x, y, zoom } = message.viewport;
       world.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`;
@@ -46,10 +50,6 @@ function renderOverview() {
       // across engines. Only defer backdrop effects while moving or tiny.
       clearTimeout(detailTimer); detail(true);
       if (zoom * 390 >= 120) detailTimer = setTimeout(() => detail(false), 150);
-    }
-    if (message.command === "layout") {
-      layout = new Map(message.items.map(item => [item.id, item]));
-      for (const [id, item] of layout) place(documents.get(id), item);
     }
     if (message.command === "document") {
       const parsed = new DOMParser().parseFromString(message.document.html, "text/html");

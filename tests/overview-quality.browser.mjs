@@ -82,6 +82,15 @@ for (const engine of [chromium, webkit]) {
     await send([{ command: "layout", items: [{ id: "source", x: 100, y: 200, width: 390, height: 844, visible: true }] }]);
     await frame.waitForFunction(() => !document.querySelector('[data-preview]').hidden);
     assert.equal(await frame.locator('[data-preview]').evaluate(host => host.style.top), "204px");
+    await frame.evaluate(() => {
+      globalThis.atomicVisibility = null;
+      addEventListener("message", event => {
+        if (event.data?.command === "camera" && event.data.items) atomicVisibility = document.querySelector('[data-preview]').hidden;
+      });
+    });
+    await send([{ command: "camera", viewport: { x: -5000, y: 0, zoom: 5 }, items: [{ id: "source", x: 100, y: 200, width: 390, height: 844, visible: false }] }]);
+    await frame.waitForFunction(() => atomicVisibility !== null);
+    assert.equal(await frame.evaluate(() => atomicVisibility), true, "camera and culling must apply in the same message task, before the browser can paint old previews at the new scale");
     console.log(`PASS ${engine.name()}: unchanged source text/form layout from 1.5% to 500%; thumbnail/motion effects and idle recovery.`);
   } finally { await browser.close(); }
 }

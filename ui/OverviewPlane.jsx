@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createOverviewLoader, OVERVIEW_LIMIT } from "./overview-loader.js";
 
 export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError }) {
-  const frame = useRef(null), latest = useRef(null), jobs = useRef(null), [loaded, setLoaded] = useState(0);
+  const frame = useRef(null), latest = useRef(null), jobs = useRef(null), lastLayout = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
@@ -11,8 +11,14 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
   const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen }));
   const layoutKey = JSON.stringify(layout);
   latest.current = { viewport, layout };
-  useEffect(() => { if (loaded) send({ command: "camera", viewport }); }, [loaded, viewport, send]);
-  useEffect(() => { if (loaded) send({ command: "layout", items: layout }); }, [loaded, layoutKey, send]);
+  useEffect(() => {
+    if (!loaded) return;
+    const changed = lastLayout.current?.loaded !== loaded || lastLayout.current?.key !== layoutKey;
+    // Culling and camera movement are one transaction: WebKit must not paint
+    // the previous visible set at the new, potentially much larger scale.
+    send({ command: "camera", viewport, ...(changed ? { items: layout } : {}) });
+    lastLayout.current = { loaded, key: layoutKey };
+  }, [loaded, viewport, layoutKey, send]);
   useEffect(() => {
     if (!loaded) return;
     const loader = createOverviewLoader({
@@ -36,8 +42,7 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
     jobs.current = loader;
     frame.current.removeAttribute("data-error"); onError({});
     send({ command: "clear" });
-    send({ command: "camera", viewport: latest.current.viewport });
-    send({ command: "layout", items: latest.current.layout });
+    send({ command: "camera", viewport: latest.current.viewport, items: latest.current.layout });
     return () => loader.close();
   }, [loaded, revision, send, onError]);
   useEffect(() => {
