@@ -7,6 +7,7 @@
 - Wait for an explicit true readiness signal before capturing passive source UI; a loading marker cannot become a successful snapshot.
 - Keep recognized IDE XML configuration in the source review queue without misclassifying its tags as application controls; native UI XML still requires UI evidence.
 - Follow native UI inheritance and implementation ownership so property-based renderers cannot be dismissed as non-UI support when a presentation-call spelling is absent.
+- Retain review of canonical nil-initializer outcomes without inventing screens for an object that was never constructed; actual UI construction and error fallbacks still need cases.
 - Add a 260-case browser regression and a 15,000-state selection/eviction check; retain the complete ordinary overview and Chromium/WebKit regression gates.
 
 ## 0.9.0
