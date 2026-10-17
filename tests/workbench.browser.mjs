@@ -23,6 +23,16 @@ try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 760 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
   const page = await context.newPage(), errors = [];
   page.on("pageerror", e => errors.push(e.message));
+  const previewsReady = () => page.frameLocator('iframe[data-overview]').locator('[data-preview][data-ready="true"]').nth(config.catalog.length - 1).waitFor({ state: "attached" });
+  const reloadReady = async () => {
+    // GTK resize emulation replaces the document. Finish its source queue
+    // before that controlled reload, then qualify the new document's previews.
+    // Keep every pageerror assertion; do not ignore access-control failures.
+    await previewsReady();
+    await page.reload();
+    await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
+    await previewsReady();
+  };
   await page.goto(app.address);
   await page.getByText("30 個畫面 · 已同步", { exact: true }).waitFor();
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
@@ -95,8 +105,7 @@ try {
   assert.equal(await page.locator(".workspace-bar").count(), 0);
   assert.equal(await page.locator(".layers-panel").count(), 0);
   assert.equal(await page.locator(".inspector").count(), 0);
-  await page.reload();
-  await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
+  await reloadReady();
   assert.equal(await page.locator(".workspace-bar").count(), 0, "panel preference survives reload");
   await page.getByRole("button", { name: "面板", exact: true }).tap();
   await page.getByRole("button", { name: "還原版面", exact: true }).tap();
@@ -104,14 +113,14 @@ try {
     await page.setViewportSize(viewport);
     // GTK mobile emulation retains its initial layout viewport until reload;
     // native macOS/headless and Chromium still exercise in-place resizing.
-    if (reloadOnResize) await page.reload();
+    if (reloadOnResize) await reloadReady();
     await settled();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight + 1), true, `host stays within ${viewport.width}px viewport`);
     const b = await page.getByRole("button", { name: "Browse", exact: true }).boundingBox();
     assert.ok(b.width >= 44 && b.height >= 44, "mode switch is a reachable touch target");
   }
   await page.setViewportSize({ width: 1280, height: 760 });
-  if (reloadOnResize) await page.reload();
+  if (reloadOnResize) await reloadReady();
   if (!await page.locator('select[aria-label="播放流程"]').isVisible()) await page.getByRole("button", { name: "開啟流程控制", exact: true }).click();
   await page.locator('select[aria-label="播放流程"]').selectOption("save");
   await page.getByRole("button", { name: "▶ 播放", exact: true }).tap();
