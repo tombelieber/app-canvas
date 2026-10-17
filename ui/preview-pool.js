@@ -1,6 +1,14 @@
 // Keep edited app instances alive. Unvisited/offscreen previews are disposable;
 // never serialize/replay arbitrary app input events to pretend to restore state.
 import { OVERVIEW_LIMIT } from "./overview-loader.js";
+export function renderedNodes(nodes, previews, mounted) {
+  if (nodes.length <= OVERVIEW_LIMIT) return nodes;
+  // Keep graph geometry, handles and sibling ordering for every source case.
+  // Only card contents are culled; retained app ancestors remain mounted.
+  return nodes.map(node => node.type !== "screen" ? node : {
+    ...node, data: { ...node.data, shellOnly: !previews.has(node.id) && !mounted.has(node.id) },
+  });
+}
 export function visiblePreviews(nodes, viewport, area) {
   const visible = nodes.filter(n => {
     if (n.type !== "screen" || !n.data.visible) return false;

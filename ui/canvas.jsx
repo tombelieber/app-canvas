@@ -16,7 +16,7 @@ import { DemoPlayer } from "./DemoPlayer.jsx";
 import { graphFlows, caseCoverage } from "../lib/coverage.mjs";
 import { scopedScreens } from "../lib/pages.mjs";
 import { journeyPlan } from "../lib/playback.mjs";
-import { previewPool, visiblePreviews } from "./preview-pool.js";
+import { previewPool, visiblePreviews, renderedNodes } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
@@ -108,6 +108,7 @@ function Canvas() {
     if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
     return ids;
   }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
+  const cardNodes = useMemo(() => renderedNodes(nodes, previews, mounted), [nodes, previews, mounted]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
   useEffect(() => {
     const observer = new ResizeObserver(entries => {
@@ -178,7 +179,7 @@ function Canvas() {
       </PageNavigator></>}
       <main className="canvas-area">
         <div className="flow-stage" ref={stage}>
-          <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes}
+          <ReactFlow nodes={cardNodes} edges={edges} nodeTypes={nodeTypes}
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
             onPaneClick={() => { browse(); select(null); }}

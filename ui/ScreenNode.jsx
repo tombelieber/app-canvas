@@ -6,6 +6,7 @@ export const PreviewContext = createContext(null);
 export const ScreenNode = React.memo(function ScreenNode({ id, data }) {
   const ctx = useContext(PreviewContext), active = ctx.active === id, selected = ctx.selected === id;
   const live = ctx.mounted.has(id);
+  if (data.shellOnly) return <><Handle type="target" position={Position.Left} /><Handle type="source" position={Position.Right} /></>;
   const deferred = !live && (!ctx.previews.has(id) || !data.domUrl && !data.sharedUrl);
   return <article className={`screen-frame ${selected ? "is-selected" : ""} ${active ? "is-interactive" : ""} ${data.sharedUrl && !live ? "shared-preview" : ""}`} data-visible={data.visible} data-outcome={data.screen.outcome || "neutral"} style={{ width: data.width || 390 }}>
     <Handle type="target" position={Position.Left} />

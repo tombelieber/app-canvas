@@ -2,7 +2,8 @@ import React from "react";
 import { journeyPlan } from "../lib/playback.mjs";
 
 export function PlaylistOptions({ definitions, pages, catalog, scope = "all", selected, browse = false }) {
-  const scoped = definitions.filter(j => scope === "all" || journeyPlan({ journeys: [j], catalog }, `__page__:${scope}`).length || j.id === selected);
+  const scopedIds = scope === "all" ? null : new Set(journeyPlan({ journeys: definitions, catalog }, `__page__:${scope}`).map(j => j.id));
+  const scoped = scopedIds ? definitions.filter(j => scopedIds.has(j.id) || j.id === selected) : definitions;
   const flows = scoped.filter(j => j.kind !== "case"), cases = scoped.filter(j => j.kind === "case");
   return <>
     {browse && <option value="">全部畫面</option>}

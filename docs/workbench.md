@@ -113,6 +113,11 @@ keep at most **four running app frames on touch devices / eight on desktop**,
 including the player. Passive overview documents are not running app instances.
 During playback only the continuing app and retained drafts run.
 
+Large catalogs also defer card contents outside the preview and retained-app
+sets. Every source ID, graph position and connection handle stays addressable;
+only nearby cards and retained running apps mount their full contents. Page
+playlist selection scans the catalog once, rather than once per journey.
+
 Canvas/video/embedded/shadow-root content, imported or inaccessible styles,
 and assets that cannot be safely embedded fall back to the original live app.
 Those visible fallback frames are additional to the regular live budget; large

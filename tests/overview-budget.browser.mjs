@@ -27,16 +27,14 @@ try {
   assert.equal(app.getManifest().status, "ready");
   browser = await chromium.launch({ headless: true, args: ["--js-flags=--max-old-space-size=1024"] });
   const page = await browser.newPage({ viewport: { width: 1512, height: 982 } });
-  // The fixture is immutable after firstBuild. Exclude the persistent source
-  // event stream from the browser's network-idle completion signal.
-  await page.route("**/events", route => route.abort());
   await page.goto(app.address);
   await page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor({ timeout: 45000 });
   await page.waitForLoadState("networkidle");
   const overview = page.frameLocator("iframe[data-overview]");
   const initial = await overview.locator("[data-preview]").count();
   assert.ok((liveOnly ? initial === 0 : initial > 0 && initial <= 128), `retained ${initial} source DOM documents for ${count} cases`);
-  assert.equal(await page.locator(".screen-frame").count(), count, "every registered case remains addressable");
+  assert.equal(await page.locator('.react-flow__node-screen').count(), count, "every registered case remains addressable in the graph");
+  assert.ok(await page.locator('.screen-frame').count()<=136,"offscreen card contents are bounded independently of source document loading");
   async function open(id) {
     await page.getByLabel("搜尋畫面").fill(id);
     await page.locator('[title="'+id+'"]').click();
