@@ -180,6 +180,12 @@ in the tool repository. Emulation does not qualify a physical iPad.
 
 ## 4. Make missing coverage fail
 
+Complete population uses the [source walkthrough](skills/app-canvas/references/source-audit.md):
+run `discover` against the user's original application root before selecting
+cases, resolve every source region/candidate with `pending`, and run
+`--complete` with source-linked runtime evidence. A version 1 inventory and
+passing registered-case checks are construction evidence, not final acceptance.
+
 Require the independent source inventory as well as authored-case coverage:
 
 ```js
@@ -225,6 +231,7 @@ that its corresponding application interaction works.
 ```sh
 npx app-canvas --config ui-review/canvas.config.mjs --check
 npx app-canvas --config ui-review/canvas.config.mjs --verify
+npx app-canvas --config ui-review/canvas.config.mjs --complete
 npm run ui:review
 ```
 

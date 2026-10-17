@@ -189,6 +189,14 @@ case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
 
+For complete-population acceptance, use the [source walkthrough](skills/app-canvas/references/source-audit.md):
+`app-canvas discover --source-root <application> --out .artifacts/app-canvas/inventory.json`,
+resolve the `pending --inventory <file>` queue, then run `--complete` with
+source-linked runtime evidence. The gate recomputes the whole recorded scope,
+checks every source region/candidate and case, and rejects viewer-only native
+evidence. It forces the coverage flags even if the config disables them.
+Legacy `--check` / `--verify` results qualify registered cases only.
+
 UI and CSS edits refresh from source. **The agent owns discovering and
 registering new states.** The CLI does not infer business conditions; a complete
 integration must reconcile source-based discovery against its catalog. See the

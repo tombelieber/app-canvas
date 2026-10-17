@@ -45,6 +45,7 @@
     "build:demo": "node scripts/build-demo.mjs",
     "test:static": "node tests/static.browser.mjs",
     "test:onboarding": "node tests/onboarding.browser.mjs",
+    "test:population": "node tests/population.browser.mjs",
     "check:privacy": "node scripts/privacy-check.mjs",
     "test:navigation": "node tests/navigation.browser.mjs",
     "test:journeys": "node tests/journey.browser.mjs",
