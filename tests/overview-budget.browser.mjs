@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 const { startCanvas } = await import(process.env.APP_CANVAS_TEST_PACKAGE ? pathToFileURL(join(process.env.APP_CANVAS_TEST_PACKAGE, "lib/server.mjs")) : "../lib/server.mjs");
+const { verifyCanvas } = await import(process.env.APP_CANVAS_TEST_PACKAGE ? pathToFileURL(join(process.env.APP_CANVAS_TEST_PACKAGE, "lib/verify.mjs")) : "../lib/verify.mjs");
 const count = Number(process.env.APP_CANVAS_BUDGET_CASES || 260);
 assert.ok(Number.isInteger(count) && count >= 260 && count <= 20000);
 const liveOnly = process.env.APP_CANVAS_BUDGET_LIVE === "1";
@@ -26,6 +27,7 @@ try {
   await app.firstBuild;
   assert.equal(app.getManifest().status, "ready");
   browser = await chromium.launch({ headless: true, args: ["--js-flags=--max-old-space-size=1024"] });
+  await verifyCanvas({browser,address:app.address,project:{catalog:Array.from({length:count},(_,i)=>({id:'stress-'+i})),journeys:[]}});
   const page = await browser.newPage({ viewport: { width: 1512, height: 982 } });
   await page.goto(app.address);
   await page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor({ timeout: 45000 });
