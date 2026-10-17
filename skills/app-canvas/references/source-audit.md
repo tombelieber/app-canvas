@@ -47,7 +47,14 @@ An obligation without a UI contribution uses:
 
 Review generated-directory exclusions against actual build inputs; `.git` and
 `node_modules` are tool internals. Presentation sites and XML/JSX UI cannot be
-waived as non-UI. In a rendering source, opposite conditional outcomes require
+waived as non-UI. A branch marked `unreachable` by fresh discovery may receive a
+specific non-UI review: the tool verifies a literal Android minimum SDK from the
+nearest module or explicit iOS native product deployment targets in the nearest
+unambiguous Xcode project. It includes flavor and extension floors, fingerprints
+the build file, and keeps dynamic/inherited/ambiguous bounds pending. Editing a
+snapshot to add this annotation cannot waive a branch. Review the declared build
+bounds against the actual build/capture manifest; unsupported guard expressions
+remain inspection work. In a rendering source, opposite reachable outcomes require
 separate fixture cases; identical pixels may represent different conditions.
 Do not invent different UI to satisfy a structural branch.
 
