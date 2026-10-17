@@ -1,5 +1,10 @@
 # App Canvas
 
+## 0.9.2
+
+- Recognize parameterized Objective-C superclass initializers when reviewing the nil-construction outcome; actual UI construction and fallback branches still require evidence.
+- Identify Android lint configuration by its filename, location and allowed XML tags. Keep native resource XML and unrelated files protected by the rendering-source gate.
+
 ## 0.9.1
 
 - Bound passive source DOM loading and retention to 128 documents for large landscapes. Evict their DOM/font resources and cancel obsolete requests while keeping every case addressable.
