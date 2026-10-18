@@ -44,7 +44,7 @@ Browse は操作をロックして移動を優先。画面を選び Interact を
 ### エージェントに貼り付ける指示
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 共通ツールを導入
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and a
 Node.js 22+ とプロジェクトのパッケージ管理・lockfile を使用。固定した GitHub リリースとブラウザをインストールします。npm 12 が直接 Git 依存を拒否する場合のみ --allow-git=root を追加。グローバル設定は変更しません。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.10.3
+npm install --save-dev github:tombelieber/app-canvas#v0.11.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 共通パッケージは viewer、CLI、skill を管理。各リポジトリは adapter、fixtures、独立 inventory、catalog、操作検証を管理します。動作する React/Vite 例を参考にし、他の構成には専用 adapter を用意します。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.10.3/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
 
 ### 任意のエージェント Skill
 

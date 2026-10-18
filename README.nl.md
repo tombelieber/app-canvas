@@ -44,7 +44,7 @@ Geef de integratie aan een agent die bestanden kan lezen, wijzigen en opdrachten
 ### Plak dit in je agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Installeer het gedeelde gereedschap
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and a
 Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.10.3
+npm install --save-dev github:tombelieber/app-canvas#v0.11.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 Het gedeelde pakket beheert viewer, CLI en skill. Je repo beheert adapter, fixtures, onafhankelijke inventory, catalog en interactiecontroles. Begin met het uitvoerbare React/Vite-voorbeeld; andere stacks hebben een eigen adapter nodig.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.10.3/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
 
 ### Optionele agentskill
 

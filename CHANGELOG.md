@@ -1,5 +1,11 @@
 # App Canvas
 
+## 0.11.0
+
+- Add an explicit, checksummed GPU atlas overview for captured native UI. Keep Web/React source DOM, original selected/retained app instances, Demo/Play and clickable flow links. Fall back to the existing renderer on asset or GPU failure.
+- Fit large native page groups to the available board and reuse unchanged graph nodes during camera movement. Keep the original Web layout and existing runtime budgets.
+- Qualify the integrated viewer on 1,756 real native cases in Chromium and WebKit; include measured results, source-pixel checks and regression boundaries in the native overview benchmark report.
+
 ## 0.10.3
 
 - Verify every addressable case in large catalogs while keeping rendered card contents bounded. The public verification path now supports catalogs larger than the overview rendering budget.

@@ -44,7 +44,7 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 ### 貼給你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安裝共用工具
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and a
 使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.10.3
+npm install --save-dev github:tombelieber/app-canvas#v0.11.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 共用套件維護 viewer、CLI 及 skill；各 Repo 維護自己的 adapter、fixtures、獨立 inventory、catalog 與互動檢查。可從可執行的 React/Vite 範例開始；其他技術棧使用專屬 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.10.3/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
 
 ### 可選的 Agent Skill
 
