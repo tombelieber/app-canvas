@@ -67,12 +67,12 @@ All per-trial p95 intervals from the post-repair comparison:
 
 | Engine / repetition | Main | Candidate |
 | --- | ---: | ---: |
-| Chromium 1 | 108.1 ms | 25.7 ms |
+| Chromium 1 | 108.1 ms | 25.4 ms |
 | Chromium 2 | 108.4 ms | 25.7 ms |
 | Chromium 3 | 100.1 ms | 26.2 ms |
 | WebKit 1 | 194 ms | 41 ms |
 | WebKit 2 | 191 ms | 43 ms |
-| WebKit 3 | 191 ms | 41 ms |
+| WebKit 3 | 168 ms | 37 ms |
 
 Chromium long-task counts were 96/96/96 on main and 0/0/0 on the repaired
 candidate. The initial pre-repair experiment had one 58.3 ms / 42-long-task
