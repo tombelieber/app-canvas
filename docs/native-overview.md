@@ -55,6 +55,10 @@ At overview scale, all declared captures can be drawn while card bodies and
 passive app work remain bounded. Native-only fit can zoom below the ordinary
 DOM landscape floor. The same React Flow camera positions images, DOM labels,
 clickable nodes and edges; the GPU plane cannot intercept input.
+The event-driven GPU surface retains its last drawing buffer between changes,
+avoiding stale or blank presentation on WebKit GTK. Its backing surface is
+bounded to eight million pixels, with DPR capped at two; this is a per-buffer
+size bound, not a claim about total driver/GPU memory.
 
 When a card is at least 120 CSS pixels wide, the existing four-touch/eight-desktop
 runtime budget supplies nearby full-resolution originals. Selecting or

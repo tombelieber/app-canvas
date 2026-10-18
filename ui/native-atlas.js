@@ -27,7 +27,10 @@ export async function loadNativeAtlas(atlas, signal) {
 // Only paints explicitly declared captured UI. No app scripts, event replay,
 // flow model or running-frame lifetime belongs to this disposable layer.
 export function createNativeRenderer(canvas, atlas) {
-  const gl = canvas.getContext("webgl2", { alpha: true, antialias: false });
+  // This layer draws on changes and stays still between them. Retain its last
+  // frame: WebKit GTK can otherwise present a discarded/previous buffer.
+  // The backing surface remains capped at eight million pixels below.
+  const gl = canvas.getContext("webgl2", { alpha: true, antialias: false, preserveDrawingBuffer: true });
   if (!gl || Math.max(atlas.width, atlas.height) > gl.getParameter(gl.MAX_TEXTURE_SIZE)) throw Error("Native GPU preview unavailable");
   const shaders = [], program = gl.createProgram(), buffer = gl.createBuffer(), texture = gl.createTexture();
   const dispose = () => { gl.deleteTexture(texture); gl.deleteBuffer(buffer); gl.deleteProgram(program); for (const shader of shaders) gl.deleteShader(shader); };

@@ -6,6 +6,14 @@ the same commit as this report. This compares the integrated Canvas viewer,
 original adapter, original case selection and continuing player, rather than
 a standalone drawing prototype.
 
+Release qualification subsequently caught blank WebKit GTK presentation on
+Linux despite correct decoded pixels, uploaded texture and draw readback.
+Keeping the event-driven surface's last drawing buffer fixed the unchanged
+Linux pixel/interaction suite. This matches the upstream
+[WebKit GTK presentation report](https://bugs.webkit.org/show_bug.cgi?id=324549).
+All measurements below were rerun after that repair; the original PR #9
+measurements remain in its history. No pixel gate was skipped or weakened.
+
 ## Inputs and method
 
 A frozen private native-app catalog contained **1,756 distinct UI cases** and
@@ -41,12 +49,12 @@ Values below are medians of the three trials; lower time/memory is better.
 
 | Measurement | Main | Candidate |
 | --- | ---: | ---: |
-| Chromium drag/wheel p95 RAF interval | 108.4 ms | 25.5 ms |
-| WebKit drag/wheel p95 RAF interval | 155 ms | 34 ms |
-| Chromium viewer readiness | 1,828 ms | 1,501 ms |
-| WebKit viewer readiness | 2,012 ms | 1,532 ms |
-| Chromium JS heap at overview | 151.8 MiB | 66.8 MiB |
-| Chromium summed browser-process RSS | 2,036.1 MiB | 1,700.2 MiB |
+| Chromium drag/wheel p95 RAF interval | 108.1 ms | 25.7 ms |
+| WebKit drag/wheel p95 RAF interval | 191 ms | 41 ms |
+| Chromium viewer readiness | 1,943 ms | 1,488 ms |
+| WebKit viewer readiness | 2,398 ms | 1,396 ms |
+| Chromium JS heap at overview | 148.2 MiB | 65.3 MiB |
+| Chromium summed browser-process RSS | 1,940.5 MiB | 1,659.6 MiB |
 | Case bounds intersecting whole-app viewport | 1,092 / 1,756 | 1,756 / 1,756 |
 | Passive native app iframes at overview | 8 | 0 |
 | Heavy card bodies at overview | 128 | 0 |
@@ -55,20 +63,22 @@ The candidate drew all 1,756 native atlas images. Graph IDs and hit targets
 remain present; zero heavy card bodies does not mean zero indexed nodes.
 Main's intersecting bounds count measures geometry, not loaded image coverage.
 
-All per-trial p95 intervals, including the slower candidate trial:
+All per-trial p95 intervals from the post-repair comparison:
 
 | Engine / repetition | Main | Candidate |
 | --- | ---: | ---: |
-| Chromium 1 | 108.4 ms | 25.5 ms |
-| Chromium 2 | 108.2 ms | 58.3 ms |
-| Chromium 3 | 108.4 ms | 25.1 ms |
-| WebKit 1 | 163 ms | 34 ms |
-| WebKit 2 | 152 ms | 35 ms |
-| WebKit 3 | 155 ms | 34 ms |
+| Chromium 1 | 108.1 ms | 25.7 ms |
+| Chromium 2 | 108.4 ms | 25.7 ms |
+| Chromium 3 | 100.1 ms | 26.2 ms |
+| WebKit 1 | 194 ms | 41 ms |
+| WebKit 2 | 191 ms | 43 ms |
+| WebKit 3 | 191 ms | 41 ms |
 
-Chromium long-task counts were 96/96/96 on main and 0/42/0 on the candidate.
-The outlier remains in the results. This is an improvement, not a zero-jank
-claim. WebKit long-task telemetry and comparable heap/RSS were unavailable.
+Chromium long-task counts were 96/96/96 on main and 0/0/0 on the repaired
+candidate. The initial pre-repair experiment had one 58.3 ms / 42-long-task
+candidate outlier; it remains recorded in PR #9. The table above is a complete
+new paired comparison, not selected trials. Three runs are not a zero-jank
+guarantee. WebKit long-task telemetry and comparable heap/RSS were unavailable.
 RSS sums can double-count shared pages and do not measure unique physical
 memory or GPU residency. These are snapshots, not a memory-plateau proof.
 
@@ -102,7 +112,8 @@ focus, Demo, touch, tablet, onboarding, population, overview quality/budgets,
 readiness, static build/viewer and launch pages). It also included locale parity,
 package/site privacy scans and both strict Claude manifest validations.
 The final focused native suite passed after the texture-failure and pointer
-checks were added. The tablet suite included 480 zoom samples and retained
+checks were added, and the unchanged native suite passed in the official
+Playwright 1.64.1 Linux container after the retained-buffer repair. The tablet suite included 480 zoom samples and retained
 its existing browsing-context and single-load checks. A repeated static build
 initially refused an existing output directory; moving that previous generated
 directory and building fresh passed without changing the export guard.
