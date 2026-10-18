@@ -69,6 +69,7 @@ function renderOverview() {
       Promise.all([...shadow.querySelectorAll("img")].map(img => img.decode().catch(() => {}))).then(async () => {
         await document.fonts.ready;
         if (!host.isConnected) return;
+        for (const el of shadow.querySelectorAll("[data-canvas-scroll-y]")) { el.scrollLeft = Number(el.dataset.canvasScrollX || 0); el.scrollTop = Number(el.dataset.canvasScrollY || 0); }
         host.dataset.ready = "true";
         parent.postMessage({ channel: "app-canvas-overview", token, ready: message.id }, "*");
       });

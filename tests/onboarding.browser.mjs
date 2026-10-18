@@ -32,13 +32,14 @@ try {
   const home = join(root, "agent-home");
   await exec(process.execPath, [cli, "install"], { env: { ...process.env, HOME: home } });
   for (const harness of ["codex", "claude"])
-    for (const file of ["SKILL.md", "agents/openai.yaml", "references/completion.md", "references/native.md", "references/source-audit.md"])
+    for (const file of ["SKILL.md", "agents/openai.yaml", "references/completion.md", "references/native.md", "references/source-audit.md", "references/url-import.md"])
       assert.deepEqual(
         await readFile(join(home, `.${harness}/skills/app-canvas`, file)),
         await readFile(join(installed, "skills/app-canvas", file)),
         `the public installer must ship the canonical ${file} to ${harness}`,
       );
   await exec(process.execPath, [fileURLToPath(new URL("./population.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
+  await exec(process.execPath, [fileURLToPath(new URL("./import.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
   assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /6 source inventory items mapped/);
   inventory.items.pop();

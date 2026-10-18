@@ -17,3 +17,15 @@ test("selected imported copies materialize global undo history without unrelated
   assert.equal(draft.materialize(base, project, history, 3, "alternative").root.children[0].children[0].text, "Local variant");
   assert.equal(draft.materialize(base, project, history, 2, "alternative").root.children[0].children[0].text, "Calendar");
 });
+test("a copy inherits only ancestor edits before its creation", () => {
+  const project = projectFixture(), base = documentFixture();
+  const history = [
+    { type: "setText", screenId: "screen-a", layerId: "n3", value: "Before copy" },
+    { type: "duplicateScreen", screenId: "screen-a", newId: "first-copy", value: "First" },
+    { type: "setText", screenId: "screen-a", layerId: "n3", value: "After copy" },
+    { type: "duplicateScreen", screenId: "first-copy", newId: "nested-copy", value: "Nested" },
+    { type: "setText", screenId: "first-copy", layerId: "n3", value: "After nested copy" },
+  ];
+  assert.equal(draft.materialize(base, project, history, history.length, "nested-copy").root.children[0].children[0].text, "Before copy");
+  assert.equal(draft.materialize(base, project, history, history.length, "first-copy").root.children[0].children[0].text, "After nested copy");
+});

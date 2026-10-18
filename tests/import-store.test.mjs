@@ -40,3 +40,9 @@ test("project reads and writes reject symlink escapes and corrupt saved operatio
   const evil = join(root, "evil"); await mkdir(evil); await symlink(path, join(evil, "linked"));
   await assert.rejects(() => createStore(join(evil, "linked")), /symlink/i);
 });
+test("missing local assets fail closed before a capture becomes durable", async t => {
+  const { store } = await setup(t), capture = captureFixture();
+  capture.document.root.children[1].style["background-image"] = `url("asset:${"a".repeat(64)}")`;
+  await assert.rejects(() => store.capture(capture), /missing.*asset/i);
+  assert.equal((await store.metadata()).screens.length, 0);
+});

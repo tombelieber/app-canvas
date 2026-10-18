@@ -9,14 +9,18 @@ export function screenList(project, history, cursor) {
   return screens;
 }
 export function materialize(document, project, history, cursor, screenId) {
-  const screens = project.screens.filter(s => s.documentId === document.id), eligible = new Set(screens.map(s => s.id)), relevant = [];
-  let position = 0;
-  history.forEach((op, index) => {
-    if (!eligible.has(op.screenId)) return;
-    relevant.push(op); if (index < cursor) position++;
-    if (op.type === "duplicateScreen") eligible.add(op.newId);
-  });
-  return applyEdits({ ...project, screens }, { [document.id]: document }, relevant, position).documents[screenId];
+  // Follow one copy's ancestry backwards. Materializing a selected copy must
+  // not clone every sibling document once again for each visible screen.
+  let ancestor = screenId; const relevant = [];
+  for (let index = cursor - 1; index >= 0; index--) {
+    const op = history[index];
+    if (op.type === "duplicateScreen" && op.newId === ancestor) ancestor = op.screenId;
+    else if (op.screenId === ancestor && !["duplicateScreen", "renameScreen"].includes(op.type)) relevant.push(op);
+  }
+  const screen = project.screens.find(s => s.id === ancestor && s.documentId === document.id);
+  if (!screen) throw Error("Missing document ancestry");
+  const edits = relevant.reverse().map(op => ({ ...op, screenId: ancestor }));
+  return applyEdits({ ...project, screens: [screen] }, { [document.id]: document }, edits, edits.length).documents[ancestor];
 }
 export function layerRows(node, depth = 0, collapsed = new Set(), rows = []) {
   rows.push({ node, depth });

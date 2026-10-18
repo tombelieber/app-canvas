@@ -13,6 +13,15 @@ conditional variants using complete real UI screens.
 
 One runtime serves multiple projects. Each project keeps its **screen catalog, preview adapter, synthetic fixtures and interaction checks**. Components, layouts and CSS come from the application. There is no second design file to synchronize.
 
+## Import a website (unreleased desktop v1)
+
+A development checkout can capture a URL into an editable **App Canvas**
+landscape, record observed states/flows, and save/reopen local design edits.
+See the [desktop URL import guide](docs/url-import.md) for commands, sign-in,
+privacy, editing and fidelity limits. The published v0.10.3 pin below does not
+include this feature. Source-backed and native workflows keep their existing
+complete-population contracts.
+
 ## Give this to your coding agent
 
 Open your application repository in your agent and paste:

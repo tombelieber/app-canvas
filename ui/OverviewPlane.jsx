@@ -17,6 +17,7 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
     if (!loaded) return;
     const loader = createOverviewLoader({
       async load(source, signal) {
+        if (currentOverrides.current?.[source.id]) return currentOverrides.current[source.id];
         const url = new URL(source.url, location.href); url.searchParams.set("__canvas_revision", revision);
         const response = await fetch(url, { signal });
         if (!response.ok) throw Error("Preview unavailable");

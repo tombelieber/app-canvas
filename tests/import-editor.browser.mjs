@@ -15,14 +15,20 @@ try {
   await session.page.getByRole("button", { name: "All posts", exact: true }).click(); await session.capture("Status menu");
   await session.page.getByRole("button", { name: "Published", exact: true }).click(); await session.capture("Published state");
   await session.page.getByRole("link", { name: "Settings", exact: true }).click(); await session.capture("Settings page");
-  assert.equal((await session.store.read()).project.screens.length, 4, "all recorded source states exist before editing");
+  await session.page.evaluate(() => { document.querySelector('[aria-label="Scroll panel"]').scrollTop = 180; scrollTo(0, 420); });
+  await session.capture("Scrolled settings");
+  assert.equal((await session.store.read()).project.screens.length, 5, "all recorded source states exist before editing");
   assert.equal((await session.store.read()).project.flows.length, 3, "manual capture keeps the immediately preceding trusted action");
   app = await startImportCanvas({ directory, port: 0 }); browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1800, height: 1200 } }); const failures = []; page.on("pageerror", error => { failures.push(error.message); console.error("Browser runtime:", error.message); });
   page.on("console", message => { if (message.type() === "error") console.error("Browser console:", message.text()); });
   await page.goto(app.address); await page.getByRole("button", { name: "Content calendar captured", exact: true }).waitFor();
   await page.getByRole("button", { name: "Edit", exact: true }).click();
-  const ready = () => page.locator('iframe[data-import-editor][data-ready="true"]').waitFor();
+  const ready = async () => { await page.locator('iframe[data-import-editor][data-ready="true"]').waitFor(); await page.frameLocator("iframe[data-import-editor]").locator('html[data-import-ready="true"]').waitFor(); };
+  await page.getByRole("button", { name: "Scrolled settings captured", exact: true }).click(); await ready();
+  assert.equal(await page.frameLocator("iframe[data-import-editor]").locator("html").evaluate(() => scrollY), 420, "opening an imported state restores source window scroll");
+  assert.equal(await page.frameLocator("iframe[data-import-editor]").locator('[aria-label="Scroll panel"]').evaluate(el => el.scrollTop), 180, "opening a state restores inner scroll");
+  await page.getByRole("button", { name: "Content calendar captured", exact: true }).click(); await ready();
   await page.getByRole("button", { name: "Nested text", exact: true }).click();
   await page.getByLabel("Text content", { exact: true }).fill("Edited nested text"); await page.getByRole("button", { name: "Apply text", exact: true }).click();
   let frame = page.frameLocator("iframe[data-import-editor]"); await frame.getByText("Edited nested text", { exact: true }).waitFor();
@@ -37,7 +43,7 @@ try {
   await page.getByLabel("Radius", { exact: true }).fill("20px"); await page.getByLabel("Radius", { exact: true }).blur();
   await ready();
   let card = frame.locator('[aria-label="Reference card"]');
-  assert.deepEqual(await card.evaluate(el => { const s = getComputedStyle(el); return [s.translate, s.width, s.height, s.backgroundColor, s.borderRadius]; }), ["25px 35px", "460px", "350px", "rgb(230, 240, 250)", "20px"]);
+  assert.deepEqual(await card.evaluate(el => { const s = getComputedStyle(el); return [s.translate, s.width, s.height, s.backgroundColor, s.borderRadius]; }), ["37px 41px", "460px", "350px", "rgb(230, 240, 250)", "20px"]);
   await page.getByRole("button", { name: "Duplicate layer", exact: true }).click(); await page.getByRole("button", { name: "Hide layer", exact: true }).click();
   await ready();
   assert.equal(await frame.locator('[aria-label="Reference card"]').count(), 2);
@@ -48,12 +54,33 @@ try {
   await page.getByRole("button", { name: "Reference card", exact: true }).click(); await page.getByRole("button", { name: "Reset layer", exact: true }).click();
   await ready();
   assert.equal(await frame.locator('[aria-label="Reference card"]').evaluate(el => getComputedStyle(el).width), "400px");
+  const stableCamera = () => page.evaluate(async () => { let previous, stable = 0; for (let i = 0; i < 180; i++) { await new Promise(requestAnimationFrame); const next = document.querySelector(".react-flow__viewport").getAttribute("style"); stable = next === previous ? stable + 1 : 0; if (stable >= 5) return; previous = next; } throw Error("Camera did not settle"); });
+  for (const zoom of [false, true]) {
+    if (zoom) { await page.getByRole("button", { name: "Zoom In", exact: true }).click(); await stableCamera(); }
+    await ready(); const before = await frame.locator('[aria-label="Reference card"]').boundingBox();
+    await page.mouse.move(before.x + before.width - 6, before.y + 6); await page.mouse.down(); await page.mouse.move(before.x + before.width - 6 + 35, before.y + 6 + 20, { steps: 6 }); await page.mouse.up(); await ready();
+    const after = await frame.locator('[aria-label="Reference card"]').boundingBox();
+    assert.ok(Math.abs(after.x - before.x - 35) < 1.5 && Math.abs(after.y - before.y - 20) < 1.5, "drag follows physical pointer distance through nested source transforms and canvas zoom");
+    const handle = await frame.locator("[data-editor-resize]").boundingBox();
+    await frame.locator("body").evaluate(() => { window.__pointerObservation = null; window.addEventListener("pointerdown", e => { window.__pointerObservation = { tag: e.target.tagName, resize: e.target.hasAttribute("data-editor-resize"), layer: e.target.getAttribute("data-canvas-layer") }; }, { once: true, capture: true }); });
+    await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2); await page.mouse.down(); await page.mouse.move(handle.x + handle.width / 2 + 25, handle.y + handle.height / 2 + 15, { steps: 6 }); await page.mouse.up(); await ready();
+    const resized = await frame.locator('[aria-label="Reference card"]').boundingBox();
+    assert.ok(Math.abs(resized.width - after.width - 25) < 1.5 && Math.abs(resized.height - after.height - 15) < 1.5, `resize preserves transformed border-box geometry at both zoom levels: ${JSON.stringify({ zoom, before: after, after: resized, handle, pointer: await frame.locator("body").evaluate(() => window.__pointerObservation), style: await frame.locator('[aria-label="Reference card"]').evaluate(el => ({ width: el.style.width, height: el.style.height, translate: el.style.translate })) })}`);
+  }
   await page.getByRole("button", { name: "Synthetic image", exact: true }).click();
   const replacement = join(root, "replacement.png"); await writeFile(replacement, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64"));
   await page.getByLabel("Replace image", { exact: true }).setInputFiles(replacement);
+  const originalEditorIdentity = await page.locator("iframe[data-import-editor]").getAttribute("src");
   await page.getByRole("button", { name: "Duplicate screen", exact: true }).click();
+  await ready();
+  assert.notEqual(await page.locator("iframe[data-import-editor]").getAttribute("src"), originalEditorIdentity, "screen alternatives have distinct editor channels even when they share a captured base");
+  await page.getByLabel("State name", { exact: true }).fill("Alternative reference"); await page.getByLabel("State name", { exact: true }).blur();
+  await page.getByRole("button", { name: "Browse", exact: true }).click();
+  await page.frameLocator("iframe[data-overview]").locator('[data-preview^="copy-"][data-ready="true"][data-visible="true"]').waitFor({ state: "visible", timeout: 10000 });
+  assert.equal(await page.getByText("預覽未能載入；點選畫面可開啟原 App。", { exact: true }).count(), 0, "unsaved screen alternatives use their local preview without a missing remote document");
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page.getByRole("button", { name: "Save", exact: true }).click(); await page.getByText("Saved", { exact: true }).waitFor();
-  const saved = await (await createStore(directory)).read(); assert.equal(saved.project.screens.length, 5); assert.ok(saved.project.history.some(op => op.type === "setImage"));
+  const saved = await (await createStore(directory)).read(); assert.equal(saved.project.screens.length, 6); assert.ok(saved.project.history.some(op => op.type === "setImage"));
   assert.equal((await page.locator("iframe").count()), 2, "one shared overview and one active editor");
   await page.getByRole("button", { name: "Browse", exact: true }).click(); assert.equal(await page.locator("iframe[data-import-editor]").count(), 0);
   await page.getByRole("button", { name: "State graph", exact: true }).click();

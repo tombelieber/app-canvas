@@ -14,7 +14,11 @@ export function EditorFrame({ document, assets, selected, onSelect, onOperation,
       if (event.source !== frame.current?.contentWindow || event.data?.channel !== "app-canvas-import-editor" || event.data.token !== token) return;
       const message = event.data;
       if (message.type === "select" && typeof message.layerId === "string") onSelect(message.layerId);
-      if (message.type === "operation" && message.operation && ["move", "resize"].includes(message.operation.type)) onOperation(message.operation);
+      if (message.type === "pending") acknowledge(0);
+      if (message.type === "operation" && message.operation && ["move", "resize"].includes(message.operation.type)) {
+        const { type, layerId, x, y, width, height } = message.operation;
+        if (message.revision !== latest.current.revision || !onOperation({ type, layerId, ...(type === "move" ? { x, y } : { width, height }) })) render();
+      }
       if (message.type === "browse") onBrowse();
       if (message.type === "navigate" && links.some(link => link.to === message.to)) onNavigate(message.to);
       if (message.type === "ready") render();

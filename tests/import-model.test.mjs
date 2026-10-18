@@ -50,3 +50,30 @@ test("import renderer escapes text and uses only normalized local document conte
   assert.ok(html.includes("&lt;img")); assert.ok(!html.includes('<img src="x"'));
   assert.ok(html.includes("default-src 'none'")); assert.ok(!html.includes("https://"));
 });
+
+test("import identities cannot collide with object prototypes", () => {
+  for (const id of ["__proto__", "constructor", "prototype", "toString", "hasOwnProperty"]) {
+    const doc = documentFixture(); doc.root.id = id; assert.throws(() => schema.validateDocument(doc), /identity/i);
+    const project = projectFixture(); project.screens[0].id = id; assert.throws(() => schema.validateProject(project), /identity/i);
+  }
+});
+
+test("duplicated SVG definitions and local paint references remain independent", () => {
+  const doc = documentFixture();
+  doc.root.children.push({ id: "svg-root", tag: "svg", attrs: { viewBox: "0 0 24 24" }, style: { width: "24px", height: "24px" }, children: [
+    { id: "defs", tag: "defs", attrs: {}, style: {}, children: [{ id: "gradient", tag: "linearGradient", attrs: { id: "paint" }, style: {}, children: [{ id: "stop", tag: "stop", attrs: { offset: "0" }, style: { "stop-color": "red" }, children: [] }] }] },
+    { id: "shape", tag: "path", attrs: { d: "M0 0h24v24H0z" }, style: { fill: "url(#paint)" }, children: [] },
+  ] });
+  const history = [{ type: "duplicate", screenId: "screen-a", layerId: "svg-root", newId: "svg-copy" }];
+  const result = patches.applyEdits(projectFixture(), { "doc-a": doc }, history, 1).documents["screen-a"];
+  const first = result.root.children.find(n => n.id === "svg-root"), copy = result.root.children.find(n => n.id === "svg-copy");
+  const originalId = first.children[0].children[0].attrs.id, copiedId = copy.children[0].children[0].attrs.id;
+  assert.notEqual(copiedId, originalId, "copied gradients need their own DOM identity");
+  assert.ok(copy.children[1].style.fill.includes(`#${copiedId}`)); assert.ok(first.children[1].style.fill.includes(`#${originalId}`));
+});
+
+test("resizing one axis preserves inherited text geometry on the other axis", () => {
+  const doc = documentFixture(), history = [{ type: "resize", screenId: "screen-a", layerId: "n3", width: 240 }];
+  const node = patches.applyEdits(projectFixture(), { "doc-a": doc }, history, 1).documents["screen-a"].root.children[0].children[0];
+  assert.equal(node.style.width, "240px"); assert.equal(node.style.height, undefined);
+});

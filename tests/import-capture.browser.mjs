@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { chromium } from "playwright";
@@ -13,9 +13,14 @@ try {
   await session.ready;
   let saved = await session.store.read();
   assert.equal(saved.project.screens.length, 1); assert.ok(JSON.stringify(saved).includes("Content calendar"));
+  const bounds = await session.page.locator("identity-shadow").boundingBox();
+  const reference = await readFile(join(root, "project/references", `${saved.project.screens[0].id}.png`));
+  const pixel = await session.page.evaluate(async ({ png, x, y }) => { const image = new Image(); image.src = `data:image/png;base64,${png}`; await image.decode(); const canvas = document.createElement("canvas"); canvas.width = image.width; canvas.height = image.height; const context = canvas.getContext("2d"); context.drawImage(image, 0, 0); return [...context.getImageData(x, y, 1, 1).data]; }, { png: reference.toString("base64"), x: Math.round(bounds.x + 2), y: Math.round(bounds.y + 2) });
+  assert.deepEqual(pixel, [218, 226, 228, 255], "private shadow text is masked in the durable reference screenshot too");
   assert.ok(!JSON.stringify(saved).includes("member@example.test"), "identity text is redacted before persistence");
   assert.ok(saved.project.assets.some(a => a.mime === "image/png"), "real fetched images are localized");
   assert.equal(saved.documents[saved.project.screens[0].id].viewport.width, 1440);
+  assert.ok(saved.documents[saved.project.screens[0].id].fonts.some(font => font.family === "SyntheticIcons"), "inline stylesheet web fonts are localized for offline rendering");
   await session.page.getByRole("button", { name: "All posts", exact: true }).click();
   await session.whenIdle();
   saved = await session.store.read();
@@ -24,6 +29,11 @@ try {
   const count = saved.project.screens.length; await session.capture("Repeat menu");
   assert.equal((await session.store.read()).project.screens.length, count, "identical states are deduplicated");
   await session.page.getByRole("button", { name: "Published", exact: true }).click(); await session.whenIdle();
+  await session.page.evaluate(() => { document.querySelector('[aria-label="Scroll panel"]').scrollTop = 180; scrollTo(0, 420); });
+  await session.capture("Scrolled content");
+  const scrolled = await session.store.read(), scrolledDocument = scrolled.documents[scrolled.project.screens.at(-1).id];
+  assert.equal(scrolledDocument.scroll.y, 420);
+  assert.ok(JSON.stringify(scrolledDocument).includes('"y":180'), "inner scroll offsets are captured");
   await session.page.goto(`${site.url}/login`); await session.whenIdle();
   assert.equal(session.status.phase, "paused", "login is excluded");
   saved = await session.store.read(); assert.ok(!JSON.stringify(saved).includes("fixture-secret"));
@@ -39,6 +49,7 @@ try {
   assert.equal(await page.locator("svg path").count(), 1);
   assert.ok(await page.getByAltText("Synthetic image").evaluate(el => el.complete && el.naturalWidth > 0));
   assert.ok(await page.getByAltText("Vector image").evaluate(el => el.complete && el.naturalWidth > 0), "external SVG images become safe local raster assets");
+  assert.equal(await page.locator('[aria-label="Reference card"]').evaluate(el => getComputedStyle(el).translate), "12px 6px", "source individual transforms are retained");
   assert.equal(external, 0, "imported document has no network dependencies");
   console.log(`PASS URL capture: ${saved.project.screens.length} states, evidence-backed flows, redaction, assets, auth pause, offline DOM/SVG rendering.`);
 } finally { await session?.close(); await browser?.close(); await site.close(); await rm(root, { recursive: true, force: true }); }

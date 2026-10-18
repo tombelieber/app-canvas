@@ -1,11 +1,19 @@
 ---
 name: app-canvas
-description: Use when asked to install, populate or maintain a complete Figma-like UI landscape from a web or native app repository, including components, variants, states and flows.
+description: Use when asked to install, populate or maintain a complete Figma-like UI landscape from a web or native app repository, or capture a website URL into an editable desktop landscape with components, variants, states and flows.
 ---
 
 # App Canvas
 
 Deliver the repository's complete UI landscape in one navigable canvas. The user supplies a repository and a capable coding agent; the agent owns discovery, state enumeration, fixtures, render setup, population and coverage verification. Keep the canvas engine in the shared `@tombelieber/app-canvas` package; each application owns its inventory, catalog, synthetic fixtures, preview adapter and checks.
+
+## Select the input path
+
+For a website URL, read [references/url-import.md](references/url-import.md)
+and use its desktop capture/edit/save/reopen contract. URL imports report
+observed scope; the source completeness requirements below remain unchanged for
+repository population. The URL feature is unreleased: verify the CLI supports
+`import` and `open` instead of assuming the published pin has it.
 
 ## Required completion contract
 

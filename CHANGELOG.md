@@ -1,5 +1,12 @@
 # App Canvas
 
+## Unreleased
+
+- Desktop URL capture into App Canvas with observed states/flows, normalized
+  local DOM/assets, editable layers, history, atomic save and offline reopen.
+- Dedicated capture profiles, authentication pauses, partial-fidelity reports
+  and isolated imported playback. Existing source/native completion is unchanged.
+
 ## 0.10.3
 
 - Verify every addressable case in large catalogs while keeping rendered card contents bounded. The public verification path now supports catalogs larger than the overview rendering budget.

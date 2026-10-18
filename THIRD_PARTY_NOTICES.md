@@ -2,7 +2,8 @@
 
 App Canvas uses React Flow (`@xyflow/react`, MIT), React and React DOM (MIT),
 esbuild (MIT), Playwright (Apache-2.0), TypeScript (Apache-2.0), and Dagre /
-Graphlib (MIT) for directed graph layout. Their
+Graphlib (MIT) for directed graph layout. CSS Tree (MIT) parses normalized CSS;
+its data dependencies include mdn-data (CC0-1.0) and source-map-js (BSD-3-Clause). Their
 packages retain their respective copyright and license notices.
 
 The runnable StoolSense example is an author-owned frontend with synthetic

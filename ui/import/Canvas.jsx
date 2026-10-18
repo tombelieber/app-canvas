@@ -29,6 +29,7 @@ export function ImportCanvas({ project: initial }) {
   const load = useCallback(async (force = false) => {
     const next = await request("/api/import/state"); setCapture(next.session); if (next.manifest) setMeasured(next.manifest);
     if ((dirtyRef.current || busy.current) && !force) return;
+    if (loadedRevision.current !== next.project.revision) setCache({});
     setStored(next.project); setHistory(next.project.history); setCursor(next.project.cursor); setRevision(next.project.revision); loadedRevision.current = next.project.revision;
     setSelected(old => old && next.screens.some(s => s.id === old) ? old : next.screens[0]?.id || null);
   }, [request]);
@@ -61,7 +62,7 @@ export function ImportCanvas({ project: initial }) {
   const filtered = catalog.filter(s => (page === "all" || page === s.pageId) && (!query || `${s.title} ${s.pageId}`.toLowerCase().includes(query.toLowerCase())));
   const groups = routes.map((route, i) => ({ id: route, title: route, color: ["#476c89", "#4e826b", "#8a5d9b"][i % 3] }));
   const manifest = { screens: Object.fromEntries(screens.map(s => [s.id, { width: 1440, height: localDocuments[s.id]?.height || measured.screens?.[s.id]?.height || 1000, domUrl: `/import/document/${s.id}`, sharedUrl: `/import/overview/${s.id}` }])) };
-  const nodes = layoutScreens(filtered, manifest, groups, { mode: view === "machine" ? "machine" : "overview", flows: stored?.flows || [] }).map(n => n.type === "screen" && n.id === selected && mode !== "browse" ? { ...n, data: { ...n.data, height: 1000 * 390 / 1440, viewport: { width: 1440, height: 1000 } }, style: { width: 390, height: 1000 * 390 / 1440 + 48 } } : n);
+  const nodes = layoutScreens(filtered, manifest, groups, { mode: view === "machine" ? "machine" : "overview", flows: stored?.flows || [] }).map(n => n.type === "screen" ? { ...n, data: { ...n.data, visible: true } } : n).map(n => n.type === "screen" && n.id === selected && mode !== "browse" ? { ...n, data: { ...n.data, height: 1000 * 390 / 1440, viewport: { width: 1440, height: 1000 } }, style: { width: 390, height: 1000 * 390 / 1440 + 48 } } : n);
   const previews = visiblePreviews(nodes, viewport, area), hidden = useMemo(() => mode !== "browse" && selected ? new Set([selected]) : empty, [mode, selected]);
   const selectedNode = nodes.find(n => n.id === selected), links = useMemo(() => stored?.flows.filter(f => f.from === selected) || [], [stored, selected]);
   const navigate = useCallback(id => { if (busy.current) return; setSelected(id); setLayer(null); setPage("all"); setQuery(""); }, []);
@@ -73,7 +74,8 @@ export function ImportCanvas({ project: initial }) {
       setHistory(next); setCursor(next.length); setNotice("Unsaved changes");
       if (full.type === "duplicateScreen") setSelected(full.newId);
       if (full.type === "duplicate") setLayer(full.newId);
-    } catch (error) { setNotice(error.message); }
+      return true;
+    } catch (error) { setNotice(error.message); return false; }
   }, [selected, layer, history, cursor, document, cache, screen, stored]);
   const save = useCallback(async () => {
     if (!stored) return; busy.current = true; setSaving(true);
@@ -120,7 +122,7 @@ export function ImportCanvas({ project: initial }) {
       <div className="flow-stage" ref={areaRef}><ReactFlow nodes={nodes} edges={edges} nodeTypes={types} defaultViewport={{ x: 20, y: 20, zoom: .6 }} onNodeClick={(_, n) => { if (n.type === "screen") navigate(n.id); }} onEdgeClick={(_, edge) => navigate(edge.target)} minZoom={.02} maxZoom={5} nodesDraggable={false} nodesConnectable={false} deleteKeyCode={null} panOnScroll zoomOnDoubleClick={false}>
         <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable />
         <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={hidden} revision={revision} onError={setErrors} overrides={overrides} />
-        {mode !== "browse" && document && assets && selectedNode && <ViewportPortal><div className="import-editor-surface nodrag nopan nowheel" style={{ left: selectedNode.position.x, top: selectedNode.position.y + 4, width: 390, height: 1000 * 390 / 1440 }}><EditorFrame document={document} assets={assets} selected={layer} onSelect={setLayer} onOperation={operation} onBrowse={() => setMode("browse")} prototype={mode === "prototype"} links={links} onNavigate={navigate} /></div></ViewportPortal>}
+        {mode !== "browse" && document && assets && selectedNode && <ViewportPortal><div className="import-editor-surface nodrag nopan nowheel" style={{ left: selectedNode.position.x, top: selectedNode.position.y + 4, width: 390, height: 1000 * 390 / 1440 }}><EditorFrame key={selected} document={document} assets={assets} selected={layer} onSelect={setLayer} onOperation={operation} onBrowse={() => setMode("browse")} prototype={mode === "prototype"} links={links} onNavigate={navigate} /></div></ViewportPortal>}
       </ReactFlow>{!screens.length && <div className="import-empty"><h2>Capture a product into App Canvas</h2><p>{capture?.phase === "paused" ? "Complete sign-in in the capture browser, then press Capture State." : "Explore in the capture browser; captured screens appear here."}</p></div>}</div>
     </main>
     <aside className="details-panel"><ImportInspector node={mode === "edit" ? node : null} screen={screen} busy={saving} operation={operation} duplicateScreen={() => operation({ type: "duplicateScreen", newId: `copy-${crypto.randomUUID()}`, value: `${screen.title} · copy` })} upload={upload} links={links} navigate={navigate} /></aside>

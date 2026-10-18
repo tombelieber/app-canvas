@@ -11,6 +11,14 @@ Follow the user's repository instructions and authorization boundaries.
 [Tool source](https://github.com/tombelieber/app-canvas) ·
 [Runnable React/Vite reference](examples/react-vite)
 
+## URL input
+
+For a website URL and editable captured landscape, follow the separate
+[desktop URL import guide](docs/url-import.md) and the canonical
+[URL skill reference](skills/app-canvas/references/url-import.md). This development
+path is unreleased; verify the installed CLI exposes `import`/`open`. Imports
+report observed scope, and cannot pass the source completeness gates below.
+
 ## The outcome
 
 The developer opens one zoomable canvas, sees the app's pages and named states,
