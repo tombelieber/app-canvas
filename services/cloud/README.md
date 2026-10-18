@@ -8,6 +8,8 @@ The cloud workspace itself has not launched.
 
 Deploy under an existing, qualified Workers Free account. Use a dedicated D1
 DB named `app-canvas-waitlist`; replace the database ID for your own account.
+The Free plan enforces its own CPU ceiling; do not configure `limits.cpu_ms`,
+which is a paid-plan setting and causes Free-plan deployments to be rejected.
 The checked-in ID is the public demo's resource identifier, not a credential.
 Do not bind another product's database.
 
