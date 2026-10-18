@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdir, stat, writeFile } from "node:fs/promises";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 const { startCanvas, packageRoot } = await import(

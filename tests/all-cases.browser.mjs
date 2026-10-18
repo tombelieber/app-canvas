@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { loadProject } from "../lib/config.mjs";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 import { verifyJourneys } from "../lib/verify.mjs";

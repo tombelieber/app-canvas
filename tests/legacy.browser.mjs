@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 const app=await startCanvas({port:0,watchFiles:false,config:{title:"Legacy cached project",groups:[{id:"app",title:"Pages"}],catalog:[{id:"home",title:"Home",group:"app"}],preview:async({canvasOrigin})=>({url:()=>canvasOrigin+"/frame",handle(req,res,url){if(url.pathname!=="/frame")return false;res.setHeader("Content-Type","text/html");res.end('<!doctype html><html data-review-ready="true"><head></head><body><button id="live">Legacy app</button></body></html>');return true;}})}});
 const browser=await chromium.launch();

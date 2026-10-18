@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 const config = {
   title: "Queue proof", groups: [{ id: "app" }],

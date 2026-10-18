@@ -71,7 +71,7 @@ ${c.readmeMore} [English README](README.md) · [MIT](LICENSE)
 
 export async function generatedReadmes(content) {
   const original = await readFile(new URL("README.md", root), "utf8");
-  const section = `${start}\n${languageBar(content.locales)}\n\n**[Product & multilingual guides](${pageUrl("en")}) · [Agent walkthrough](${pageUrl("en", "start")}) · [Release story](${pageUrl("en", "release")})**\n\nCLI **v${content.facts.version}** · Demo **${content.facts.states} states · ${content.facts.flows} flows · ${content.facts.entries} playable entries**, including standalone cases. Viewer controls: Traditional Chinese.\n${end}`;
+  const section = `${start}\n${languageBar(content.locales)}\n\n**[Product & multilingual guides](${pageUrl("en")}) · [Agent walkthrough](${pageUrl("en", "start")}) · [Release story](${pageUrl("en", "release")})**\n\nCLI **v${content.facts.version}** · Demo **${content.facts.states} states · ${content.facts.flows} flows · ${content.facts.entries} playable entries**, including standalone cases. Viewer: English by default + 10 languages.\n${end}`;
   const english = original.includes(start)
     ? original.replace(/<!-- launch:begin -->[\s\S]*?<!-- launch:end -->/, section)
     : original.replace("# App Canvas\n", `# App Canvas\n\n${section}\n`);

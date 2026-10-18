@@ -1,3 +1,4 @@
+process.env.APP_CANVAS_TELEMETRY = "0";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";

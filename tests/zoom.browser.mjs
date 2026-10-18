@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { webkit } from "playwright";
+import { webkit } from "./locale-browser.mjs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 

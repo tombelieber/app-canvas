@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 import { verifyJourneys } from "../lib/verify.mjs";
 const journeys = [{id:"replace-file",title:"Replace file",entry:"upload",steps:[{screen:"upload",title:"Use the new mapping",actions:[

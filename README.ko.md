@@ -44,7 +44,7 @@ Browse는 이동 중 컨트롤을 잠급니다. 화면을 선택하고 Interact�
 ### 코딩 에이전트에 붙여 넣기
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 공유 도구 설치
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and a
 Node.js 22+와 프로젝트의 패키지 관리자 및 lockfile을 사용합니다. 고정한 GitHub 릴리스와 브라우저를 설치하세요. npm 12가 이 직접 Git 의존성을 차단할 때만 --allow-git=root를 추가하고 전역 정책은 바꾸지 마세요.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.11.0
+npm install --save-dev github:tombelieber/app-canvas#v0.12.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 공유 패키지는 viewer, CLI, skill을 관리합니다. 각 저장소는 adapter, fixtures, 독립 inventory, catalog, 상호작용 검증을 관리합니다. 실행 가능한 React/Vite 예제로 시작하고 다른 스택에는 전용 adapter를 사용하세요.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
 
 ### 선택 사항인 Agent Skill
 
@@ -106,7 +106,7 @@ npx app-canvas install --target both
 
 - Web은 실제 HTML/CSS와 상호작용 시 원래 JavaScript를 사용합니다. UIKit, SwiftUI, Android는 원래 runtime의 harness와 증거가 필요합니다. 캡처 이미지는 조작 가능한 네이티브 앱이 아닙니다.
 - 커버리지는 검토한 소스와 케이스의 대응이며 모든 업무 조건의 자동 발견이 아닙니다. UI 검증은 운영 backend나 의료 정확도, 모델 정밀도를 보장하지 않습니다.
-- Viewer 컨트롤은 현재 번체 중국어입니다. 이 제품 페이지와 가이드는 다국어입니다. 공개 데모는 고정된 합성 frontend export이고 실제 통합은 소스를 감시합니다. 실제 iPad 성능은 측정하지 않았습니다.
+- Viewer는 영어가 기본이며 11개 언어를 지원합니다. 공개 데모는 고정된 합성 프론트엔드이고 로컬 통합은 소스를 따릅니다. 실제 iPad 성능은 측정하지 않았습니다.
 
 합성 데이터 · 앱 backend 없음 · 로그인 불필요 · API 키 불필요
 

@@ -3,7 +3,7 @@ import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 const { startCanvas } = await import(process.env.APP_CANVAS_TEST_PACKAGE ? pathToFileURL(join(process.env.APP_CANVAS_TEST_PACKAGE, "lib/server.mjs")) : "../lib/server.mjs");
 const { verifyCanvas } = await import(process.env.APP_CANVAS_TEST_PACKAGE ? pathToFileURL(join(process.env.APP_CANVAS_TEST_PACKAGE, "lib/verify.mjs")) : "../lib/verify.mjs");
 const count = Number(process.env.APP_CANVAS_BUDGET_CASES || 260);

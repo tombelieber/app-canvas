@@ -44,7 +44,7 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 ### 貼給你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安裝共用工具
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and a
 使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.11.0
+npm install --save-dev github:tombelieber/app-canvas#v0.12.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 共用套件維護 viewer、CLI 及 skill；各 Repo 維護自己的 adapter、fixtures、獨立 inventory、catalog 與互動檢查。可從可執行的 React/Vite 範例開始；其他技術棧使用專屬 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
 
 ### 可選的 Agent Skill
 
@@ -106,7 +106,7 @@ npx app-canvas install --target both
 
 - Web preview 使用真實 HTML/CSS，互動時執行原有 JavaScript。UIKit、SwiftUI、Android 需要原生 runtime harness 及證據；原生截圖不等於可操作的原生 App。
 - Coverage 是經審查的來源與 case 對照，不會自動推斷所有業務情境。UI checks 不代表 production backend、醫療準確率或模型 precision 已合格。
-- Viewer 控制介面目前是繁體中文；產品頁及教學提供多語言。公開 Demo 是固定的虛構資料 frontend export，實際整合才會監看你的來源。尚未量測實體 iPad 效能。
+- Viewer 預設 English，支援 11 種語言。公開 Demo 係固定嘅虛構前端；本機整合會跟隨原始碼更新。未量度實體 iPad 效能。
 
 虛構資料 Demo · 無 App backend · 毋須登入 · 毋須 API key
 

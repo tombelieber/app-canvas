@@ -59,7 +59,7 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.11.0
+npm install --save-dev github:tombelieber/app-canvas#v0.12.0
 npx app-canvas browsers
 ```
 
@@ -276,3 +276,13 @@ Native Swift/Kotlin/Java and React Native UI use agent-authored simulator/device
 harnesses and adapters. This package supplies the shared viewer/coverage
 mechanisms and native workflow contract; it does not ship a universal native
 renderer or automatically discover semantic states without the coding agent.
+
+## Viewer language and usage privacy
+
+The viewer defaults to English with an in-place switcher for all eleven launch
+languages. Application content and authored case labels keep their own language.
+Official CLI downloads enable minimal anonymous tool usage events; users can
+run `app-canvas telemetry off` or set `APP_CANVAS_TELEMETRY=0`. CI, DNT/GPC and
+self-hosted exports can disable transmission. No application data, source or
+paths are sent. See [telemetry](docs/telemetry.md). Do not send fixture or
+repository content to analytics when extending an adapter.

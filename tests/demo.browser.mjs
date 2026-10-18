@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 
 // The first assertion must fail if the one-click audience entry point is removed.
