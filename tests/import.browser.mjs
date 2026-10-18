@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { chromium } from "playwright";
+import { startImportSite } from "./fixtures/import-site.mjs";
+const root = await mkdtemp(join(tmpdir(), "app-canvas-import-e2e-")), site = await startImportSite();
+const cli = fileURLToPath(new URL("../bin/app-canvas.mjs", import.meta.url));
+let child, browser;
+const start = args => new Promise((resolve, reject) => {
+  child = spawn(process.execPath, [cli, ...args, "--port", "0"], { stdio: ["ignore", "pipe", "pipe"] });
+  let output = "", errors = ""; const timer = setTimeout(() => reject(Error(`CLI did not open App Canvas: ${errors}`)), 20000);
+  child.stdout.on("data", data => { output += data; const address = output.match(/App Canvas import: (http:\/\/127\.0\.0\.1:\d+)/)?.[1]; if (address) { clearTimeout(timer); resolve(address); } });
+  child.stderr.on("data", data => errors += data);
+  child.once("exit", code => { clearTimeout(timer); if (!output.includes("App Canvas import:")) reject(Error(`CLI import/open must start App Canvas (${code}): ${errors}`)); });
+});
+const stop = () => new Promise(resolve => { if (!child || child.exitCode !== null) return resolve(); child.once("exit", resolve); child.kill("SIGTERM"); });
+try {
+  const directory = join(root, "project"), address = await start(["import", `${site.url}/calendar`, "--out", directory, "--headless", "--no-record"]);
+  browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
+  await page.goto(address); await page.getByText("Content calendar", { exact: true }).first().waitFor();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
+  await page.getByRole("button", { name: "Content calendar", exact: true }).last().click();
+  await page.getByLabel("Text content", { exact: true }).fill("Edited landscape");
+  await page.getByRole("button", { name: "Apply text", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByText("Saved", { exact: true }).waitFor();
+  const token = await page.evaluate(() => window.__unusedToken);
+  assert.equal(token, undefined, "no ambient token global");
+  const denied = await fetch(`${address}/api/import/save`, { method: "POST", headers: { Origin: "https://example.test", "Content-Type": "application/json" }, body: "{}" }); assert.equal(denied.status, 403);
+  await stop();
+  const reopened = await start(["open", directory]); let outside = 0;
+  await page.route("**/*", route => { if (!route.request().url().startsWith(reopened)) { outside++; return route.abort(); } return route.continue(); });
+  await page.goto(reopened); await page.getByRole("button", { name: "Edit", exact: true }).click();
+  const frame = page.frameLocator("iframe[data-import-editor]"); await frame.getByText("Edited landscape", { exact: true }).waitFor();
+  assert.equal(outside, 0, "saved project reopens without the source site"); assert.equal(site.mutations(), 0);
+  console.log("PASS public CLI URL → App Canvas landscape → edit → save → close → open → saved offline UI, cross-site save denied.");
+} finally { await stop(); await browser?.close(); await site.close(); await rm(root, { recursive: true, force: true }); }

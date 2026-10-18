@@ -19,6 +19,9 @@ const { values, positionals } = parseArgs({
     target: { type: "string" },
     out: { type: "string" },
     help: { type: "boolean" },
+    headless: { type: "boolean" },
+    "no-record": { type: "boolean" },
+    profile: { type: "string" },
   },
 });
 if (values.version) {
@@ -30,7 +33,7 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both",
   );
   process.exit(0);
 }
@@ -51,6 +54,10 @@ if (positionals[0] === "browsers") {
 }
 let app;
 try {
+  if (["import", "open"].includes(positionals[0])) {
+    const { runImportCommand } = await import("../lib/import/cli.mjs");
+    await runImportCommand(positionals, values);
+  } else {
   if (values.complete && (values.check || values.verify || positionals.length)) throw Error("Cannot combine --complete with --check, --verify or another command");
   if (["discover", "pending"].includes(positionals[0])) {
     const { discoverSources } = await import("../lib/inventory.mjs");
@@ -119,6 +126,7 @@ try {
       values.complete ? `PASS: source population verified, ${proof.total} cases` : `PASS: ${proof.total} registered screens${proof.interactionsVerified ? " and project interactions" : ""} (registered cases only; use --complete for population acceptance)`,
     );
     await app.close();
+  }
   }
 } catch (error) {
   console.error(error.message);

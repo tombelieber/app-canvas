@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createOverviewLoader, OVERVIEW_LIMIT } from "./overview-loader.js";
 
-export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError }) {
+export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError, overrides }) {
   const frame = useRef(null), latest = useRef(null), jobs = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
+  const currentOverrides = useRef(overrides); currentOverrides.current = overrides;
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
   const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
@@ -24,7 +25,7 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
       show(source, document) {
         if (frame.current?.dataset.error === source.id) frame.current.removeAttribute("data-error");
         onError(old => { if (!old[source.id]) return old; const next = { ...old }; delete next[source.id]; return next; });
-        send({ command: "document", id: source.id, document });
+        send({ command: "document", id: source.id, document: currentOverrides.current?.[source.id] || document });
       },
       evict(id) { send({ command: "evict", id }); },
       error(source) {
@@ -42,6 +43,7 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
   useEffect(() => {
     if (loaded) jobs.current?.sync(JSON.parse(sourceKey));
   }, [loaded, sourceKey, revision]);
+  useEffect(() => { if (loaded && overrides) { for (const [id, document] of Object.entries(overrides)) send({ command: "document", id, document }); send({ command: "layout", items: latest.current.layout }); } }, [loaded, overrides, send]);
   // Keep the iframe outside the transformed graph. An inverse scale produces
   // small final bounds but can still allocate large intermediate WebKit layers.
   return <div className="overview-plane" style={{ width: area.width, height: area.height }}>

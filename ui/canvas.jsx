@@ -19,6 +19,7 @@ import { journeyPlan } from "../lib/playback.mjs";
 import { previewPool, visiblePreviews, renderedNodes } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
+import { ImportCanvas } from "./import/Canvas.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
 const { catalog, pages } = project;
 const flows = graphFlows(project), coverage = caseCoverage(project);
@@ -205,4 +206,4 @@ function Canvas() {
     </div>
   </PreviewContext.Provider>;
 }
-createRoot(document.getElementById("root")).render(<ReactFlowProvider><Canvas /></ReactFlowProvider>);
+createRoot(document.getElementById("root")).render(<ReactFlowProvider>{project.kind === "web-import" ? <ImportCanvas project={project} /> : <Canvas />}</ReactFlowProvider>);
