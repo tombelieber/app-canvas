@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { mkdir } from "node:fs/promises";
 import { startCanvas } from "../lib/server.mjs";
 const config = {

@@ -44,7 +44,7 @@ Encarga la integración a un agente que pueda leer, editar y ejecutar comandos. 
 ### Pega esto en tu agente
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Instala la herramienta compartida
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md and a
 Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.11.0
+npm install --save-dev github:tombelieber/app-canvas#v0.12.0
 npx app-canvas browsers
 ```
 
@@ -92,7 +92,7 @@ npm run ui:review
 
 El paquete compartido mantiene viewer, CLI y skill. Tu repo mantiene adapter, fixtures, inventory independiente, catalog y comprobaciones. Empieza con el ejemplo ejecutable React/Vite; otros stacks necesitan su adapter.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.11.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.11.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
 
 ### Skill opcional
 
@@ -106,7 +106,7 @@ npx app-canvas install --target both
 
 - Web utiliza HTML/CSS reales y JavaScript original al interactuar. UIKit, SwiftUI y Android necesitan harnesses y evidencia del runtime original; una captura no es una app nativa interactiva.
 - La cobertura relaciona código revisado y casos, no descubre automáticamente toda condición posible. Las pruebas UI no validan backends de producción ni precisión clínica o de modelos.
-- Los controles del viewer están en chino tradicional; estas páginas y guías son multilingües. La demo es un frontend sintético congelado; una integración real observa tu código. No se ha medido el rendimiento en iPad físico.
+- Viewer: inglés por defecto y 11 idiomas. La demo pública es un frontend sintético fijo; las integraciones locales siguen tu código. No se ha medido el rendimiento en un iPad físico.
 
 Datos sintéticos · sin backend de app · sin cuenta · sin API key
 

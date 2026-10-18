@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { overviewDocument } from "../ui/overview-document.js";
 
 const source = { fonts: "", background: "white", html: `<!doctype html><html><head><style>

@@ -68,13 +68,13 @@
   "limits": [
     "Web gebruikt echte HTML/CSS en oorspronkelijke JavaScript voor interacties. UIKit, SwiftUI en Android vereisen harnesses en bewijs uit de oorspronkelijke runtime; een opname is geen interactieve native app.",
     "Dekking verbindt beoordeelde broncode met cases en ontdekt niet automatisch elke bedrijfsconditie. UI-controles kwalificeren geen productiebackend, klinische juistheid of modelprecisie.",
-    "De viewerbediening is momenteel Traditioneel Chinees; deze pagina’s en gidsen zijn meertalig. De demo is een bevroren synthetische frontend; echte integraties volgen je code. Prestaties op een fysieke iPad zijn niet gemeten."
+    "Viewer: standaard Engels, met 11 talen. De openbare demo is een vast synthetisch frontend; lokale integraties volgen je broncode. Prestaties op een fysieke iPad zijn niet gemeten."
   ],
   "storyTitle": "Waarom ik App Canvas bouwde",
   "story": [
     "AI maakte een nieuwe pagina bouwen eenvoudig, maar een groeiende app niet begrijpelijker. Ik wilde geïmplementeerde schermen en fouten samen zien, zonder alles door te klikken of een tweede ontwerpbestand te onderhouden.",
     "App Canvas maakt de beoordeling een navigeerbaar landschap. De agent integreert de repo; het gedeelde gereedschap biedt canvas, previews van echte code, cameravolging en geverifieerd afspelen.",
-    "StoolSense is het publieke voorbeeld: registreren, corrigeren, verwijderen, import, export, dialogen en herstel met synthetische data. Geen productiesessie, echte gezondheidsdata, AI-verzoeken of analytics. MIT-licentie. Probeer de demo en geef de gids aan je agent."
+    "StoolSense is het synthetische openbare voorbeeld. Geen productiesessie, echte gezondheidsgegevens of AI-verzoeken. Optionele gebruiksgebeurtenissen staan los van app-data."
   ],
   "versionLabel": "CLI-release",
   "docsLabel": "Agentgids",

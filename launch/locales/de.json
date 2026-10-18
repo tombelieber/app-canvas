@@ -68,13 +68,13 @@
   "limits": [
     "Web-Vorschauen nutzen echtes HTML/CSS und Original-JavaScript bei Interaktionen. UIKit, SwiftUI und Android brauchen Harnesses und Nachweise aus der ursprünglichen Laufzeit; ein Bild ist keine interaktive native App.",
     "Abdeckung ist eine geprüfte Zuordnung von Quellen zu Fällen, keine automatische Erkennung jeder Geschäftsbedingung. UI-Prüfungen qualifizieren weder Produktions-Backends noch klinische oder Modellgenauigkeit.",
-    "Die Viewer-Bedienung ist derzeit traditionelles Chinesisch; Produktseiten und Anleitungen sind mehrsprachig. Die Demo ist ein eingefrorenes synthetisches Frontend; echte Integrationen beobachten deinen Code. Physische iPad-Leistung wurde nicht gemessen."
+    "Viewer: standardmäßig Englisch, 11 Sprachen. Die öffentliche Demo ist ein eingefrorenes synthetisches Frontend; lokale Integrationen folgen dem Quellcode. Physische iPad-Leistung wurde nicht gemessen."
   ],
   "storyTitle": "Warum ich App Canvas gebaut habe",
   "story": [
     "KI machte die nächste Seite einfach, aber eine wachsende App nicht verständlicher. Ich wollte implementierte Seiten und Fehlerzustände sehen, ohne alles durchzuklicken oder eine zweite Designdatei zu pflegen.",
     "App Canvas macht die Prüfung zu einer navigierbaren Übersicht. Der Agent integriert das Repository; das gemeinsame Werkzeug liefert Canvas, echte Code-Vorschauen, Kameraführung und geprüfte Wiedergabe.",
-    "StoolSense ist das öffentliche Beispiel: Aufzeichnen, Korrigieren, Löschen, Import, Export, Dialoge und Wiederherstellung mit synthetischen Daten. Keine Produktionssitzung, echten Gesundheitsdaten, KI-Anfragen oder Analytics. MIT-Lizenz. Erst Demo, dann Agent-Anleitung."
+    "StoolSense ist das synthetische öffentliche Beispiel. Keine Produktionssitzung, echten Gesundheitsdaten oder KI-Anfragen. Optionale Nutzungsereignisse sind von App-Daten getrennt."
   ],
   "versionLabel": "CLI-Release",
   "docsLabel": "Agent-Anleitung",

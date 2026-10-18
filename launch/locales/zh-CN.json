@@ -68,13 +68,13 @@
   "limits": [
     "Web preview 使用真实 HTML/CSS，交互时执行原有 JavaScript。UIKit、SwiftUI 和 Android 需要原生 runtime harness 和证据；原生截图不等于可操作的原生 App。",
     "Coverage 是经过审查的源码与 case 对照，不会自动推断所有业务场景。UI checks 不代表 production backend、医疗准确率或模型 precision 已达标。",
-    "Viewer 控制界面目前为繁体中文；产品页和教程提供多语言。公开 Demo 是固定的合成数据 frontend export，实际集成才监看你的源码。尚未测量实体 iPad 性能。"
+    "Viewer 默认 English，支持 11 种语言。公开 Demo 是固定的虚构前端；本机集成会跟随源码更新。尚未测量实体 iPad 性能。"
   ],
   "storyTitle": "为什么我创建 App Canvas",
   "story": [
     "AI 让创建新页面变得容易，却未让整个 App 更容易理解。我想一次看到实际页面和失败状态，无需逐页点击，也无需另外维护一份设计文件。",
     "App Canvas 将审查变成可导航的画布。Coding agent 负责各 Repo 的集成；共享工具提供画布、真实代码 web previews、跟随流程的镜头和可检查播放。",
-    "StoolSense 是公开示例，用合成数据展示记录、修正、删除、导入、导出、对话框和恢复。Hosted export 没有 production session、真实健康数据、AI requests 或 analytics。采用 MIT license：先试 Demo，再把集成指南交给 Agent。"
+    "StoolSense 是公开的虚构示例，没有生产会话、真实健康记录或 AI 请求。可选的匿名工具使用事件与 App 数据分开。"
   ],
   "versionLabel": "CLI 版本",
   "docsLabel": "Agent 指南",

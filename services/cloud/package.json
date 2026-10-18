@@ -1,0 +1,1 @@
+{"name":"app-canvas-cloud-service","private":true,"type":"module","scripts":{"dev":"wrangler dev","deploy":"wrangler deploy","check":"node --check worker.mjs && wrangler deploy --dry-run"},"devDependencies":{"wrangler":"4.151.1"}}

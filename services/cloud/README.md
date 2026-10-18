@@ -1,0 +1,49 @@
+# App Canvas Cloud interest service
+
+Cloudflare Workers + D1 only. No Supabase dependency.
+
+The public Worker serves a consent-based waitlist, credential-bound removal
+and an allowlisted anonymous PostHog proxy. It never hosts user app repositories.
+The cloud workspace itself has not launched.
+
+Deploy under an existing, qualified Workers Free account. Use a dedicated D1
+DB named `app-canvas-waitlist`; replace the database ID for your own account.
+The Free plan enforces its own CPU ceiling; do not configure `limits.cpu_ms`,
+which is a paid-plan setting and causes Free-plan deployments to be rejected.
+The checked-in ID is the public demo's resource identifier, not a credential.
+Do not bind another product's database.
+
+```sh
+wrangler d1 migrations apply DB --local
+wrangler dev --var LOCAL_TEST:1
+# After local verification and Free-plan/capacity checks:
+wrangler d1 migrations apply DB --remote
+wrangler secret put POSTHOG_TOKEN
+wrangler deploy
+```
+
+`LOCAL_TEST` is only for local tests; never deploy that variable. Production
+origins are explicit in worker.mjs. Loopback is accepted only with LOCAL_TEST.
+No preview/private development origin is implicitly authorized. The CLI capture
+route accepts no-Origin clients but still enforces the event schema and limits.
+CORS is not authentication. The service exposes no email reads.
+
+Waitlist requests: 8/minute per network address per Cloudflare rate-limit region,
+plus an atomic global 500-submission/day D1 cap. The Free plan provides the
+billing boundary; rate limiting is abuse mitigation, not a security identity.
+Capture is also capped at 5,000 attempts/day globally before sending to PostHog.
+The daily scheduled task expires 365-day registrations and old budget records.
+Requests and bodies are not logged. Inspect only aggregates for operational QA.
+Keep canary addresses on reserved example domains and remove them with their
+returned code after verification. Never report canaries as market demand.
+
+Capture requires POSTHOG_TOKEN (public ingest class, stored as a Worker secret).
+The publisher's destination is the shared **OSS Products** PostHog project.
+This collector only accepts App Canvas events, fixes `product=app_canvas` and
+`schema_version=1`, and prefixes distinct IDs with `app_canvas:`. Future OSS
+tools may share the destination but must use their own fixed product value,
+event contract and scoped identities. Product filters are not access control;
+see [the shared analytics contract](../../docs/telemetry.md#shared-oss-analytics-project).
+Without it the endpoint returns unavailable. Do not call that analytics-ready.
+Set RELEASE_VERSION to the exact promoted package version. Verify actual
+PostHog ingestion as well as HTTP delivery before claiming analytics shipped.

@@ -1,7 +1,9 @@
+import { useI18n } from "./i18n.jsx";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createNativeRenderer, loadNativeAtlas } from "./native-atlas.js";
 
 export function NativeOverviewPlane({ atlas, nodes, viewport, area, mounted, liveScreen, onReady, error }) {
+  const { t } = useI18n();
   const canvas = useRef(null), latest = useRef(null), draw = useRef(null);
   const [state, setState] = useState({ atlas: null, status: "loading" });
   const status = state.atlas === atlas ? state.status : "loading";
@@ -44,6 +46,6 @@ export function NativeOverviewPlane({ atlas, nodes, viewport, area, mounted, liv
   if (!atlas && !error) return null;
   return <div className="native-overview overview-plane" data-status={error ? "fallback" : status} data-drawn="0" style={{ width: area.width, height: area.height }}>
     {atlas && <canvas ref={canvas} style={{ width: "100%", height: "100%", visibility: status === "ready" ? "visible" : "hidden" }} aria-hidden="true" />}
-    {(error || status === "fallback") && <span className="native-overview-notice" role="status">原生總覽未能加速；已使用原有預覽。</span>}
+    {(error || status === "fallback") && <span className="native-overview-notice" role="status">{t("Native acceleration unavailable; using original previews.")}</span>}
   </div>;
 }

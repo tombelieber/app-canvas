@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 
 const app = await startCanvas({ root: packageRoot, configPath: "examples/stoolsense/canvas.config.mjs", port: 0, watchFiles: false });

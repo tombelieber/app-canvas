@@ -68,13 +68,13 @@
   "limits": [
     "Web usa HTML/CSS reali e JavaScript originale per interagire. UIKit, SwiftUI e Android richiedono harness e prove nel runtime originale; una cattura non è un’app nativa interattiva.",
     "La copertura collega codice revisionato e casi, senza scoprire automaticamente ogni condizione di business. I test UI non qualificano backend di produzione, accuratezza clinica o precisione dei modelli.",
-    "I controlli del viewer sono in cinese tradizionale; queste pagine e guide sono multilingue. La demo è un frontend sintetico congelato; le integrazioni reali osservano il codice. Le prestazioni su iPad fisico non sono state misurate."
+    "Viewer: inglese predefinito, con 11 lingue. La demo pubblica è un frontend sintetico fisso; le integrazioni locali seguono il codice. Le prestazioni su iPad fisico non sono state misurate."
   ],
   "storyTitle": "Perché ho creato App Canvas",
   "story": [
     "L’IA rendeva semplice creare un’altra pagina, non capire un’app in crescita. Volevo vedere schermate implementate e stati di errore senza attraversare tutta l’app o mantenere un secondo file di design.",
     "App Canvas trasforma la revisione in un panorama navigabile. L’agente integra il repository; lo strumento condiviso offre canvas, preview del codice reale, visuale che segue il flusso e riproduzione verificata.",
-    "StoolSense è l’esempio pubblico: registrazione, correzione, eliminazione, importazione, esportazione, dialoghi e recupero con dati sintetici. Nessuna sessione di produzione, dato sanitario reale, richiesta IA o analytics. Licenza MIT. Prova la demo, poi passa la guida all’agente."
+    "StoolSense è l’esempio pubblico sintetico. Non contiene sessioni di produzione, dati sanitari reali o richieste IA. Gli eventi facoltativi di utilizzo sono separati dai dati dell’app."
   ],
   "versionLabel": "Release CLI",
   "docsLabel": "Guida dell’agente",

@@ -5,7 +5,7 @@
 
 **[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
 
-CLI **v0.11.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer controls: Traditional Chinese.
+CLI **v0.12.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
 <!-- launch:end -->
 
 A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
@@ -50,10 +50,10 @@ bundle a universal device renderer; viewer checks and native checks are separate
 
 ## Try the included application
 
-Requires Node.js 22+ and Chromium installed through Playwright. The UI chrome currently uses Traditional Chinese; project screen titles can use any language.
+Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.11.0
+npm install -g github:tombelieber/app-canvas#v0.12.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -95,7 +95,7 @@ A single compact toolbar and collapsible sidebars preserve iPad landscape space.
 **顯示其他分支** retains neighboring states while following a selected flow.
 
 The hosted demo also uses this frozen synthetic export. It has no application
-backend, production session, real health records, AI requests or analytics.
+backend, production session, real health records or AI requests. Minimal optional tool usage events are separate; see [telemetry controls](docs/telemetry.md).
 Saving and deleting affect only the disposable browser preview. GitHub Pages
 serves the static files under GitHub's own hosting policies.
 

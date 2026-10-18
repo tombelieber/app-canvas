@@ -68,13 +68,13 @@
   "limits": [
     "Web previews use actual HTML/CSS and original JavaScript for interaction. Native UIKit, SwiftUI and Android need original-runtime harnesses and evidence; a capture is not a live native app.",
     "Coverage is a reviewed source-to-case contract, not automatic discovery of every possible business condition. UI checks do not qualify production backends, clinical accuracy or model precision.",
-    "The viewer controls currently use Traditional Chinese. These product pages and guides are multilingual. The public demo is a frozen synthetic frontend; live integrations watch your real source. Physical iPad performance has not been measured."
+    "Viewer: English by default, with 11 languages. The public demo is a frozen synthetic frontend; live integrations watch your source. Physical iPad performance has not been measured."
   ],
   "storyTitle": "Why I built App Canvas",
   "story": [
     "AI made it easy to build another page. It did not make a growing application easy to understand. I wanted to see the implemented screens and their failure states together without clicking through the whole app or maintaining a second design file.",
     "App Canvas turns that review into a navigable landscape. A coding agent does the repository-specific integration; the shared tool supplies the canvas, original-code web previews, camera-following navigation and checked playback.",
-    "StoolSense is the public example: synthetic recording, correction, deletion, import, export, dialogs and recovery. The hosted export has no production session, health records, AI requests or analytics. MIT licensed. Start with the demo, then give your agent the integration guide."
+    "StoolSense is the synthetic public example. It has no production session, real health records or AI requests. Optional anonymous tool usage events are separate from app data."
   ],
   "versionLabel": "CLI release",
   "docsLabel": "Agent guide",

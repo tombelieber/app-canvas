@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { build } from "esbuild";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 
 const bundle = await build({ stdin: { contents: 'import { actionRunner } from "./lib/frame-actions.js"; window.runCanvasAction = actionRunner();', resolveDir: process.cwd() }, bundle: true, write: false, format: "iife" });
 for (const engine of [chromium, webkit]) {

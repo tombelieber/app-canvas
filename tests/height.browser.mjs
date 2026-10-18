@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 const app = await startCanvas({ port: 0, watchFiles: false, config: {
   title: "Viewport-dependent layout", groups: [{ id: "app", title: "Pages" }],

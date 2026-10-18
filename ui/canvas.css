@@ -136,7 +136,7 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
  .operate-app {display:none}
 }
 @media (max-width:650px) {
- .workspace-identity,.workspace-dock > button[aria-label^="切換"],.canvas-view-controls {display:none}
+ .workspace-identity,.workspace-dock > .navigation-toggle,.canvas-view-controls {display:none}
  .fit-button,.playback-toggle span {display:none}
  .workspace-dock {padding:3px 5px;gap:3px}
  .workspace-dock button {padding:8px;font-size:12px;white-space:nowrap}
@@ -202,3 +202,6 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
  .demo-player select {font-size:16px}
 }
 .preview-deferred{height:100%;display:grid;place-items:center;padding:24px;box-sizing:border-box;color:#66717a;background:#f4f5f6;font:14px/1.5 system-ui;pointer-events:none}
+
+.language-picker {width:110px;max-width:110px;min-width:76px;height:44px;padding:6px;border:1px solid #d6dde1;border-radius:6px;background:white;color:#24444b;font:inherit;font-size:12px}
+@media(max-width:600px){.language-picker{width:76px;max-width:76px;font-size:11px}.workspace-dock .operate-app{display:none}}

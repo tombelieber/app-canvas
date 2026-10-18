@@ -1,5 +1,12 @@
 # App Canvas
 
+## 0.12.0
+
+- Default the viewer to English and add all eleven launch languages, with persistent switching that keeps app drafts, previews, camera and playback alive.
+- Add an optional hosted-workspace interest list using Cloudflare Workers and a dedicated D1 database, with explicit consent, deduplication, removal codes and one-year retention. Cloud itself is not launched.
+- Add minimal default-on CLI/download and official-demo usage events through an allowlisted PostHog proxy; keep persistent opt-out, DNT/GPC, CI controls, self-host configuration and generic exports disabled by default. Never transmit app content, source, names, paths or waitlist email to analytics.
+- Localize the product waitlist/privacy controls and qualify the viewer in Chromium and WebKit while preserving the existing native GPU and interaction gates.
+
 ## 0.11.0
 
 - Add an explicit, checksummed GPU atlas overview for captured native UI. Keep Web/React source DOM, original selected/retained app instances, Demo/Play and clickable flow links. Fall back to the existing renderer on asset or GPU failure.

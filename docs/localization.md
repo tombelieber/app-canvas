@@ -2,8 +2,9 @@
 
 App Canvas publishes the product page, repository onboarding guide and release
 story in English, Traditional Chinese, Simplified Chinese, Japanese, Spanish,
-French, German, Portuguese, Italian, Korean and Dutch. The viewer controls
-remain Traditional Chinese. Project labels may use any language.
+French, German, Portuguese, Italian, Korean and Dutch. The viewer defaults to English and uses the same 11 languages. A persistent
+native-select switcher updates chrome without remounting previews or playback.
+Project labels and application contents retain their original language.
 
 ## One content contract
 
@@ -47,5 +48,12 @@ Product-material updates alone do not require moving a version tag.
 Use publishable real captures under `docs/`. The overview and flow show the
 synthetic public web demo; the iPhone image is a real Safari capture. Never
 include private data, device identifiers, profiles, raw traces or credentials.
-Review image pixels as well as text privacy checks. The pages require no new
-analytics, remote fonts or client-side translation service.
+Review image pixels as well as text privacy checks. The pages use no remote fonts or client-side translation service. Explicit
+usage events and the Cloudflare waitlist are described in [telemetry](telemetry.md).
+
+`lib/locales.mjs` is the common locale registry. Viewer strings live in
+`ui/locales/`; `launch/cloud-locales.json` owns the localized waitlist.
+`npm run test:i18n` verifies English default, every locale, persistence, existing
+drafts/camera/iframe identity and a language switch during real playback.
+The original interaction suites explicitly select zh-TW using
+`tests/locale-browser.mjs`; they do not determine the product default.

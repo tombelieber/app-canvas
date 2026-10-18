@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 const root = await mkdtemp(join(tmpdir(), "app-canvas-watch-"));
 const source = join(root, "screen.html");

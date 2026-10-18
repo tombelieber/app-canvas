@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { serveStatic } from "./serve-static.mjs";
 import { loadContent, languages, pagePath } from "../launch/content.mjs";
 

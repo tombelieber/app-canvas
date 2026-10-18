@@ -1,3 +1,4 @@
+process.env.APP_CANVAS_TELEMETRY = "0";
 import assert from "node:assert/strict";
 import { mkdtemp, cp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -60,7 +61,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto(app.address);
-  await page.getByRole("button", {name:"▶ 操作 App",exact:true}).click();
+  await page.getByRole("button", {name:"▶ Use app",exact:true}).click();
   const frame = page.frameLocator('iframe[data-screen="tasks"]');
   await frame.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
   const abort = new AbortController();

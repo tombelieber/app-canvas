@@ -1,7 +1,9 @@
+import { useI18n } from "./i18n.jsx";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createOverviewLoader, OVERVIEW_LIMIT } from "./overview-loader.js";
 
 export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveScreen, revision, onError }) {
+  const { t } = useI18n();
   const frame = useRef(null), latest = useRef(null), jobs = useRef(null), [loaded, setLoaded] = useState(0);
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
@@ -29,7 +31,7 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
       evict(id) { send({ command: "evict", id }); },
       error(source) {
         frame.current.dataset.error = source.id;
-        onError(old => ({ ...old, [source.id]: "預覽未能載入；點選畫面可開啟原 App。" }));
+        onError(old => ({ ...old, [source.id]: "Preview unavailable; select the screen to open the original app." }));
       },
     });
     jobs.current = loader;
@@ -45,6 +47,6 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
   // Keep the iframe outside the transformed graph. An inverse scale produces
   // small final bounds but can still allocate large intermediate WebKit layers.
   return <div className="overview-plane" style={{ width: area.width, height: area.height }}>
-    <iframe ref={frame} data-overview title="所有完整 UI · 共用隔離渲染" src={source} sandbox="allow-scripts" inert tabIndex={-1} onLoad={() => setLoaded(old => old + 1)} />
+    <iframe ref={frame} data-overview title={t("Full UI · shared isolated rendering")} src={source} sandbox="allow-scripts" inert tabIndex={-1} onLoad={() => setLoaded(old => old + 1)} />
   </div>;
 }

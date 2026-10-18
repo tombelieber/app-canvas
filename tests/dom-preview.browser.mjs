@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 
 const image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=";

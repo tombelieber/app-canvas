@@ -30,13 +30,30 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
   );
+  process.exit(0);
+}
+const telemetryCommand = positionals[0] === "telemetry";
+const trackable = !values.check && !values.verify && !values.complete && !["browsers", "discover", "pending", "export"].includes(positionals[0]);
+let telemetry;
+if (trackable) {
+  const { createTelemetry } = await import("../lib/telemetry.mjs");
+  const version = JSON.parse(await readFile(new URL("../package.json", import.meta.url))).version;
+  telemetry = await createTelemetry({version, source: process.env.APP_CANVAS_INSTALL_SOURCE || "npx", surface: positionals[0] === "demo" ? "official_demo" : "real_project"});
+  if (!telemetryCommand) await telemetry.notice();
+}
+if (telemetryCommand) {
+  const choice = positionals[1];
+  if (choice && !["on", "off", "status"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status");
+  if (choice === "on" || choice === "off") await telemetry.setEnabled(choice === "on");
+  console.log(`Anonymous usage analytics: ${telemetry.config().enabled ? "enabled" : "disabled"}`);
   process.exit(0);
 }
 if (positionals[0] === "install") {
   const { install } = await import("../lib/install.mjs");
   await install({ target: values.target || "both" });
+  await telemetry?.once("install");
   process.exit(0);
 }
 if (positionals[0] === "browsers") {
@@ -94,6 +111,7 @@ try {
     if (typeof completeProject.verify !== "function") throw Error("Complete validation requires a project verify hook with source-linked runtime evidence");
   }
   app = await startCanvas({
+    telemetry,
     config: completeProject,
     root: positionals[0] === "demo" ? packageRoot : process.cwd(),
     configPath:

@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import { createJourneys } from "../examples/stoolsense/journeys.mjs";
 import { caseCoverage } from "../lib/coverage.mjs";
 
-export const languages = ["en", "zh-TW", "zh-CN", "ja", "es", "fr", "de", "pt", "it", "ko", "nl"];
+import { languages } from "../lib/locales.mjs";
+export { languages };
 export const baseUrl = "https://tombelieber.github.io/app-canvas/";
 export const repository = "https://github.com/tombelieber/app-canvas";
 export const personalRelease = "https://tomtang3.ai/blog/introducing-app-canvas/";

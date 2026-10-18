@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { build } from "esbuild";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
 const image=await readFile(new URL("./fixtures/native-atlas.png",import.meta.url)),sha=createHash("sha256").update(image).digest("hex");
 const js=(await build({entryPoints:[new URL("./fixtures/native-overview-react.jsx",import.meta.url).pathname],bundle:true,write:false,format:"esm",define:{"process.env.NODE_ENV":'"production"'}})).outputFiles[0].text;
