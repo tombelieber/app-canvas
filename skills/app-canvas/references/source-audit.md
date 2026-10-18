@@ -58,6 +58,14 @@ remain inspection work. In a rendering source, opposite reachable outcomes requi
 separate fixture cases; identical pixels may represent different conditions.
 Do not invent different UI to satisfy a structural branch.
 
+Fresh discovery may also mark a narrowly recognized canonical Objective-C
+initializer outcome `nonRenderingOutcome`: a nil return constructs no own UI,
+and a completely empty `if (self) {}` body adds no branch-local UI effect. These
+annotations still require specific source reviews. They do not waive the native
+UI class, superclass construction, caller behavior, declarations or presentation
+sites. Statements, fallbacks, later code and ordinary self guards are excluded;
+editing a recorded annotation cannot replace the fresh source proof.
+
 Keep blocked obligations with a `blocker`. `pending` returns the next ten unread
 obligations and the remaining count. Resolve them, populate their semantic
 items and original-runtime evidence, and continue. A zero reading count is not
