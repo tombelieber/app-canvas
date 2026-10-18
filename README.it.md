@@ -1,0 +1,115 @@
+<!-- Generated from launch/locales/it.json; run npm run docs:generate. -->
+# App Canvas
+
+[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt.md) · [Italiano](README.it.md) · [한국어](README.ko.md) · [Nederlands](README.nl.md)
+
+## Tutta la tua UI. Una canvas. Codice reale.
+
+Esplora schermate, stati e flussi interattivi reali su una canvas con zoom, creata e mantenuta con il tuo agente di programmazione.
+
+**[Apri la demo](https://tombelieber.github.io/app-canvas/) · [Aggiungi al repository](https://tombelieber.github.io/app-canvas/about/it/start/) · [Articolo di lancio](https://tombelieber.github.io/app-canvas/about/it/release/)**
+
+## TL;DR
+
+- Visualizza insieme schermate complete, stati nominati e flussi implementati.
+- Mantieni una sola implementazione UI. L’agente crea fixture, adapter e verifiche di copertura.
+- Prova 77 stati e 44 flussi con dati sintetici, senza account né chiave API.
+
+![Stati reali di StoolSense nella canvas App Canvas](docs/stoolsense-overview.jpg)
+
+Demo reale: 77 stati, 44 flussi, 121 elementi riproducibili. Include casi singoli, non 121 percorsi E2E.
+
+## Esplora, interagisci, riproduci
+
+### Allontanati per capire l’app
+
+Schermate complete raggruppate per pagina, ricerca, filtri e pannelli richiudibili. I link dei flussi spostano la visuale alla destinazione.
+
+### Avvicinati per usare la UI reale
+
+Browse blocca i controlli durante lo spostamento. Seleziona una schermata e Interact per usare il codice originale con dati temporanei.
+
+### Premi Demo per spiegare un percorso
+
+Riproduci successo, errore e recupero in una sessione continua, con indicazioni, didascalie, pausa, velocità e timeline dei passaggi.
+
+![Riproduzione reale dopo un salvataggio offline fallito, con bozza conservata](docs/stoolsense-playback.jpg)
+
+UI reale di errore e recupero. La riproduzione esegue azioni e verifiche definite; una linea disegnata non è un test.
+
+## Da un repository esistente a una canvas interattiva
+
+Affida l’integrazione a un agente che legge, modifica ed esegue comandi. Non servono Storybook o elenchi manuali di schermate. L’installazione da sola non popola la canvas.
+
+### Incolla nel tuo agente
+
+```text
+Read https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+```
+
+### 1. Installa lo strumento condiviso
+
+Usa Node.js 22+ e package manager e lockfile del progetto. Installa la release GitHub fissata e il browser. Con npm 12 aggiungi --allow-git=root solo se blocca questa dipendenza Git diretta; non modificare le regole globali.
+
+```sh
+npm install --save-dev github:tombelieber/app-canvas#v0.10.3
+npx app-canvas browsers
+```
+
+### 2. Inventaria prima di scegliere i casi
+
+Esegui discover sull’intera radice dell’app. L’agente esamina ogni regione e candidato, risolve pending ed elenca stati semantici indipendentemente dal catalog. I blocchi restano visibili.
+
+```sh
+npx app-canvas discover --source-root . --out .artifacts/app-canvas/inventory.json
+npx app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+```
+
+### 3. Renderizza la UI originale con fixture
+
+Crea config, catalog, fixture sintetiche, preview entry e journeys in ui-review. L’adapter importa pagine, provider e stili originali. Sostituisci dati e dipendenze, non la UI; rifiuta richieste di rete sconosciute.
+
+### 4. Verifica stati e interazioni
+
+Copri normale, vuoto, caricamento, errore, accesso negato, dialoghi e recupero. Verifica ogni caso e i controlli reali in flussi continui. Riconcilia inventory, assertion legate al codice e route; supera --complete sulla stessa radice.
+
+```sh
+npx app-canvas --config ui-review/canvas.config.mjs --check
+npx app-canvas --config ui-review/canvas.config.mjs --verify
+npx app-canvas --config ui-review/canvas.config.mjs --complete --source-root .
+```
+
+### 5. Rivedi e mantieni dal codice
+
+Avvia ui:review, esamina canvas e grafo e riproduci un flusso. Chiedi modifiche al vero codice dell’app. Le preview esistenti si ricostruiscono; nuovi stati e route richiedono inventory, fixture e journeys aggiornati. Pretendi la verifica completa prima della consegna.
+
+```sh
+npm run ui:review
+```
+
+
+### Cosa resta nell’applicazione
+
+Il pacchetto condiviso mantiene viewer, CLI e skill. Il repository conserva adapter, fixture, inventory indipendente, catalog e test di interazione. Parti dall’esempio React/Vite eseguibile; altri stack richiedono adapter dedicati.
+
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.10.3/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.10.3/examples/react-vite)
+
+### Skill opzionale
+
+Codex e Claude Code possono installare la skill inclusa. Altri agenti leggono direttamente AGENT_GUIDE.md. Il runtime non chiama modelli né richiede chiavi API; il tuo agente ha costi e permessi propri.
+
+```sh
+npx app-canvas install --target both
+```
+
+## Ambito e limiti
+
+- Web usa HTML/CSS reali e JavaScript originale per interagire. UIKit, SwiftUI e Android richiedono harness e prove nel runtime originale; una cattura non è un’app nativa interattiva.
+- La copertura collega codice revisionato e casi, senza scoprire automaticamente ogni condizione di business. I test UI non qualificano backend di produzione, accuratezza clinica o precisione dei modelli.
+- I controlli del viewer sono in cinese tradizionale; queste pagine e guide sono multilingue. La demo è un frontend sintetico congelato; le integrazioni reali osservano il codice. Le prestazioni su iPad fisico non sono state misurate.
+
+Dati sintetici · nessun backend app · nessun account · nessuna chiave API
+
+[Articolo tecnico Safari](https://tomtang3.ai/blog/app-canvas-safari-rendering/)
+
+API dettagliata, flusso nativo, alternative e manutenzione nel README inglese e nella guida dell’agente. [English README](README.md) · [MIT](LICENSE)

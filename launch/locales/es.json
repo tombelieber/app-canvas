@@ -1,0 +1,88 @@
+{
+  "name": "Español",
+  "title": "Toda tu UI. Un lienzo. Código real.",
+  "description": "Explora pantallas, estados y flujos interactivos reales en un lienzo ampliable, creado y mantenido con tu agente de programación.",
+  "demo": "Abrir demo",
+  "source": "Código en GitHub",
+  "start": "Añadir a tu repo",
+  "release": "Historia del lanzamiento",
+  "languages": "Elige tu idioma",
+  "eyebrow": "App Canvas · Código abierto · Para agentes",
+  "summary": "TL;DR",
+  "tldr": [
+    "Ve juntas las pantallas completas, sus estados y los flujos implementados.",
+    "Mantén una sola implementación de UI. Tu agente crea fixtures, adapter y verificaciones de cobertura.",
+    "Prueba {states} estados y {flows} flujos con datos sintéticos, sin cuenta ni API key."
+  ],
+  "tour": "Explora, interactúa y reproduce",
+  "features": [
+    [
+      "Aléjate para entender la app",
+      "Pantallas completas agrupadas por página, búsqueda, filtros y paneles plegables. Los enlaces de flujo llevan la cámara al destino."
+    ],
+    [
+      "Acércate para usar la UI real",
+      "Browse bloquea los controles para mover el lienzo. Selecciona una pantalla y pulsa Interact para usar el código original con datos desechables."
+    ],
+    [
+      "Pulsa Demo para explicar un recorrido",
+      "Reproduce éxito, fallo y recuperación en una sesión continua, con indicaciones, subtítulos, pausa, velocidad y línea temporal."
+    ]
+  ],
+  "overviewAlt": "Estados reales de StoolSense en el lienzo App Canvas",
+  "playbackAlt": "Reproducción real tras un fallo de guardado sin conexión, conservando el borrador",
+  "phoneAlt": "App Canvas en Safari de un iPhone físico",
+  "overviewCaption": "Demo real: {states} estados, {flows} flujos y {entries} entradas reproducibles. Incluye casos independientes; no son {entries} recorridos E2E.",
+  "playbackCaption": "UI real de fallo y recuperación. La reproducción ejecuta acciones y comprobaciones; una conexión dibujada no es una prueba.",
+  "phoneCaption": "Captura de Safari en un iPhone físico. El artículo técnico explica cómo pasó de fallar a funcionar y los límites de las mediciones.",
+  "guideTitle": "De un repo existente a un lienzo interactivo",
+  "guideIntro": "Encarga la integración a un agente que pueda leer, editar y ejecutar comandos. No necesitas Storybook ni una lista previa de pantallas. Instalar el paquete no llena el lienzo por sí solo.",
+  "promptLabel": "Pega esto en tu agente",
+  "steps": [
+    [
+      "Instala la herramienta compartida",
+      "Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global."
+    ],
+    [
+      "Inventaría antes de elegir casos",
+      "Ejecuta discover sobre toda la raíz de la app. El agente revisa cada región y candidato, resuelve pending y enumera estados semánticos independientemente del catalog. Los bloqueos siguen visibles."
+    ],
+    [
+      "Renderiza la UI original con fixtures",
+      "Crea config, catalog, fixtures sintéticos, preview entry y journeys en ui-review. El adapter importa páginas, providers y estilos reales. Sustituye datos y dependencias, no la UI; rechaza solicitudes desconocidas."
+    ],
+    [
+      "Verifica estados e interacciones",
+      "Incluye estados normal, vacío, carga, error, acceso denegado, diálogos y recuperación. Comprueba cada caso y los controles reales en flujos continuos. Concilia inventory, assertions vinculadas al código y rutas; pasa --complete sobre la misma raíz."
+    ],
+    [
+      "Revisa y mantén desde el código",
+      "Ejecuta ui:review, explora el mapa y reproduce un flujo. Pide cambios al código real. Las vistas existentes se reconstruyen; rutas y estados nuevos requieren actualizar inventory, fixtures y journeys. Exige el control completo antes de entregar."
+    ]
+  ],
+  "filesTitle": "Qué conserva tu aplicación",
+  "filesText": "El paquete compartido mantiene viewer, CLI y skill. Tu repo mantiene adapter, fixtures, inventory independiente, catalog y comprobaciones. Empieza con el ejemplo ejecutable React/Vite; otros stacks necesitan su adapter.",
+  "skillTitle": "Skill opcional",
+  "skillText": "Codex y Claude Code pueden instalar la skill incluida. Otros agentes siguen AGENT_GUIDE.md directamente. El runtime no llama a modelos ni necesita API key; tu agente tiene sus propios costes y permisos.",
+  "limitsTitle": "Alcance y límites",
+  "limits": [
+    "Web utiliza HTML/CSS reales y JavaScript original al interactuar. UIKit, SwiftUI y Android necesitan harnesses y evidencia del runtime original; una captura no es una app nativa interactiva.",
+    "La cobertura relaciona código revisado y casos, no descubre automáticamente toda condición posible. Las pruebas UI no validan backends de producción ni precisión clínica o de modelos.",
+    "Los controles del viewer están en chino tradicional; estas páginas y guías son multilingües. La demo es un frontend sintético congelado; una integración real observa tu código. No se ha medido el rendimiento en iPad físico."
+  ],
+  "storyTitle": "Por qué creé App Canvas",
+  "story": [
+    "La IA facilitó crear otra página, pero no entender una app creciente. Quería ver las pantallas implementadas y sus fallos sin recorrer cada pantalla ni mantener un segundo archivo de diseño.",
+    "App Canvas convierte la revisión en un paisaje navegable. El agente integra cada repo; la herramienta compartida ofrece el lienzo, previews de código real, navegación con cámara y reproducción verificada.",
+    "StoolSense es el ejemplo público: registros, correcciones, borrado, importación, exportación, diálogos y recuperación con datos sintéticos. Sin sesión de producción, datos reales de salud, llamadas IA ni analytics. Licencia MIT. Prueba la demo y entrega la guía a tu agente."
+  ],
+  "versionLabel": "Versión CLI",
+  "docsLabel": "Guía del agente",
+  "technical": "Artículo técnico de Safari",
+  "privacy": "Datos sintéticos · sin backend de app · sin cuenta · sin API key",
+  "readmeMore": "API detallada, flujo nativo, alternativas y mantenimiento en el README inglés y la guía del agente.",
+  "readmeGuide": "Guía de integración",
+  "skip": "Saltar al contenido",
+  "flowAlt": "Grafo real de fallo de guardado, borrador conservado y reintento exitoso",
+  "flowCaption": "Elige un flujo para ver pantallas completas y transiciones etiquetadas. Un enlace mueve la cámara al destino."
+}
