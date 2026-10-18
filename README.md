@@ -1,5 +1,13 @@
 # App Canvas
 
+<!-- launch:begin -->
+[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt.md) · [Italiano](README.it.md) · [한국어](README.ko.md) · [Nederlands](README.nl.md)
+
+**[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
+
+CLI **v0.10.3** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer controls: Traditional Chinese.
+<!-- launch:end -->
+
 A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
 
 **[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**

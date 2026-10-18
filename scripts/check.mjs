@@ -1,5 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { loadContent } from "../launch/content.mjs";
+import { syncReadmes } from "../launch/readmes.mjs";
 for (const folder of ["bin", "lib", "scripts", "tests"])
   for (const file of await readdir(folder))
     if (/\.(m?js)$/.test(file)) {
@@ -19,3 +21,4 @@ if (marketplace.name !== plugin.name || marketplace.plugins.length !== 1 ||
 for (const file of ["README.md", "AGENT_GUIDE.md", "skills/app-canvas/SKILL.md"])
   if (!(await readFile(file, "utf8")).includes(`github:tombelieber/app-canvas#v${p.version}`))
     throw Error(`${file} must pin the current App Canvas release`);
+await syncReadmes(await loadContent(), true);
