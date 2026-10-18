@@ -15,7 +15,7 @@ export function renderPage(locale, page, { locales, facts }) {
   const title = page === "start" ? c.guideTitle : page === "release" ? c.storyTitle : c.title;
   const alternateLinks = languages.map(lang => `<link rel="alternate" hreflang="${lang}" href="${pageUrl(lang, page)}">`).join("\n");
   const languageLinks = languages.map(lang => `<a lang="${lang}" hreflang="${lang}" href="${pagePath(lang, page)}"${lang === locale ? ' aria-current="page"' : ""}>${e(locales[lang].name)}</a>`).join("");
-  const image = (file, alt, caption, phone = false) => `<figure${phone ? ' class="phone"' : ""}><a href="${localAssets}${file}"><img src="${localAssets}${file}" alt="${e(alt)}" width="${phone ? 1170 : file === "playback.jpg" ? 1280 : 1319}" height="${phone ? 2532 : file === "playback.jpg" ? 720 : 827}" loading="${page === "product" && file === "overview.jpg" ? "eager" : "lazy"}" decoding="async"></a><figcaption>${e(t(caption))}</figcaption></figure>`;
+  const image = (file, alt, caption, phone = false) => `<figure${phone ? ' class="phone"' : ""}><a href="${localAssets}${file}"><img src="${localAssets}${file}" alt="${e(alt)}" width="${phone ? 1170 : file === "playback.jpg" ? 1194 : 1319}" height="${phone ? 2532 : file === "playback.jpg" ? 834 : 827}" loading="${page === "product" && file === "overview.jpg" ? "eager" : "lazy"}" decoding="async"></a><figcaption>${e(t(caption))}</figcaption></figure>`;
   const overview = image("overview.jpg", c.overviewAlt, c.overviewCaption);
   const flow = image("flow.jpg", c.flowAlt, c.flowCaption);
   const playback = image("playback.jpg", c.playbackAlt, c.playbackCaption);
