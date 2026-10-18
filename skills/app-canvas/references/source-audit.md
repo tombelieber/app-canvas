@@ -66,6 +66,12 @@ UI class, superclass construction, caller behavior, declarations or presentation
 sites. Statements, fallbacks, later code and ordinary self guards are excluded;
 editing a recorded annotation cannot replace the fresh source proof.
 
+The native keyword scan also retains Java UI type imports in the worklist. A
+complete Java `import` declaration may receive `nonRenderingOutcome` because
+the declaration only binds a name. Constructors, calls, fields, the owning UI
+file and imported implementation still require their own reviews and evidence;
+an import followed by another statement receives no such proof.
+
 Keep blocked obligations with a `blocker`. `pending` returns the next ten unread
 obligations and the remaining count. Resolve them, populate their semantic
 items and original-runtime evidence, and continue. A zero reading count is not
