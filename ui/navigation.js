@@ -1,7 +1,7 @@
 // Fit against the actual canvas DOM area, including a docked inspector. Use
 // setViewport rather than a queued fitView dependent on node measurements.
-export function cameraFor(bounds, area, { padding = 48, maxZoom = 4 } = {}) {
-  const zoom = Math.max(0.015, Math.min(maxZoom, (area.width - padding * 2) / bounds.width, (area.height - padding * 2) / bounds.height));
+export function cameraFor(bounds, area, { padding = 48, maxZoom = 4, minZoom = .015 } = {}) {
+  const zoom = Math.max(minZoom, Math.min(maxZoom, (area.width - padding * 2) / bounds.width, (area.height - padding * 2) / bounds.height));
   return { x: area.width / 2 - (bounds.x + bounds.width / 2) * zoom, y: area.height / 2 - (bounds.y + bounds.height / 2) * zoom, zoom };
 }
 export function screenBounds(node) {

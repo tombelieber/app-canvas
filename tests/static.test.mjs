@@ -17,6 +17,8 @@ test("static export contains the same canvas, relative assets and no local previ
   manifest.screens.home.domUrl = "http://127.0.0.1:123/assets/dom-home.html";
   manifest.screens.home.sharedUrl = "http://127.0.0.1:123/assets/dom-home.json";
   manifest.canvasHash = "candidate-runtime";
+  manifest.nativeOverview = { url: "http://127.0.0.1:123/private-native-atlas.webp" };
+  manifest.nativeOverviewError = "Private adapter diagnostic";
   await writeFile(join(output, "dom-home.json"), JSON.stringify({ html: "Actual source DOM", background: "white", fonts: "" }));
   const preview = { exportDom: true, async exportStatic({ outDir }) {
     await mkdir(join(outDir, "frame"));
@@ -27,6 +29,8 @@ test("static export contains the same canvas, relative assets and no local previ
     await exportCanvas({ output, outDir, project, preview, manifest });
     const exported = await readFile(join(outDir, "manifest.json"), "utf8");
     assert.ok(!exported.includes("127.0.0.1"));
+    assert.equal(JSON.parse(exported).nativeOverview, undefined, "publishing DOM does not authorize publishing private native captures");
+    assert.equal(JSON.parse(exported).nativeOverviewError, undefined);
     assert.equal(JSON.parse(exported).screens.home.url, "./frame/index.html?id=home");
     assert.equal(JSON.parse(exported).screens.home.domUrl, "./assets/dom-home.html");
     assert.match(await readFile(join(outDir, "assets/dom-home.html"), "utf8"), /Actual source DOM/);

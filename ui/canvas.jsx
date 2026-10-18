@@ -10,6 +10,7 @@ import { useBridge } from "./useBridge.js";
 import { project, useManifest } from "./useManifest.js";
 import { LiveFrame } from "./LiveFrame.jsx";
 import { OverviewPlane } from "./OverviewPlane.jsx";
+import { NativeOverviewPlane } from "./NativeOverviewPlane.jsx";
 import { useJourney } from "./useJourney.js";
 import { JourneyPanel } from "./JourneyPanel.jsx";
 import { DemoPlayer } from "./DemoPlayer.jsx";
@@ -20,6 +21,7 @@ import { previewPool, visiblePreviews, renderedNodes } from "./preview-pool.js";
 import { usePanelPreferences } from "./usePanelPreferences.js";
 import { WorkspaceDock, ScopeToolbar, PageNavigator, Inspector } from "./WorkbenchChrome.jsx";
 const nodeTypes = { screen: ScreenNode, section: GroupNode };
+const minimapColor = n => n.type === "section" ? "#e2e7ec" : "#87a8ad";
 const { catalog, pages } = project;
 const flows = graphFlows(project), coverage = caseCoverage(project);
 const runId = crypto.randomUUID();
@@ -38,6 +40,12 @@ function Canvas() {
   const [presenting, setPresenting] = useState(false), demoSnapshot = useRef(null);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);
   const [previewErrors, setPreviewErrors] = useState({});
+  const [nativeState, setNativeState] = useState(null);
+  const receiveNativeState = useCallback((atlas, status) => setNativeState({ atlas, status }), []);
+  const nativeIds = useMemo(() => new Set(manifest.nativeOverview?.cases.map(c => c.id) || []), [manifest.nativeOverview]);
+  const nativePreview = nativeState?.atlas === manifest.nativeOverview && nativeState?.status === "ready";
+  const nativePending = !!manifest.nativeOverview && (nativeState?.atlas !== manifest.nativeOverview || nativeState?.status === "loading");
+  const nativeDetail = !!manifest.nativeOverview && viewport.zoom * 390 >= 120;
   const preferences = usePanelPreferences(`app-canvas:panels:${location.pathname}:${project.title}`);
   const limit = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches ? 4 : 8;
   const cameraRun = useRef(0), previousNodes = useRef(new Map());
@@ -79,7 +87,7 @@ function Canvas() {
   const nodes = useMemo(() => {
     const groups = pages.map((p, i) => ({ ...p, color: project.groups[i % project.groups.length].color }));
     const grouped = visible.map(s => ({ ...s, group: s.pageId }));
-    const layout = layoutScreens(grouped, manifest, groups, { mode: view === "machine" ? "machine" : "overview", flows, focusedId: selectedId });
+    const layout = layoutScreens(grouped, manifest, groups, { mode: view === "machine" ? "machine" : "overview", flows, focusedId: selectedId, nativeOverview: !!manifest.nativeOverview, area });
     const ids = new Set(visible.map(s => s.id));
     const placed = layout.map(node => {
       if (node.type !== "screen") return node;
@@ -89,7 +97,7 @@ function Canvas() {
         const height = node.data.screen.viewport?.height || 844, width = node.data.viewport.width;
         node = { ...node, initialWidth: 390, initialHeight: height * 390 / width + 48, data: { ...node.data, compact: false, width: 390, viewport: { width, height }, height: height * 390 / width }, style: { width: 390, height: height * 390 / width + 48 } };
       }
-      node = { ...node, data: { ...node.data, visible: true } };
+      node = { ...node, data: { ...node.data, visible: true, nativePreview: nativePreview && nativeIds.has(node.id) && !node.data.error, nativePending: nativePending && nativeIds.has(node.id), nativeDetail } };
       previousNodes.current.set(node.id, node); return node;
     });
     for (const s of catalog) if (!ids.has(s.id)) {
@@ -100,17 +108,18 @@ function Canvas() {
     // with a stable React key. Keep screen siblings in catalog order on filters.
     const byId = new Map(placed.map(n => [n.id, n]));
     return [...placed.filter(n => n.type !== "screen"), ...catalog.map(s => byId.get(s.id))];
-  }, [visible, manifest, view, selectedId, active, player.state?.screen, journeyScreens, depth, area]);
+  }, [visible, manifest, view, selectedId, active, player.state?.screen, journeyScreens, depth, area, nativePreview, nativePending, nativeIds, nativeDetail]);
   const previews = useMemo(() => visiblePreviews(nodes, viewport, area), [nodes, viewport, area]);
   const mounted = useMemo(() => {
     const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
     // Legacy manifests and drawing surfaces that cannot be represented by
     // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
-    if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl) ids.add(node.id);
+    if (!player.state) for (const node of nodes) if (ids.size < limit && previews.has(node.id) && node.data.url && !node.data.domUrl && !node.data.nativePending && (!node.data.nativePreview || node.data.nativeDetail)) ids.add(node.id);
     return ids;
   }, [nodes, previews, viewport, area, selectedId, active, retained, limit, !!player.state]);
   const cardNodes = useMemo(() => renderedNodes(nodes, previews, mounted), [nodes, previews, mounted]);
   const fit = useCallback(() => setRequest({ id: null, nonce: performance.now() }), []);
+  useEffect(() => { if (nativePreview && !selectedId && !journeyId) fit(); }, [nativePreview, fit]);
   useEffect(() => {
     const observer = new ResizeObserver(entries => {
       const r = entries[0].contentRect, restore = !presenting && demoSnapshot.current;
@@ -128,7 +137,7 @@ function Canvas() {
     const visibleNodes = nodes.filter(n => n.type === "screen" && n.data.visible);
     if (!node && !visibleNodes.length) { setRequest(null); return; }
     const bounds = node && presenting ? { x: node.position.x, y: node.position.y - 42, width: 390, height: node.data.height + 60 } : node ? screenBounds(node) : overviewBounds(visibleNodes);
-    const position = request.viewport || cameraFor(bounds, stage.current.getBoundingClientRect(), { padding: node ? 40 : 35, maxZoom: node ? 4 : 1 });
+    const position = request.viewport || cameraFor(bounds, stage.current.getBoundingClientRect(), { padding: node ? 40 : 35, maxZoom: node ? 4 : 1, minZoom: manifest.nativeOverview ? .001 : .015 });
     const currentCamera = ++cameraRun.current; setMoving(true);
     camera.setViewport(position, { duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240 }).finally(() => { if (cameraRun.current === currentCamera) setMoving(false); });
     setRequest(null);
@@ -185,10 +194,11 @@ function Canvas() {
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
             onPaneClick={() => { browse(); select(null); }}
             onMoveStart={() => setMoving(true)} onMoveEnd={() => setMoving(false)}
-            minZoom={0.015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
+            minZoom={manifest.nativeOverview ? .001 : .015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
-            <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={n => n.type === "section" ? "#e2e7ec" : "#87a8ad"} nodeStrokeWidth={0} />
+            <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={minimapColor} nodeStrokeWidth={0} />
             <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={mounted} liveScreen={player.state?.screen} revision={manifest.revision} onError={setPreviewErrors} />
+            <NativeOverviewPlane atlas={manifest.nativeOverview} error={manifest.nativeOverviewError} nodes={nodes} viewport={viewport} area={area} mounted={mounted} liveScreen={player.state?.screen} onReady={receiveNativeState} />
             {journeyNode && entryUrl && <ViewportPortal><div className="journey-live nodrag nopan nowheel" style={{ left: journeyNode.position.x, top: journeyNode.position.y, width: 390, height: journeyNode.data.height }}>
               <LiveFrame key={player.state.key} id="journey" title="流程播放 · 真實 UI" url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} presentation={presenting} />
             </div></ViewportPortal>}

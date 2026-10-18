@@ -28,6 +28,15 @@ test("zoomed-out and collapsed previews do not start background apps",()=>{
   assert.equal(previewPool({...base,nodes:nodes.map(n=>({...n,data:{...n.data,compact:true}}))}).size,0);
   assert.equal(previewPool(base).size,4);
 });
+test("GPU-native passive images do not boot app frames, while selected and retained originals survive",()=>{
+ const native=nodes.map(n=>({...n,data:{...n.data,nativePreview:true}}));
+ assert.equal(previewPool({...base,nodes:native}).size,0);
+ assert.deepEqual([...previewPool({...base,nodes:native,selected:"10",retained:["old"]})],["old","10"]);
+ assert.equal(previewPool({...base,nodes:native.map(n=>({...n,data:{...n.data,nativeDetail:true}}))}).size,4,"nearby originals still render at full resolution within the existing budget");
+ const pending=nodes.map(n=>({...n,data:{...n.data,nativePending:true}}));
+ assert.equal(previewPool({...base,nodes:pending}).size,0,"loading an atlas cannot briefly boot every passive native fixture");
+ assert.deepEqual([...previewPool({...base,nodes:pending,selected:"10",retained:["old"]})],["old","10"],"original interaction remains available while the optional atlas loads");
+});
 test("a fifteen-thousand-state overview bounds passive work without removing catalog nodes",()=>{
   const landscape=Array.from({length:15000},(_,i)=>({id:`case-${i}`,type:"screen",position:{x:(i%20)*490,y:Math.floor(i/20)*900},data:{visible:true,height:844}}));
   const visible=visiblePreviews(landscape,{x:0,y:0,zoom:.001},base.area);
@@ -48,4 +57,15 @@ test("a complete native catalog bounds card DOM and preserves offscreen running 
   assert.equal(moved.find(n=>n.id==='native-19000').data.shellOnly,false,"camera navigation can address a case outside the original viewport");
   assert.equal(moved.at(-1).data.shellOnly,false);
   assert.deepEqual(result.map(n=>n.id),catalog.map(n=>n.id),"camera/filter changes preserve sibling order for running frames");
+});
+test("camera-only updates reuse unchanged graph nodes and tiny GPU captures need no card DOM",()=>{
+ const source=Array.from({length:260},(_,i)=>({id:`gpu-${i}`,type:"screen",position:{x:i*10,y:0},data:{nativePreview:true,nativeDetail:false}}));
+ const visible=new Set(source.map(n=>n.id)),mounted=new Set([source[0].id]);
+ const first=renderedNodes(source,visible,mounted),next=renderedNodes(source,new Set([source[1].id]),mounted);
+ assert.equal(first[1].data.shellOnly,true,"the GPU already paints the complete capture at tiny scale");
+ assert.strictEqual(first[1],next[1],"a camera update cannot invalidate every graph node");
+ assert.strictEqual(first,next,"unchanged shell coverage cannot rebuild the entire graph store");
+ assert.strictEqual(first[0],next[0],"retained original runtime ancestors stay stable");
+ const changed=[{...source[0],position:{x:100,y:0}},...source.slice(1)];
+ assert.notStrictEqual(renderedNodes(changed,visible,mounted)[0],first[0],"real layout changes must still propagate");
 });

@@ -65,6 +65,7 @@
     "test:legacy": "node tests/legacy.browser.mjs",
     "test:dom": "node tests/dom-preview.browser.mjs",
     "test:shared": "node tests/shared-preview.browser.mjs",
+    "test:native-overview": "node tests/native-overview.browser.mjs",
     "test:overview-budget": "node tests/overview-budget.browser.mjs",
     "test:readiness": "node tests/readiness.browser.mjs"
   },

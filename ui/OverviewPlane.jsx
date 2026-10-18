@@ -6,9 +6,9 @@ export function OverviewPlane({ nodes, viewport, area, previews, mounted, liveSc
   const nonce = useMemo(() => crypto.randomUUID(), []);
   const source = useMemo(() => new URL(`./overview.html?runtime=${nonce}`, import.meta.url).href, [nonce]);
   const send = useCallback(message => frame.current?.contentWindow?.postMessage({ channel: "app-canvas-overview", token: nonce, ...message }, "*"), [nonce]);
-  const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
+  const sources = useMemo(() => nodes.filter(n => n.type === "screen" && n.data.sharedUrl && !n.data.nativePreview).map(n => ({ id: n.id, url: n.data.sharedUrl })), [nodes]);
   const sourceKey = JSON.stringify(sources.length <= OVERVIEW_LIMIT ? sources : sources.filter(source => previews.has(source.id) && !mounted.has(source.id)));
-  const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen }));
+  const layout = nodes.filter(n => n.type === "screen" && n.data.sharedUrl && !n.data.nativePreview).map(n => ({ id: n.id, x: n.position.x, y: n.position.y, width: n.data.viewport.width, height: n.data.viewport.height, visible: previews.has(n.id) && !mounted.has(n.id) && n.id !== liveScreen }));
   latest.current = { viewport, layout };
   useEffect(() => { if (loaded) send({ command: "camera", viewport }); }, [loaded, viewport, send]);
   useEffect(() => { if (loaded) send({ command: "layout", items: layout }); }, [loaded, nodes, previews, mounted, liveScreen, send]);
