@@ -30,7 +30,7 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
   );
   process.exit(0);
 }
@@ -45,9 +45,13 @@ if (trackable) {
 }
 if (telemetryCommand) {
   const choice = positionals[1];
-  if (choice && !["on", "off", "status"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status");
+  if (choice && !["on", "off", "status", "dogfood", "unknown"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status|dogfood|unknown");
   if (choice === "on" || choice === "off") await telemetry.setEnabled(choice === "on");
+  if (choice === "dogfood" || choice === "unknown") {
+    if (!await telemetry.setCohortClass(choice === "dogfood" ? "internal_test" : "unknown")) throw Error("Audience preference could not be saved");
+  }
   console.log(`Anonymous usage analytics: ${telemetry.config().enabled ? "enabled" : "disabled"}`);
+  console.log(`Usage audience: ${telemetry.config().cohort_class === "internal_test" ? "Dogfood" : "Unknown"}`);
   process.exit(0);
 }
 if (positionals[0] === "install") {

@@ -34,6 +34,9 @@ test('analytics allowlist rejects PII, arbitrary events, URLs and identifiers',(
  assert.equal(sanitizeEvent({...event,properties:{...event.properties,surface:'landing'}}),null);
  assert.equal(sanitizeEvent({...event,properties:{...event.properties,product:'another_tool'}}),null);
  assert.equal(sanitizeEvent({...event,properties:{...event.properties,schema_version:2}}),null);
+ assert.equal(sanitizeEvent(event).properties.cohort_class,'unknown');
+ assert.equal(sanitizeEvent({...event,properties:{...event.properties,cohort_class:'internal_test'}}).properties.cohort_class,'internal_test');
+ for(const cohort_class of ['external','Dogfood',true,{},null])assert.equal(sanitizeEvent({...event,properties:{...event.properties,cohort_class}}),null);
 });
 
 test('shared OSS capture enforces product attribution and product-scoped identities',async t=>{
