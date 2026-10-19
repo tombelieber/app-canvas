@@ -58,6 +58,26 @@ remain inspection work. In a rendering source, opposite reachable outcomes requi
 separate fixture cases; identical pixels may represent different conditions.
 Do not invent different UI to satisfy a structural branch.
 
+Fresh discovery also recognizes a canonical empty Android `res/values*` XML
+container as non-rendering: it declares no resources. Keep its file, region and
+element obligations and give each a specific source-based non-UI explanation.
+Attributes, active children, other directories and opaque XML retain their UI
+review requirements; a recorded annotation cannot override fresh source.
+
+Fresh discovery may also mark a narrowly recognized canonical Objective-C
+initializer outcome `nonRenderingOutcome`: a nil return constructs no own UI,
+and a completely empty `if (self) {}` body adds no branch-local UI effect. These
+annotations still require specific source reviews. They do not waive the native
+UI class, superclass construction, caller behavior, declarations or presentation
+sites. Statements, fallbacks, later code and ordinary self guards are excluded;
+editing a recorded annotation cannot replace the fresh source proof.
+
+The native keyword scan also retains Java UI type imports in the worklist. A
+complete Java `import` declaration may receive `nonRenderingOutcome` because
+the declaration only binds a name. Constructors, calls, fields, the owning UI
+file and imported implementation still require their own reviews and evidence;
+an import followed by another statement receives no such proof.
+
 Keep blocked obligations with a `blocker`. `pending` returns the next ten unread
 obligations and the remaining count. Resolve them, populate their semantic
 items and original-runtime evidence, and continue. A zero reading count is not

@@ -13,6 +13,10 @@ try {
   await writeFile(join(root, "source/App.mjs"), `export function render(denied) {
     return denied ? '<main><h1>Login failed</h1><button>Retry</button></main>' : '<main><h1>Login</h1><input aria-label="Username"></main>';
   }`);
+  const values = join(root, 'source/res/values-sw720dp-land/dimens.xml');
+  const emptyValues = '<resources>\n<!-- no dimension overrides -->\n</resources>\n';
+  await mkdir(join(root, 'source/res/values-sw720dp-land'), { recursive: true });
+  await writeFile(values, emptyValues);
   const run = (...args) => exec(process.execPath, [cli, ...args], { cwd: root, timeout: 90000, maxBuffer: 1024 * 1024 });
   await run("discover", "--source-root", "source", "--out", ".artifacts/inventory.json");
   const path = join(root, ".artifacts/inventory.json"), inventory = JSON.parse(await readFile(path, "utf8"));
@@ -20,7 +24,11 @@ try {
     { id: "login", kind: "screen", sources: ["App.mjs"], cases: ["idle"] },
     { id: "denied", kind: "state", sources: ["App.mjs"], cases: ["denied"] },
   ];
-  inventory.reviews = inventory.obligations.map(item => ({ id: item.id, items: [item.outcome === "true" ? "denied" : "login"] }));
+  const resourcePath = 'res/values-sw720dp-land/dimens.xml';
+  inventory.files = inventory.files.map(file => file.path === resourcePath ? { ...file, nonUiReason: 'Empty values container declares no resources' } : file);
+  inventory.reviews = inventory.obligations.map(item => item.path === resourcePath
+    ? { id: item.id, nonUiReason: 'Empty values container declares no resources' }
+    : { id: item.id, items: [item.outcome === "true" ? "denied" : "login"] });
   await writeFile(path, JSON.stringify(inventory));
   await writeFile(join(root, "canvas.config.mjs"), `
     import assert from 'node:assert/strict';
@@ -56,13 +64,16 @@ try {
   `);
   const result = await run("--complete", "--source-root", "source");
   assert.match(result.stdout, /PASS: source population verified, 2 cases/);
+  await writeFile(values, '<resources><dimen name="margin">24dp</dimen></resources>');
+  await assert.rejects(() => run('--complete', '--source-root', 'source'), error => error.code === 1 && /source inventory.*changed|discovery obligations changed/i.test(error.stderr));
+  await writeFile(values, emptyValues);
   await assert.rejects(() => run("--complete", "--source-root", "."), error => error.code === 1 && /source.*root.*match/i.test(error.stderr));
   inventory.items.pop();
-  inventory.reviews = inventory.reviews.filter(item => !item.items.includes("denied"));
+  inventory.reviews = inventory.reviews.filter(item => !item.items?.includes("denied"));
   await writeFile(path, JSON.stringify(inventory));
   const configPath = join(root, "canvas.config.mjs");
   const config = await readFile(configPath, "utf8");
   await writeFile(configPath, config.replace("['idle', 'denied']", "['idle']").replace("flows: [{from:'idle',to:'denied',label:'Denied fixture',kind:'condition'}]", "flows: []"));
   await assert.rejects(() => run("--complete", "--source-root", "source"), error => error.code === 1 && /source obligations unreviewed/.test(error.stderr));
-  console.log("PASS: public --complete renders both original states, rejects a different source scope, and rejects omitted error-state accounting");
+  console.log("PASS: public --complete renders both original states, accounts for an empty values container without a fake screen, rejects a newly added value, different source scope and omitted error-state accounting");
 } finally { await rm(root, { recursive: true, force: true }); }
