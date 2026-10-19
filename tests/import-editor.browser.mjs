@@ -83,6 +83,15 @@ try {
   const saved = await (await createStore(directory)).read(); assert.equal(saved.project.screens.length, 6); assert.ok(saved.project.history.some(op => op.type === "setImage"));
   assert.equal((await page.locator("iframe").count()), 2, "one shared overview and one active editor");
   await page.getByRole("button", { name: "Browse", exact: true }).click(); assert.equal(await page.locator("iframe[data-import-editor]").count(), 0);
+  await page.getByRole("button", { name: "Fit", exact: true }).click(); await stableCamera();
+  const settingsId = saved.project.screens.find(s => s.pageId === "/settings").id;
+  const settingsPreview = page.frameLocator("iframe[data-overview]").locator(`[data-preview="${settingsId}"]`);
+  await settingsPreview.waitFor({ state: "visible" });
+  await page.getByLabel("Page filter", { exact: true }).selectOption("/calendar");
+  await page.locator(`.react-flow__node[data-id="${settingsId}"]`).waitFor({ state: "detached" });
+  await page.getByRole("button", { name: "Fit", exact: true }).click(); await stableCamera();
+  assert.equal(await settingsPreview.isVisible(), false, "filtering hides retained source previews outside the current landscape");
+  await page.getByLabel("Page filter", { exact: true }).selectOption("all");
   await page.getByRole("button", { name: "State graph", exact: true }).click();
   await page.locator(".react-flow__edge").nth(1).waitFor({ state: "attached", timeout: 5000 });
   assert.ok(await page.locator(".react-flow__edge").count() >= 2);

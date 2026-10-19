@@ -17,6 +17,10 @@ function renderOverview() {
     host.remove(); documents.delete(id);
   };
   const place = () => {
+    const current = new Set(layout.map(item => item.id));
+    for (const [id, host] of documents) if (!current.has(id)) {
+      host.hidden = true; host.dataset.visible = "false";
+    }
     for (const item of layout) {
       const host = documents.get(item.id);
       if (!host) continue;
