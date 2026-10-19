@@ -4,6 +4,21 @@ import { documentFixture, projectFixture } from "./fixtures/import-model.mjs";
 const schema = await import("../lib/import/schema.mjs").catch(() => ({}));
 const patches = await import("../lib/import/patches.mjs").catch(() => ({}));
 const render = await import("../lib/import/render.mjs").catch(() => ({}));
+const styles = await import("../lib/import/styles.mjs");
+
+test("named grid placement retains its defining template through capture and rendering", () => {
+  const doc = documentFixture();
+  const resolved = { display: "grid", "grid-template-columns": "240px 1200px", "grid-template-rows": "0px 1000px", "grid-template-areas": '"navbar navbar" "sidebar main"' };
+  // The capture reader copies only these computed properties; omitting areas sends
+  // named children to implicit tracks outside the captured viewport.
+  doc.root.style = Object.fromEntries(styles.styleProperties.filter(key => key in resolved).map(key => [key, resolved[key]]));
+  doc.root.children[0].style = { "grid-column-start": "main", "grid-column-end": "main", "grid-row-start": "main", "grid-row-end": "main" };
+  schema.validateDocument(doc);
+  const html = render.renderDocument(doc);
+  assert.equal(doc.root.style["grid-template-areas"], resolved["grid-template-areas"]);
+  assert.match(html, /grid-template-areas:&quot;navbar navbar&quot;\s*&quot;sidebar main&quot;/);
+  assert.ok(html.includes("grid-column-start:main"));
+});
 
 test("import documents reject executable tags, CSS resources, handlers and duplicate identities", () => {
   assert.equal(typeof schema.validateDocument, "function", "validated import documents must exist");
