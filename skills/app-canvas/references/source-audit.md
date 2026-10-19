@@ -64,6 +64,16 @@ element obligations and give each a specific source-based non-UI explanation.
 Attributes, active children, other directories and opaque XML retain their UI
 review requirements; a recorded annotation cannot override fresh source.
 
+For ordinary Android resource selection, fresh discovery can also identify a
+version-only XML alternative that shadows a lower/default resource throughout
+the module's literal minimum SDK range. This is limited to same-name drawable,
+color, anim and animator XML under `src/main/res`, without additional qualifiers
+or declared source-set overrides. The source build and replacement hashes remain
+attached to the old tags. Keep every old file/region/element review; the selected
+alternative still requires real UI evidence. Values entries, opaque SDK bounds,
+other qualifiers and direct loading of a specific resource file need separate
+source/runtime proof. See [Android resource selection](https://developer.android.com/guide/topics/resources/providing-resources#BestMatch).
+
 Fresh discovery may also mark a narrowly recognized canonical Objective-C
 initializer outcome `nonRenderingOutcome`: a nil return constructs no own UI,
 and a completely empty `if (self) {}` body adds no branch-local UI effect. These
