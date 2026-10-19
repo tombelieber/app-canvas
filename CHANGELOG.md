@@ -8,8 +8,11 @@
   and isolated imported playback. Existing source/native completion is unchanged.
 - Preserve passive overlays' pointer behavior so imported screens remain selectable.
 - Hide retained screen previews when they leave the filtered landscape.
-- Support up to 128 imported screens, retaining the project resource budget and
-  rejecting screen/observation overflow before writing capture resources.
+- Support up to 512 imported screens and 1,024 capture observations, with a 512 MiB project resource budget and
+  reject screen/observation overflow before writing capture resources.
+- Reuse validated import snapshots when capturing and saving; avoid copying the
+  entire landscape again just to report capture status.
+- Accept SVG mask references under the same local-resource validation as other SVG paint attributes.
 
 ## 0.10.3
 

@@ -13,6 +13,17 @@ test("import documents reject executable tags, CSS resources, handlers and dupli
   }
 });
 
+test("SVG masks accept local fragments while rejecting remote resources", () => {
+  const doc = documentFixture();
+  doc.root.children.push({ id: "masked-svg", tag: "svg", attrs: {}, style: {}, children: [
+    { id: "masked-group", tag: "g", attrs: { mask: "url(#shape-mask)" }, style: {}, children: [] },
+  ] });
+  assert.equal(schema.validateDocument(doc), doc);
+  assert.match(render.renderDocument(doc), /mask="url\(#shape-mask\)"/);
+  doc.root.children.at(-1).children[0].attrs.mask = "url(https://example.test/private)";
+  assert.throws(() => schema.validateDocument(doc), /local asset/);
+});
+
 test("all desktop edits are reversible without changing immutable captures or neighboring screens", () => {
   assert.equal(typeof patches.applyEdits, "function", "reversible imported edits must exist");
   const project = projectFixture(), base = documentFixture(), documents = { "doc-a": base };
@@ -76,4 +87,33 @@ test("resizing one axis preserves inherited text geometry on the other axis", ()
   const doc = documentFixture(), history = [{ type: "resize", screenId: "screen-a", layerId: "n3", width: 240 }];
   const node = patches.applyEdits(projectFixture(), { "doc-a": doc }, history, 1).documents["screen-a"].root.children[0].children[0];
   assert.equal(node.style.width, "240px"); assert.equal(node.style.height, undefined);
+});
+
+test("undo snapshots stay isolated while redo tails and reserved capture bytes are validated", () => {
+  const project = projectFixture(), base = documentFixture(), bases = { "doc-a": base };
+  const history = [
+    { type: "setText", screenId: "screen-a", layerId: "n3", value: "First edit" },
+    { type: "duplicateScreen", screenId: "screen-a", newId: "copy", value: "Copy" },
+    { type: "setText", screenId: "screen-a", layerId: "n3", value: "Later edit" },
+  ];
+  const undone = patches.applyEdits(project, bases, history, 1);
+  assert.equal(undone.screens.length, 1);
+  assert.equal(undone.documents["screen-a"].root.children[0].children[0].text, "First edit");
+  const complete = patches.applyEdits(project, bases, history, history.length);
+  assert.equal(complete.documents.copy.root.children[0].children[0].text, "First edit");
+  assert.equal(complete.documents["screen-a"].root.children[0].children[0].text, "Later edit");
+  complete.documents["screen-a"].root.children[0].children[0].text = "Caller mutation";
+  assert.equal(base.root.children[0].children[0].text, "Calendar");
+  assert.throws(() => patches.applyEdits(project, bases, [...history, { type: "setText", screenId: "missing", layerId: "n3", value: "Invalid redo" }], 1), /missing screen/i);
+  assert.throws(() => patches.applyEdits(project, bases, [], 0, 512 * 1024 ** 2), /size limit/i);
+});
+
+test("metadata replay validates every redo edit without retaining document copies", () => {
+  const project = projectFixture(), base = documentFixture(), bases = { "doc-a": base };
+  const history = [{ type: "duplicateScreen", screenId: "screen-a", newId: "copy", value: "Copy" }, { type: "setText", screenId: "copy", layerId: "n3", value: "Changed copy" }];
+  const metadata = patches.applyEdits(project, bases, history, 1, 0, { metadataOnly: true });
+  assert.equal(metadata.documents, undefined);
+  assert.deepEqual(metadata.screens, patches.applyEdits(project, bases, history, 1).screens);
+  assert.equal(base.root.children[0].children[0].text, "Calendar");
+  assert.throws(() => patches.applyEdits(project, bases, [...history, { type: "delete", screenId: "copy", layerId: "missing" }], 0, 0, { metadataOnly: true }), /missing layer/i);
 });
