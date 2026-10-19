@@ -58,6 +58,12 @@ remain inspection work. In a rendering source, opposite reachable outcomes requi
 separate fixture cases; identical pixels may represent different conditions.
 Do not invent different UI to satisfy a structural branch.
 
+Fresh discovery also recognizes a canonical empty Android `res/values*` XML
+container as non-rendering: it declares no resources. Keep its file, region and
+element obligations and give each a specific source-based non-UI explanation.
+Attributes, active children, other directories and opaque XML retain their UI
+review requirements; a recorded annotation cannot override fresh source.
+
 Keep blocked obligations with a `blocker`. `pending` returns the next ten unread
 obligations and the remaining count. Resolve them, populate their semantic
 items and original-runtime evidence, and continue. A zero reading count is not
