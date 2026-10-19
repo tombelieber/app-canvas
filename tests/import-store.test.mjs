@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile, symlink, mkdir, rm } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile, symlink, mkdir, rm, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { captureFixture } from "./fixtures/import-model.mjs";
@@ -45,4 +45,42 @@ test("missing local assets fail closed before a capture becomes durable", async 
   capture.document.root.children[1].style["background-image"] = `url("asset:${"a".repeat(64)}")`;
   await assert.rejects(() => store.capture(capture), /missing.*asset/i);
   assert.equal((await store.metadata()).screens.length, 0);
+});
+test("a full desktop landscape persists beyond fifty screens and rejects overflow before writing resources", async t => {
+  const { path, store } = await setup(t);
+  for (let i = 0; i < 128; i++) {
+    const capture = captureFixture(`doc-${i}`); capture.document.root.children[0].children[0].text = `Screen ${i}`;
+    await store.capture(capture);
+  }
+  assert.equal((await (await createStore(path)).read()).project.screens.length, 128);
+  const before = await readdir(join(path, "documents"));
+  const overflow = captureFixture("overflow"); overflow.document.root.children[0].children[0].text = "Overflow";
+  await assert.rejects(() => store.capture(overflow), /limit|size/i);
+  assert.deepEqual(await readdir(join(path, "documents")), before, "rejected capture leaves no orphan document");
+  assert.equal((await store.metadata()).screens.length, 128);
+});
+test("capture reserves capacity for saved redo alternatives before writing a document", async t => {
+  const { path, store } = await setup(t); await store.capture(captureFixture());
+  const project = JSON.parse(await readFile(join(path, "project.json")));
+  project.screens = Array.from({ length: 127 }, (_, i) => ({ ...project.screens[0], id: `screen-${i}` }));
+  project.observations = [];
+  project.history = [{ type: "duplicateScreen", screenId: "screen-0", newId: "alternative", value: "Alternative" }];
+  project.cursor = 0;
+  await writeFile(join(path, "project.json"), JSON.stringify(project));
+  const before = await readdir(join(path, "documents")), capture = captureFixture("overflow");
+  capture.document.root.children[0].children[0].text = "New capture";
+  await assert.rejects(() => store.capture(capture), /limit/i);
+  assert.deepEqual(await readdir(join(path, "documents")), before);
+  assert.equal((await store.read()).project.screens.length, 127);
+});
+test("observation overflow retains accepted captures without orphan resources", async t => {
+  const { path, store } = await setup(t); await store.capture(captureFixture());
+  const project = JSON.parse(await readFile(join(path, "project.json")));
+  project.observations = Array.from({ length: 200 }, (_, i) => ({ id: `observation-${i}`, screenId: project.screens[0].id, reason: "manual" }));
+  await writeFile(join(path, "project.json"), JSON.stringify(project));
+  const before = await readdir(join(path, "documents")), capture = captureFixture("overflow");
+  capture.document.root.children[0].children[0].text = "New capture";
+  await assert.rejects(() => store.capture(capture), /observation limit/i);
+  assert.deepEqual(await readdir(join(path, "documents")), before);
+  assert.equal((await store.metadata()).observations.length, 200);
 });

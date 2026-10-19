@@ -76,7 +76,7 @@ anonymization guarantee. Visible business content, names, images, filenames and
 URL paths may remain sensitive. Keep captures private and inspect them before
 sharing. Do not place a capture in a public repository or public static export.
 
-Budgets are 50 captured/derived screens, 200 observations, 30,000 document
+Budgets are 128 captured/derived screens, 200 observations, 30,000 document
 nodes, 16,000px height, 8 MiB per asset, 32 MiB per state and 256 MiB of project
 resources. Resource reads have four concurrent slots. Hitting a limit rejects
 new work and retains accepted captures. A Chromium-compatible capture is required;

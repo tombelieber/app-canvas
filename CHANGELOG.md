@@ -8,6 +8,8 @@
   and isolated imported playback. Existing source/native completion is unchanged.
 - Preserve passive overlays' pointer behavior so imported screens remain selectable.
 - Hide retained screen previews when they leave the filtered landscape.
+- Support up to 128 imported screens, retaining the project resource budget and
+  rejecting screen/observation overflow before writing capture resources.
 
 ## 0.10.3
 
