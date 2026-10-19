@@ -6,6 +6,7 @@
   local DOM/assets, editable layers, history, atomic save and offline reopen.
 - Dedicated capture profiles, authentication pauses, partial-fidelity reports
   and isolated imported playback. Existing source/native completion is unchanged.
+- Preserve passive overlays' pointer behavior so imported screens remain selectable.
 
 ## 0.10.3
 
