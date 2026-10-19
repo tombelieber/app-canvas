@@ -26,6 +26,16 @@ other source uses conservative lexical candidates. Enumerate additional states
 in `items`, including database/remote content IDs and justified boundaries.
 Opaque or unresolved dependencies remain blockers until inspected.
 
+UIKit toolbar/bar-item construction and `inputAccessoryView` attachment receive
+explicit worklist entries, including Objective-C message and property syntax.
+Trace their object lifetime as well as their source location. An accessory can
+be nil during first render and become a real toolbar when a field is regenerated
+after navigation or retry. Inspect first entry and the reachable reused-controller
+path; map the visibly attached accessory, its real controls and dismissal state.
+Allocation, an unattached object or the initial nil value does not establish
+coverage of the later visible state. These lexical entries remain prompts for
+source-driven inspection, not an exhaustive lifecycle or UI-state analysis.
+
 Add one review per generated obligation:
 
 ```json
