@@ -1,5 +1,9 @@
 # App Canvas
 
+## 0.13.1
+
+- Preserve bounded Objective-C data-effect source eligibility when upgrading existing native canvases. Restore resolved helper/callback analysis, keep every source ID and review, and reject hidden UI effects and forged or stale eligibility.
+
 ## 0.13.0
 
 - Capture desktop URLs into editable App Canvas landscapes with local DOM/assets,

@@ -62,6 +62,10 @@ the canvas to an application, perform that population in the same task.
   Map each discovered item to rendered cases. Resolve every pending item; do
   not reduce the denominator to the easiest screens. Record scope, counts,
   evidence-based non-UI classifications and actual blockers in `ui-review/README.md`.
+  For the separate strict source audit, fresh Objective-C data-only method
+  annotations permit specific explanations
+  after bounded helper/callback analysis; they never remove source IDs or waive
+  the owning file, caller UI or unknown effects.
 
 ## 2. Install the tool and optional skill
 
