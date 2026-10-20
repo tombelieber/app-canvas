@@ -50,12 +50,25 @@ management credential in the package.
 
 ## Shared OSS analytics project
 
-Publisher-operated OSS tools share one PostHog project, **OSS Products**.
+Publisher-operated tools share one PostHog project, **Product**.
 App Canvas events always carry `product: "app_canvas"` and `schema_version: 1`.
 Event names describe actions (`viewer_ready`, `flow_completed`); `surface`
 separates demo, real-project, landing and qualification traffic, while `source`
 identifies the distribution channel. Do not infer product from an app name,
 repository URL or event-name substring.
+
+`environment` describes deployment (`production`, `development`, `staging`,
+`test`, `qualification`, or `unknown`). It is independent of audience:
+`External`, `Dogfood`, or `Unknown`. Official demo/landing and normal installed
+CLI usage stamp `production`; a local CLI is an installed product, not
+automatically a development build. Developers can set `APP_CANVAS_ENVIRONMENT`.
+Qualification surfaces always stamp `qualification`.
+
+To exclude your own CLI usage, set `APP_CANVAS_COHORT_CLASS=internal_test`.
+This affects audience only, never environment or consent. Browser ownership
+uses verified product-scoped IDs in the collector transformation. Clients
+cannot self-certify External. Older payloads without environment remain
+accepted as `unknown`; no stored event or installation ID is rewritten.
 
 The App Canvas collector rejects other product values and sends a distinct ID
 prefixed with `app_canvas:`. This keeps IDs from different tools separate even

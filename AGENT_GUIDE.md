@@ -15,7 +15,7 @@ Follow the user's repository instructions and authorization boundaries.
 
 For a website URL and editable captured landscape, follow the separate
 [desktop URL import guide](docs/url-import.md) and the canonical
-[URL skill reference](skills/app-canvas/references/url-import.md). Available in v0.13.0; verify the installed CLI exposes `import`, `capture-script`,
+[URL skill reference](skills/app-canvas/references/url-import.md). Available in v0.13.1; verify the installed CLI exposes `import`, `capture-script`,
 `capture`, `status`, `link` and `open`. App Canvas + the agent support an existing
 authorized browser or a dedicated capture browser. Resolve the accessible
 worklist, review fidelity, edit, Save and verify a fresh offline reopen. Keep
@@ -70,7 +70,7 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.13.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.1
 npx app-canvas browsers
 ```
 
@@ -78,7 +78,7 @@ On npm 12, Git admission may require `--allow-git=root` on that install command.
 Keep the exception scoped to the direct requested dependency and command.
 
 The installed package includes this guide and `app-canvas guide`. New UI
-delivery commands require v0.13.0 or later;
+delivery commands require v0.13.1 or later;
 v0.12.0 does not contain them. The release pin and lockfile record the qualified revision. For another tool revision,
 verify its availability and inventory export before pinning it; do not invent
 an unavailable tag or drop the source gate to use an older build.

@@ -5,7 +5,7 @@
 
 **[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
 
-CLI **v0.13.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
+CLI **v0.13.1** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
 <!-- launch:end -->
 
 A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
@@ -28,7 +28,7 @@ record observed screens/states/flows, and save/reopen local design edits. Use an
 existing authorized browser through the packaged DOM reader, or the dedicated
 capture browser. No Figma account or model API key is required by the package.
 See the [desktop URL import guide](docs/url-import.md) for commands, sign-in,
-privacy, editing and fidelity limits. Available in v0.13.0 with the matching CLI and skill. Source-backed and native workflows keep their existing
+privacy, editing and fidelity limits. Available in v0.13.1 with the matching CLI and skill. Source-backed and native workflows keep their existing
 complete-population contracts.
 
 ## Give this to your coding agent
@@ -63,7 +63,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.13.0
+npm install -g github:tombelieber/app-canvas#v0.13.1
 app-canvas browsers
 app-canvas demo
 ```
@@ -229,7 +229,7 @@ app-canvas populate --config ui-review/canvas.config.mjs --source-root <applicat
 # Or run the final gate directly: --ui-complete --source-root <application>
 ```
 
-These UI-delivery commands are available in v0.13.0;
+These UI-delivery commands are available in v0.13.1;
 v0.12.0 does not include them. Pin a qualified commit and read its matching guide.
 The coding agent owns source/navigation discovery, all meaningful screens and
 states, original UI adapters, page/feature grouping and connected checked flows.

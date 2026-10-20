@@ -15,7 +15,7 @@ export function useTelemetry(locale) {
  },[]);
  const track=(event,properties={})=>{
   const c=current.current;if(!c?.enabled)return;
-  fetch(new URL(c.endpoint,location.href),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:c.id,event,properties:{surface:c.surface,version:c.version,source:c.source,locale,...properties}}),referrerPolicy:'no-referrer',signal:AbortSignal.timeout(3000)}).catch(()=>{});
+  fetch(new URL(c.endpoint,location.href),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:c.id,event,properties:{...properties,surface:c.surface,version:c.version,source:c.source,locale,environment:c.environment??(c.surface==='qualification'?'qualification':'production'),cohort_class:c.cohort_class??'unknown'}}),referrerPolicy:'no-referrer',signal:AbortSignal.timeout(3000)}).catch(()=>{});
  };
  const previous=useRef(null);
  useEffect(()=>{if(!config)return;const first=previous.current===null; if(first)track('viewer_ready');else if(previous.current!==locale)track('locale_changed');previous.current=locale;},[config,locale]);

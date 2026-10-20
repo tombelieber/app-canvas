@@ -38,7 +38,7 @@ Keep canary addresses on reserved example domains and remove them with their
 returned code after verification. Never report canaries as market demand.
 
 Capture requires POSTHOG_TOKEN (public ingest class, stored as a Worker secret).
-The publisher's destination is the shared **OSS Products** PostHog project.
+The publisher's destination is the shared **Product** PostHog project.
 This collector only accepts App Canvas events, fixes `product=app_canvas` and
 `schema_version=1`, and prefixes distinct IDs with `app_canvas:`. Future OSS
 tools may share the destination but must use their own fixed product value,

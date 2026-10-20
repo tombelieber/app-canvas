@@ -1,5 +1,13 @@
 # App Canvas
 
+## 0.13.1
+
+- Stamp deployment environment on CLI, viewer and landing usage independently
+  of audience. Qualification remains explicit and cannot appear as production.
+- Allow operators to mark their own CLI usage as internal without changing
+  consent or installation identity. Clients cannot self-certify External.
+- Keep older payloads compatible as unknown; retain all historical events.
+
 ## 0.13.0
 
 - Capture desktop URLs into editable App Canvas landscapes with local DOM/assets,
