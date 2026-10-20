@@ -2,6 +2,8 @@
 
 ## 0.13.0
 
+- Preserve bounded Objective-C data-only source eligibility through resolved helpers and concrete callbacks, without removing source IDs or relaxing the strict all-source audit.
+
 - Add independent UI discovery, page/feature/state reconciliation and `--ui-complete` original-runtime acceptance. Keep the existing stricter `--complete` source audit unchanged and report its work separately from missing screens.
 - Add exact-input capture planning and a resumable `populate` executor with bounded asynchronous jobs, artifact/dependency invalidation and shared project/device ownership. Final UI verification always runs fresh.
 - Make the canonical skill own repository-to-whole-app delivery without repeated user questionnaires, prioritize supported phones, retain distinct layouts/states and deduplicate repeated evidence work.
