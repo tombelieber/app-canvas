@@ -42,7 +42,7 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> --out <new-private-directory> --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> --out <new-private-directory> --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
   );
   process.exit(0);
 }
@@ -57,9 +57,13 @@ if (trackable) {
 }
 if (telemetryCommand) {
   const choice = positionals[1];
-  if (choice && !["on", "off", "status"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status");
+  if (choice && !["on", "off", "status", "dogfood", "unknown"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status|dogfood|unknown");
   if (choice === "on" || choice === "off") await telemetry.setEnabled(choice === "on");
+  if (choice === "dogfood" || choice === "unknown") {
+    if (!await telemetry.setCohortClass(choice === "dogfood" ? "internal_test" : "unknown")) throw Error("Audience preference could not be saved");
+  }
   console.log(`Anonymous usage analytics: ${telemetry.config().enabled ? "enabled" : "disabled"}`);
+  console.log(`Usage audience: ${telemetry.config().cohort_class === "internal_test" ? "Dogfood" : "Unknown"}`);
   process.exit(0);
 }
 if (positionals[0] === "install") {

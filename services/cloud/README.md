@@ -38,12 +38,18 @@ Keep canary addresses on reserved example domains and remove them with their
 returned code after verification. Never report canaries as market demand.
 
 Capture requires POSTHOG_TOKEN (public ingest class, stored as a Worker secret).
-The publisher's destination is the shared **OSS Products** PostHog project.
+The publisher's destination is the shared **Product** PostHog project.
 This collector only accepts App Canvas events, fixes `product=app_canvas` and
 `schema_version=1`, and prefixes distinct IDs with `app_canvas:`. Future OSS
 tools may share the destination but must use their own fixed product value,
 event contract and scoped identities. Product filters are not access control;
-see [the shared analytics contract](../../docs/telemetry.md#shared-oss-analytics-project).
+see [the shared analytics contract](../../docs/telemetry.md#shared-product-analytics-project).
 Without it the endpoint returns unavailable. Do not call that analytics-ready.
 Set RELEASE_VERSION to the exact promoted package version. Verify actual
 PostHog ingestion as well as HTTP delivery before claiming analytics shipped.
+
+Deploy the collector's expanded `cohort_class` allowlist before distributing
+clients that send this field. Legacy clients that omit it remain valid and
+receive `unknown`; only `internal_test` and `unknown` are accepted from clients.
+The ingestion-side verified audience mapping may then override that value.
+Do not roll the collector back to a contract that rejects a supported client.

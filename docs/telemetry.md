@@ -7,6 +7,8 @@ normal CLI run prints a notice. No SDK scans the app, DOM or repository.
 app-canvas telemetry status
 app-canvas telemetry off
 app-canvas telemetry on
+app-canvas telemetry dogfood
+app-canvas telemetry unknown
 ```
 
 `APP_CANVAS_TELEMETRY=0`, `DO_NOT_TRACK=1`, and CI disable transmission and
@@ -19,7 +21,7 @@ canvas, installation or app interactions.
 
 Only the allowlisted event name, fixed product/schema identifiers, random installation/browser ID, tool version,
 source channel, one of the fixed product surfaces, selected language and fixed
-landing-page/CTA enums. Installations and browsers are **not people**. Events
+landing-page/CTA enums, plus an optional self-declared usage audience. Installations and browsers are **not people**. Events
 from the public synthetic demo are **not activation in a real repository**.
 Qualification traffic has its own surface and must be excluded from adoption
 reports. Opt-outs and blockers mean observed usage is incomplete.
@@ -48,9 +50,25 @@ set `APP_CANVAS_TELEMETRY_ENDPOINT` to their own HTTPS collector implementing
 user repositories. The publisher's ingest key is a Worker secret, never a
 management credential in the package.
 
-## Shared OSS analytics project
+## Identifying your own usage
 
-Publisher-operated OSS tools share one PostHog project, **OSS Products**.
+Run `app-canvas telemetry dogfood` once on your own installation. Future CLI
+and local-viewer events carry `cohort_class: "internal_test"`. This persists
+across restarts without changing your anonymous ID or analytics preference.
+Reload an already-open viewer after changing the preference.
+`app-canvas telemetry unknown` clears the declaration. For temporary use,
+`APP_CANVAS_DOGFOOD=1` labels that process only. Neither setting enables
+disabled analytics or overrides CI, Do Not Track or Global Privacy Control.
+
+Unmarked installations are **Unknown**, not confirmed External. A client can
+self-declare Dogfood to exclude its own usage; it cannot certify itself as an
+external customer. Publisher-side verified account/install mappings remain
+private and product-specific. No email or account ID is added to the payload.
+Classification applies to new events; earlier events are not rewritten.
+
+## Shared product analytics project
+
+Publisher-operated tools share one PostHog project, **Product**.
 App Canvas events always carry `product: "app_canvas"` and `schema_version: 1`.
 Event names describe actions (`viewer_ready`, `flow_completed`); `surface`
 separates demo, real-project, landing and qualification traffic, while `source`
