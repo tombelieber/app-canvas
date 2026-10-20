@@ -30,6 +30,84 @@ NSString *value;
 ${code}
 @end`;
 const proofs = (s = source(), xml = story, extras = []) => stableNativeGuards([{path:'Panel.m',text:s}, ...extras], [{path:'Main.storyboard',text:xml}]);
+const textSource = (code = body('NSString *result = [equation stringByReplacingOccurrencesOfString:@"x" withString:entry.text]; NSLog(@"%@", [entry text]);')) => source(code).replace('IBOutlet UISegmentedControl *mode;', 'IBOutlet UISegmentedControl *mode;\nIBOutlet UITextField *entry;');
+const textStory = story.replace('<segmentedControl id="mode"/>', '<segmentedControl id="mode"/><textField id="entry"/>').replace('<outlet property="mode" destination="mode"/>', '<outlet property="mode" destination="mode"/><outlet property="entry" destination="entry"/>');
+
+test('plain scene-bound readonly text fields are a data getter only inside the synchronous guard interval', () => {
+  assert.deepEqual(proofs(textSource(), textStory).map(p => p.outcome), ['false', 'true']);
+  assert.equal(proofs(textSource(), story).length, 0);
+  assert.equal(proofs(textSource().replace('UITextField *entry', 'UILabel *entry'), textStory).length, 0);
+  const extra={path:'Other.m',text:'@interface Other : NSObject { UITextField *entry; } @end @implementation Other - (void)edit { [entry resignFirstResponder]; } @end'};
+  assert.equal(proofs(textSource(), textStory, [extra]).length, 2);
+});
+
+test('text reads require strong unambiguous native bindings in every scene', () => {
+  for(const [s,xml]of [
+    [textSource(),textStory.replace('<textField id="entry"/>','<textField id="entry" customClass="CustomInput"/>')],
+    [textSource(),textStory.replace('<textField id="entry"/>','<textField id="entry" customModule="Other"/>')],
+    [textSource(),textStory.replace('<outlet property="entry" destination="entry"/>','<outlet property="entry" destination="entry"/><outletCollection property="entry" destination="mode"/>')],
+    [textSource(),textStory.replace('<textField id="entry"/>','<textField id="entry"><userDefinedRuntimeAttributes><userDefinedRuntimeAttribute keyPath="text" type="image" value="other"/></userDefinedRuntimeAttributes></textField>')],
+    [textSource(),textStory.replace('<textField id="entry"/>','<textField id="entry"><connections><outlet property="text" destination="mode"/></connections></textField>')],
+    [textSource().replace('IBOutlet UITextField','__weak IBOutlet UITextField'),textStory],
+    [textSource().replace('IBOutlet UITextField','__unsafe_unretained IBOutlet UITextField'),textStory],
+    [textSource().replace('IBOutlet UITextField *entry;', 'IBOutlet UITextField *entry;\nIBOutlet UITextField *entry;'),textStory],
+  ])assert.equal(proofs(s,xml).length,0);
+  assert.equal(stableNativeGuards([{path:'Panel.m',text:textSource()}],[{path:'First.storyboard',text:textStory},{path:'Second.storyboard',text:story}]).length,0);
+});
+
+test('native text writes, slot replacement, alias escape and source string subclasses stay opaque', () => {
+  for(const statement of ['entry = unknown;','entry.text = @"data";','[entry setText:@"data"];','id alias = entry;','escape(entry);','[self setValue:unknown forKeyPath:@"entry.text"];','id alias = [self valueForKey:@"entry"];','id alias = [self valueForKeyPath:key];','UITextField *entry = unknown;']){
+    const s=textSource().replace('- (void)viewDidLoad {','- (void)viewDidLoad { '+statement);
+    assert.equal(proofs(s,textStory).length,0,statement);
+  }
+  for(const extra of [
+    {path:'Other.m',text:'@interface Evil : NSString @end'},
+    {path:'Other.m',text:'@implementation UITextField (Hook) - (NSString *)text { change_native_control(); return @"data"; } @end'},
+    {path:'Other.m',text:'#define text sideEffect'},
+  ])assert.equal(proofs(textSource(),textStory,[extra]).length,0);
+  assert.equal(proofs(textSource(body('NSLog(@"%@", entry);')),textStory).length,0);
+});
+
+test('a custom text-field delegate cannot borrow another plain field main-action root', () => {
+  const s=source().replace('- (IBAction)run:', '- (BOOL)textFieldShouldReturn:(UITextField *)input { [self run:nil]; return YES; }\n- (IBAction)run:');
+  const fields='<textField><connections><outlet property="delegate" destination="panel"/></connections></textField><textField customClass="CustomInput"><connections><outlet property="delegate" destination="panel"/></connections></textField>';
+  assert.equal(proofs(s,story.replace('<button>',fields+'<button>')).length,0);
+});
+
+test('an immutable property-list local is data only after its inspected parse and readonly lifetime', () => {
+  const declaration='NSDictionary *record = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:bytes options:NSPropertyListImmutable format:&format error:&error]; if (!record) { NSLog(@"empty"); }';
+  const code=body('NSString *result = [equation stringByReplacingOccurrencesOfString:@"x" withString:entry.text]; NSLog(@"%@", [record objectForKey:@"value"]);').replace('- (void)evaluate {','- (void)evaluate { '+declaration);
+  assert.equal(proofs(textSource(code),textStory).length,2);
+  for(const mutate of [
+    s=>s.replace('NSPropertyListImmutable','NSPropertyListMutableContainers'),
+    s=>s.replace('NSPropertyListSerialization propertyListWithData','Unknown propertyListWithData'),
+    s=>s.replace('if (!record)', 'id alias = record; if (!record)'),
+    s=>s.replace('if (!record)', 'record = unknown; if (!record)'),
+    s=>s.replace('if (!record)', 'escape(&record); if (!record)'),
+    s=>s.replace('NSDictionary *record','__block NSDictionary *record'),
+    s=>s.replace('NSDictionary *record','if (condition) { NSDictionary *record').replace('if (!record)', '} if (!record)'),
+    s=>'#define REPLACE record = unknown\n'+s.replace('if (!record)','REPLACE; if (!record)'),
+    s=>'#define INNER record = unknown\n#define REPLACE INNER\n'+s.replace('if (!record)','REPLACE; if (!record)'),
+    s=>'#define REPLACE(x) rec ## x = unknown\n'+s.replace('if (!record)','REPLACE(ord); if (!record)'),
+    s=>s.replace('NSDictionary *record', 'id NSPropertyListSerialization = self; NSDictionary *record'),
+  ])assert.equal(proofs(mutate(textSource(code)),textStory).length,0);
+  const fake={path:'Other.m',text:'@implementation NSPropertyListSerialization (Hook) + (id)propertyListWithData:(id)b options:(int)o format:(id)f error:(id)e { return unknown; } @end'};
+  assert.equal(proofs(textSource(code),textStory,[fake]).length,0);
+  const unrelated='#define DISCARD(x) [x release]\n'+textSource(code).replace('if (!record)', 'DISCARD(other); if (!record)');
+  assert.equal(proofs(unrelated,textStory).length,2);
+});
+
+test('Foundation formatting, copying and private-class hooks cannot enter a supposedly data-only interval', () => {
+  for(const text of [
+    '@implementation NSDictionary (Hook) - (NSString *)descriptionWithLocale:(id)value { show_ui(); return @"data"; } @end',
+    '@implementation NSArray (Hook) - (NSString *)descriptionWithLocale:(id)value indent:(int)i { show_ui(); return @"data"; } @end',
+    '@implementation NSString (Hook) - (id)copyWithZone:(id)zone { show_ui(); return self; } @end',
+    '@implementation __NSCFString (Hook) - (NSString *)description { show_ui(); return self; } @end',
+    '@implementation NSAttributedString (Hook) - (NSString *)string { show_ui(); return @"data"; } @end',
+    '@implementation NSString (Hook) - (id)initWithString:(id)s { show_ui(); return self; } @end',
+    '@implementation NSDecimalNumber (Hook) + (void)initialize { show_ui(); } @end',
+  ])assert.equal(proofs(textSource(),textStory,[{path:'Hook.m',text}]).length,0);
+});
 
 test('source-bound native action admits only contradictory nested outcomes after closed string operations', () => {
   const p = proofs();

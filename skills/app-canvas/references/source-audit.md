@@ -186,7 +186,17 @@ strong ivar binding to a standard Interface Builder `UISegmentedControl`, a
 source-bound UI action or standard text-field Return delegate and a closed
 synchronous interval between the enclosing and repeated reads. Any strings
 used in that interval need inspected concrete Foundation producers and writer
-checks; a declared object type is insufficient. Dormant blocks, unknown
+checks; a declared object type is insufficient. Within this interval only, `UITextField.text` may be a
+modeled data getter when a strong source ivar has only direct text reads and is
+bound to a plain, unambiguous text field in every original scene. Source slot
+writes/escapes, reflective access to that slot, runtime value injection, custom
+text fields and source string subclasses prevent this capability. It relies on
+UIKit's valid text-value contract; it does not model arbitrary invalid native
+API values. It does not make general UIKit getters or text setters non-rendering.
+An immutable property-list local can supply data only after an inspected standard
+Foundation parse that dominates the outer guard, with a readonly local lifetime;
+arbitrary dictionaries, mutable parses, aliases and pointer exports stay opaque.
+Dormant blocks, unknown
 receivers, callbacks, source helpers, UI effects, mutable receiver ownership,
 reflective dispatch through unknown targets and runtime mutation remain
 pending. Mixed Swift files must fit a closed data-declaration subset with no UI
@@ -198,5 +208,8 @@ guard or reachable nested outcome, and does not review an ID automatically.
 
 The Return delegate contract follows Apple's [UITextFieldDelegate method](https://developer.apple.com/documentation/uikit/uitextfielddelegate/textfieldshouldreturn(_:))
 and [UIKit text-field isolation](https://developer.apple.com/documentation/uikit/uitextfield).
+The bounded data summaries use the standard [`UITextField.text` value contract](https://developer.apple.com/documentation/uikit/uitextfield/text?language=objc)
+and [immutable property-list contents](https://developer.apple.com/documentation/foundation/nspropertylistmutabilityoptions/nspropertylistimmutable).
+Treat these as explicit framework contracts, not inferred purity of arbitrary getters.
 All source and Interface Builder dependencies are fingerprinted by fresh
 discovery; inventory annotations cannot establish their own eligibility.
