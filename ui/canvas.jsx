@@ -39,7 +39,7 @@ function Canvas() {
   const [selectedId, select] = useState(null), [active, setActive] = useState(null), [resets, setResets] = useState({});
   const [lines, setLines] = useState("related"), [request, setRequest] = useState(null);
   const [moving, setMoving] = useState(false), [area, setArea] = useState({ width: 800, height: 600 });
-  const [journeyId, setJourneyId] = useState(""), [view, setView] = useState("overview"), [depth, setDepth] = useState("all");
+  const [journeyId, setJourneyId] = useState(""), [view, setView] = useState("overview"), [depth, setDepth] = useState(project.initialDepth || "all");
   const [branches, setBranches] = useState(false), [autoStart, setAutoStart] = useState(false);
   const [presenting, setPresenting] = useState(false), demoSnapshot = useRef(null);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);

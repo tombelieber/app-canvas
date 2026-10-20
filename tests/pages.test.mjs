@@ -33,3 +33,17 @@ test("depth collapses variants within a page without losing selected or searched
   assert.deepEqual(scopedScreens(catalog,{depth:"0"}).map(s=>s.id),["home","settings"]);
   assert.deepEqual(scopedScreens(catalog,{query:"empty"}).map(s=>s.id),["empty"]);
 });
+
+test('new large UI deliveries open grouped; small and legacy views keep all states', () => {
+  function input(count, features) {
+    return validateProject({ title: 'Grouping', groups: [{ id: 'app' }], pages: [{ id: 'home', title: 'Home' }], uiCoverage: { inventory: 'ui-inventory.json' }, catalog: Array.from({ length: count }, (_, i) => ({ id: 'case-' + i, title: 'Case ' + i, group: 'app', pageId: 'home', feature: 'Feature ' + (i % features) })) });
+  }
+  assert.equal(publicProject(input(128, 1)).initialDepth, 'all');
+  assert.equal(publicProject(input(129, 8)).initialDepth, '1');
+  assert.equal(publicProject(input(260, 260)).initialDepth, '0');
+  const legacy = input(260, 8); delete legacy.uiCoverage;
+  assert.equal(publicProject(legacy).initialDepth, undefined);
+  assert.equal(publicProject({ ...legacy, initialDepth: 'auto' }).initialDepth, '1');
+  assert.equal(publicProject({ ...input(260, 8), initialDepth: 'all' }).initialDepth, 'all');
+  assert.throws(() => validateProject({ ...legacy, initialDepth: 'unknown' }), /initialDepth/);
+});

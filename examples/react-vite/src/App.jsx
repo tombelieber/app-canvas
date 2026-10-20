@@ -27,7 +27,7 @@ function Settings() {
   const [profile, setProfile] = useState(null), [error, setError] = useState(""), [saved, setSaved] = useState(false);
   useEffect(() => { api("/api/profile").then(setProfile).catch((e) => setError(e.message)); }, []);
   if (error) return <section data-state="denied"><h1>{error}</h1></section>;
-  if (!profile) return <p>Loading profile…</p>;
+  if (!profile) return <p data-state="profile-loading">Loading profile…</p>;
   return <section data-state="settings"><h1>Settings</h1><form onSubmit={async (e) => {
     e.preventDefault(); const name = new FormData(e.currentTarget).get("name");
     setProfile(await api("/api/profile", { method: "PATCH", body: JSON.stringify({ name }) })); setSaved(true);

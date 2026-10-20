@@ -2,7 +2,8 @@
 
 App Canvas uses React Flow (`@xyflow/react`, MIT), React and React DOM (MIT),
 esbuild (MIT), Playwright (Apache-2.0), TypeScript (Apache-2.0), and Dagre /
-Graphlib (MIT) for directed graph layout. Their
+Graphlib (MIT) for directed graph layout, and proper-lockfile (MIT) for
+population ownership and device resource leases. Their
 packages retain their respective copyright and license notices.
 
 The runnable StoolSense example is an author-owned frontend with synthetic

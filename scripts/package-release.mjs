@@ -31,7 +31,8 @@ for (const required of [
   "bin/app-canvas.mjs", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json",
   "skills/app-canvas/SKILL.md", "skills/app-canvas/agents/openai.yaml",
   "skills/app-canvas/references/completion.md", "skills/app-canvas/references/native.md",
-  "skills/app-canvas/references/source-audit.md",
+  "skills/app-canvas/references/source-audit.md", "skills/app-canvas/references/population.md",
+  "lib/populate.mjs", "lib/ui-coverage.mjs",
   "AGENT_GUIDE.md", "CHANGELOG.md",
 ]) if (!files.has(required)) throw Error(`Release package missing ${required}`);
 const sha256 = createHash("sha256").update(await readFile(join(output, pack.filename))).digest("hex");

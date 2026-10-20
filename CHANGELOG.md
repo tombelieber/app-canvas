@@ -1,5 +1,13 @@
 # App Canvas
 
+## 0.13.0
+
+- Add independent UI discovery, page/feature/state reconciliation and `--ui-complete` original-runtime acceptance. Keep the existing stricter `--complete` source audit unchanged and report its work separately from missing screens.
+- Add exact-input capture planning and a resumable `populate` executor with bounded asynchronous jobs, artifact/dependency invalidation and shared project/device ownership. Final UI verification always runs fresh.
+- Make the canonical skill own repository-to-whole-app delivery without repeated user questionnaires, prioritize supported phones, retain distinct layouts/states and deduplicate repeated evidence work.
+- Open new UI deliveries above 128 cases at page/feature depth, preserving access to every state, flow target and retained app instance. Keep existing integrations’ starting view.
+- Extend the real React/Vite reference to all eight implemented visible states with checked navigation/add/retry/save flows and fresh packaged onboarding. Preserve the viewer, original DOM, GPU/native overview, Demo/Play, flow links and retained state.
+
 ## 0.12.0
 
 - Default the viewer to English and add all eleven launch languages, with persistent switching that keeps app drafts, previews, camera and playback alive.

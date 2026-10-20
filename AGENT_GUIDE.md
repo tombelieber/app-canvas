@@ -59,15 +59,16 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.12.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 ```
 
 On npm 12, Git admission may require `--allow-git=root` on that install command.
 Keep the exception scoped to the direct requested dependency and command.
 
-Version 0.7.0 includes this guide and the `@tombelieber/app-canvas/inventory`
-export. The lockfile records the resolved commit. For another tool revision,
+The installed package includes this guide and `app-canvas guide`. New UI
+delivery commands require a verified development revision until their release;
+the currently published v0.12.0 does not contain them. Pin the qualified commit. The lockfile records the resolved commit. For another tool revision,
 verify its availability and inventory export before pinning it; do not invent
 an unavailable tag or drop the source gate to use an older build.
 
@@ -99,7 +100,8 @@ ui-review/
   catalog.json         # explicit, stable screen/state IDs
   frame.jsx            # real UI entry with preview-only dependencies
   fixtures.js          # disposable synthetic transport/provider state
-  inventory.json       # independent source items, fingerprints and case mapping
+  ui-inventory.json    # independent UI worklist, states, grouping and mappings
+  prepare.mjs          # inspected adapter preparation, not guessed screen markup
   routes.json          # reviewed route inventory, when supported
   README.md            # coverage, commands, fixture boundaries and omissions
 ```
@@ -180,30 +182,35 @@ in the tool repository. Emulation does not qualify a physical iPad.
 
 ## 4. Make missing coverage fail
 
-Complete population uses the [source walkthrough](skills/app-canvas/references/source-audit.md):
-run `discover` against the user's original application root before selecting
-cases, resolve every source region/candidate with `pending`, and run
-`--complete` with source-linked runtime evidence. A version 1 inventory and
-passing registered-case checks are construction evidence, not final acceptance.
-
-Require the independent source inventory as well as authored-case coverage:
+Complete **UI delivery** uses the [population workflow](skills/app-canvas/references/population.md).
+Use `app-canvas guide` from the installed package. Run `plan` on the whole
+original repository before captures, inspect all files and UI anchors, and
+reconcile meaningful states with actual navigation. Keep one project/device
+owner, deduplicate exact equivalent captures and resume durable checkpoints.
 
 ```js
-coverage: { requireSourceInventory: true, requireAllCases: true, requireConnected: true },
-sourceCoverage: {
-  roots: ['src/ui', 'src/router.tsx'], // use all real UI owners in this app
-  inventory: 'ui-review/inventory.json',
-},
+coverage: { requireAllCases: true, requireConnected: true },
+uiCoverage: { inventory: 'ui-review/ui-inventory.json' },
+// population: adapter tasks with fingerprints, artifacts and device resources
+// verifyUi: original-runtime state and action/recovery transition evidence
 ```
 
-Use `inventorySources(root, roots)` from `@tombelieber/app-canvas/inventory`
-to fingerprint the declared files/directories. Complete the semantic items
-and case mappings using the [inventory schema and completion gate](skills/app-canvas/references/completion.md).
-New/changed/deleted files, unmapped UI sources, missing cases and blocked items
-fail. Keep scope choices auditable: the file scanner does not infer semantics
-or prove the chosen roots include the whole app. Reinspect source changes
-before updating hashes. Existing catalog-only projects stay compatible but
-cannot claim complete population under this contract until migrated.
+Run `populate` for preparation plus fresh `--ui-complete` acceptance. Missing
+states, unresolved UI anchors, uninspected files, wrong grouping, stale sources
+or missing runtime evidence fail. A state omitted from both catalog and semantic
+inventory must still fail independent discovery. Inspect code/navigation beyond
+syntax anchors; they cannot infer every semantic condition in arbitrary code.
+Prioritize supported phones and add only distinct implemented tablet layouts.
+Group by page → feature → state, with layout/platform variants underneath.
+New UI deliveries above 128 cases start at feature depth, or page depth when
+features also exceed 128. All states/search/flow links retain the whole model.
+
+The existing `--complete` remains the unchanged, stricter
+[all-source audit](skills/app-canvas/references/source-audit.md). It still
+requires version 2 discovery and every raw obligation's review/evidence.
+Report audit-only pending work separately from missing UI; UI acceptance never
+turns an audit failure into a pass. Finish both if both are requested. Legacy
+source inventories and registered-case checks remain construction evidence.
 
 For supported React Router JSX/object route forms, configure `routeCoverage`
 with source and reviewed snapshot paths. Generate the snapshot with
@@ -231,8 +238,8 @@ that its corresponding application interaction works.
 ```sh
 npx app-canvas --config ui-review/canvas.config.mjs --check
 npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas --config ui-review/canvas.config.mjs --complete
-npm run ui:review
+npx app-canvas populate --config ui-review/canvas.config.mjs --source-root .
+# --verify verifies then exits; otherwise keep the verified viewer open.
 ```
 
 `--verify` renders every registered case, rejects preview errors and unknown

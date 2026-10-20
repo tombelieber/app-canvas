@@ -1,4 +1,9 @@
-# Source walkthrough and population acceptance
+# Strict all-source audit (`--complete`)
+
+This stricter audit is separate from [UI landscape delivery](completion.md). Its
+existing `--complete` requirements remain unchanged. Audit-only internal code
+checks are not automatically missing screens; do not weaken them or report
+a UI gate pass as an all-source audit pass. When requested, finish this work too.
 
 Start before choosing convenient canvas cases:
 

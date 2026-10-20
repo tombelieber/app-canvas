@@ -41,11 +41,11 @@
   "steps": [
     [
       "Installa lo strumento condiviso",
-      "Usa Node.js 22+ e package manager e lockfile del progetto. Installa la release GitHub fissata e il browser. Con npm 12 aggiungi --allow-git=root solo se blocca questa dipendenza Git diretta; non modificare le regole globali."
+      "Usa Node.js 22+ e package manager e lockfile del progetto. Installa la release GitHub fissata e il browser. Con npm 12 aggiungi --allow-git=root solo se blocca questa dipendenza Git diretta; non modificare le regole globali. Prima del rilascio di v0.13.0, usa un commit di sviluppo qualificato per questi comandi UI."
     ],
     [
       "Inventaria prima di scegliere i casi",
-      "Esegui discover sull’intera radice dell’app. L’agente esamina ogni regione e candidato, risolve pending ed elenca stati semantici indipendentemente dal catalog. I blocchi restano visibili."
+      "Esegui plan sull’intero repository originale. Esamina ogni file, ancoraggio UI, dipendenza che influisce sulla UI e navigazione reale. Elenca schermate e stati indipendentemente dal catalogo; mantieni visibili le UI irrisolte."
     ],
     [
       "Renderizza la UI originale con fixture",
@@ -53,7 +53,7 @@
     ],
     [
       "Verifica stati e interazioni",
-      "Copri normale, vuoto, caricamento, errore, accesso negato, dialoghi e recupero. Verifica ogni caso e i controlli reali in flussi continui. Riconcilia inventory, assertion legate al codice e route; supera --complete sulla stessa radice."
+      "Copri normale, vuoto, caricamento, errore, accesso negato, dialoghi e recupero. Verifica ogni caso e i controlli reali in flussi continui. Riconcilia inventory, assertion legate al codice e route; supera --ui-complete sulla stessa radice. --complete rimane un audit rigoroso e separato di tutto il sorgente. Le sue attività aperte non sono il numero di schermate mancanti."
     ],
     [
       "Rivedi e mantieni dal codice",

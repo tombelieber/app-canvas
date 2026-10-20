@@ -14,6 +14,7 @@ const { values, positionals } = parseArgs({
     verify: { type: "boolean" },
     check: { type: "boolean" },
     complete: { type: "boolean" },
+    "ui-complete": { type: "boolean" },
     "source-root": { type: "string" },
     inventory: { type: "string" },
     target: { type: "string" },
@@ -30,12 +31,12 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <project.config.mjs>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
   );
   process.exit(0);
 }
 const telemetryCommand = positionals[0] === "telemetry";
-const trackable = !values.check && !values.verify && !values.complete && !["browsers", "discover", "pending", "export"].includes(positionals[0]);
+const trackable = !values.check && !values.verify && !values.complete && !values['ui-complete'] && !["browsers", "discover", "pending", "export", "plan", "status", "guide", "populate"].includes(positionals[0]);
 let telemetry;
 if (trackable) {
   const { createTelemetry } = await import("../lib/telemetry.mjs");
@@ -69,6 +70,12 @@ if (positionals[0] === "browsers") {
 let app;
 try {
   if (values.complete && (values.check || values.verify || positionals.length)) throw Error("Cannot combine --complete with --check, --verify or another command");
+  if (values['ui-complete'] && (values.complete || values.check || values.verify || positionals.length)) throw Error('Cannot combine --ui-complete with other verification modes or commands');
+  if (positionals[0] === 'populate' && values.check) throw Error('populate performs fresh UI verification; --check cannot replace it');
+  if (['plan', 'status', 'guide'].includes(positionals[0])) {
+    const { uiWorklistCommand } = await import('../lib/population-cli.mjs');
+    await uiWorklistCommand(positionals[0], values); process.exit(0);
+  }
   if (["discover", "pending"].includes(positionals[0])) {
     const { discoverSources } = await import("../lib/inventory.mjs");
     if (positionals[0] === "discover") {
@@ -99,18 +106,41 @@ try {
       process.cwd(),
     );
     console.log(
-      `PASS: ${project.title}, ${project.catalog.length} registered cases; ${project.sourceCoverageReport ? `${project.sourceCoverageReport.items} source inventory items mapped` : "no source inventory configured (catalog/route checks only)"}`,
+      `PASS: ${project.title}, ${project.catalog.length} registered cases; ${project.uiCoverageReport ? `${project.uiCoverageReport.screens} pages / ${project.uiCoverageReport.states} UI states reconciled (runtime evidence not yet verified)` : project.sourceCoverageReport ? `${project.sourceCoverageReport.items} source inventory items mapped` : "no source inventory configured (catalog/route checks only)"}`,
     );
     process.exit(0);
   }
   let completeProject;
+  let population, uiProof;
+  const uiComplete = values['ui-complete'] || positionals[0] === 'populate';
+  if (positionals[0] === 'populate') {
+    const { loadProject } = await import('../lib/config.mjs');
+    const { populateProject } = await import('../lib/population-cli.mjs');
+    const controller = new AbortController();
+    const interrupt = () => controller.abort();
+    for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, interrupt);
+    try { population = await populateProject(await loadProject(values.config || 'canvas.config.mjs', process.cwd(), { prepare: true }), process.cwd(), { signal: controller.signal, async finalize() {
+      completeProject = await loadProject(values.config || 'canvas.config.mjs', process.cwd(), { uiComplete: true });
+      if (await realpath(completeProject.uiCoverageReport.sourceRoot) !== await realpath(resolve(values['source-root'] || '.'))) throw Error('UI discovery root does not match the requested original application repository');
+      app = await startCanvas({ root: process.cwd(), config: completeProject, configPath: values.config || 'canvas.config.mjs', port: values.port ? Number(values.port) : 0, watchFiles: false });
+      uiProof = await app.verify({ uiComplete: true });
+      const report = uiProof.uiDelivery;
+      return { digest: report.digest, screens: report.screens, states: report.states, cases: report.cases, transitions: report.transitions, sourceAudit: report.audit };
+    } }); }
+    finally { for (const signal of ['SIGINT', 'SIGTERM']) process.removeListener(signal, interrupt); }
+  }
+  if (uiComplete && !population) {
+    const { loadProject } = await import('../lib/config.mjs');
+    completeProject = await loadProject(values.config || 'canvas.config.mjs', process.cwd(), { uiComplete: true });
+    if (await realpath(completeProject.uiCoverageReport.sourceRoot) !== await realpath(resolve(values['source-root'] || '.'))) throw Error('UI discovery root does not match the requested application repository; use --source-root for the original repository');
+  }
   if (values.complete) {
     const { loadProject } = await import("../lib/config.mjs");
     completeProject = await loadProject(values.config || "canvas.config.mjs", process.cwd(), { complete: true });
     if (await realpath(completeProject.sourceCoverageReport.sourceRoot) !== await realpath(resolve(values["source-root"] || "."))) throw Error("Source discovery root does not match the requested application repository; use --source-root for the original repository");
     if (typeof completeProject.verify !== "function") throw Error("Complete validation requires a project verify hook with source-linked runtime evidence");
   }
-  app = await startCanvas({
+  app ||= await startCanvas({
     telemetry,
     config: completeProject,
     root: positionals[0] === "demo" ? packageRoot : process.cwd(),
@@ -119,7 +149,7 @@ try {
         ? "examples/stoolsense/canvas.config.mjs"
         : values.config || "canvas.config.mjs",
     port: values.port ? Number(values.port) : exporting ? 0 : undefined,
-    watchFiles: !values.verify && !values.complete && !exporting,
+    watchFiles: !values.verify && !values.complete && !values['ui-complete'] && !exporting,
   });
   console.log(`App canvas: ${app.address}`);
   for (const signal of ["SIGINT", "SIGTERM"])
@@ -131,12 +161,12 @@ try {
     const result = await app.exportStatic({ outDir: values.out });
     console.log(`Exported ${result.total} screens and interactive previews to ${result.directory}`);
     await app.close();
-  } else if (values.verify || values.complete) {
-    const proof = await app.verify({ complete: values.complete });
+  } else if (values.verify || values.complete || uiComplete) {
+    const proof = uiProof || await app.verify({ complete: values.complete, uiComplete });
     console.log(
-      values.complete ? `PASS: source population verified, ${proof.total} cases` : `PASS: ${proof.total} registered screens${proof.interactionsVerified ? " and project interactions" : ""} (registered cases only; use --complete for population acceptance)`,
+      uiComplete ? `PASS: UI delivery verified — ${proof.uiDelivery.screens} pages, ${proof.uiDelivery.states} states, ${proof.total} canvas cases, ${proof.uiDelivery.transitions} links. Strict source audit: ${proof.uiDelivery.audit.status}.` : values.complete ? `PASS: source population verified, ${proof.total} cases` : `PASS: ${proof.total} registered screens${proof.interactionsVerified ? " and project interactions" : ""} (registered cases only; use --ui-complete for UI delivery or --complete for strict source acceptance)`,
     );
-    await app.close();
+    if (!population || values.verify) await app.close();
   }
 } catch (error) {
   console.error(error.message);

@@ -44,25 +44,25 @@ Confiez l’intégration à un agent capable de lire, modifier et exécuter des 
 ### À coller dans votre agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Installer l’outil partagé
 
-Utilisez Node.js 22+ et le gestionnaire et lockfile du projet. Installez la version GitHub épinglée, puis le navigateur. Avec npm 12, ajoutez --allow-git=root seulement si cette dépendance Git directe est bloquée ; ne changez pas la politique globale.
+Utilisez Node.js 22+ et le gestionnaire et lockfile du projet. Installez la version GitHub épinglée, puis le navigateur. Avec npm 12, ajoutez --allow-git=root seulement si cette dépendance Git directe est bloquée ; ne changez pas la politique globale. Avant la publication de v0.13.0, utilisez un commit de développement qualifié pour ces commandes UI.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.12.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 ```
 
 ### 2. Inventorier avant de choisir les cas
 
-Lancez discover sur toute la racine de l’application. L’agent examine chaque région et candidat, résout pending et énumère les états sémantiques indépendamment du catalog. Les blocages restent visibles.
+Exécutez plan sur tout le dépôt original. Examinez chaque fichier, ancrage UI, dépendance influençant l’UI et navigation réelle. Recensez les écrans et états indépendamment du catalogue ; gardez les UI non résolues visibles.
 
 ```sh
-npx app-canvas discover --source-root . --out .artifacts/app-canvas/inventory.json
-npx app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx app-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. Afficher la vraie UI avec des fixtures
@@ -71,12 +71,10 @@ Créez config, catalog, fixtures synthétiques, preview entry et journeys dans u
 
 ### 4. Vérifier états et interactions
 
-Couvrez normal, vide, chargement, erreur, accès refusé, dialogues et récupération. Vérifiez chaque cas et les vrais contrôles dans des parcours continus. Réconciliez inventory, assertions liées au code et routes ; passez --complete sur la même racine.
+Couvrez normal, vide, chargement, erreur, accès refusé, dialogues et récupération. Vérifiez chaque cas et les vrais contrôles dans des parcours continus. Réconciliez inventory, assertions liées au code et routes ; passez --ui-complete sur la même racine. --complete reste un audit strict et distinct de tout le code source. Ses éléments ouverts ne comptent pas les écrans manquants.
 
 ```sh
-npx app-canvas --config ui-review/canvas.config.mjs --check
-npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas --config ui-review/canvas.config.mjs --complete --source-root .
+npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. Réviser et maintenir depuis le code
@@ -92,7 +90,7 @@ npm run ui:review
 
 Le paquet partagé possède viewer, CLI et skill. Votre dépôt conserve adapter, fixtures, inventory indépendant, catalog et tests d’interaction. Partez de l’exemple React/Vite exécutable ; les autres stacks ont leur adapter.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.13.0/examples/react-vite)
 
 ### Skill facultative
 

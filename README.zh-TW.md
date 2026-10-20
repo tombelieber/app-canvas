@@ -44,25 +44,25 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 ### 貼給你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安裝共用工具
 
-使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。
+使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。 v0.13.0 發佈前，這些 UI 交付指令須使用已驗證的 development commit。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.12.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 ```
 
 ### 2. 先盤點，再選 Case
 
-從整個 App 根目錄執行 discover。Agent 要逐一檢視來源區段及候選項、清理 pending，並獨立列出語意狀態，而非倒過來由 catalog 決定範圍。未解決 blocker 必須保留。
+對整個原有 App repository 執行 plan。檢視所有檔案及 UI anchors，追查影響 UI 的依賴，並核對實際導航。獨立列齊畫面及狀態，不能由 catalog 倒推範圍；未解決 UI 必須保留。
 
 ```sh
-npx app-canvas discover --source-root . --out .artifacts/app-canvas/inventory.json
-npx app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx app-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. 用 Fixtures 渲染原有 UI
@@ -71,12 +71,10 @@ Agent 建立 ui-review/canvas.config.mjs、catalog、虛構 fixtures、preview e
 
 ### 4. 驗證狀態與互動
 
-涵蓋已實作的一般、空白、載入、錯誤、拒絕存取、對話框及復原狀態。每個 case 都要有檢查，流程要操作真實控制項。核對 inventory、來源連結 assertions 與 routes，再對同一 App 根目錄通過 --complete。
+涵蓋已實作的一般、空白、載入、錯誤、拒絕存取、對話框及復原狀態。每個 case 都要有檢查，流程要操作真實控制項。核對 inventory、來源連結 assertions 與 routes，再對同一 App 根目錄通過 --ui-complete。 --complete 保留為獨立、嚴格的完整來源審查；其待辦數並非漏頁數。
 
 ```sh
-npx app-canvas --config ui-review/canvas.config.mjs --check
-npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas --config ui-review/canvas.config.mjs --complete --source-root .
+npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. 由原始碼維護與檢視
@@ -92,7 +90,7 @@ npm run ui:review
 
 共用套件維護 viewer、CLI 及 skill；各 Repo 維護自己的 adapter、fixtures、獨立 inventory、catalog 與互動檢查。可從可執行的 React/Vite 範例開始；其他技術棧使用專屬 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.13.0/examples/react-vite)
 
 ### 可選的 Agent Skill
 

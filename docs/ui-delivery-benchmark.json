@@ -1,0 +1,42 @@
+{
+  "workload": "8 original React UI states, 4 independent read-only evidence labels each; 390x844 phone viewport; 3 alternating-order trials",
+  "sourceDigest": "c9946c59dba2e800b77254153376e53feb3180d9d5db8eb1d47889be7c585d76",
+  "beforeCaptures": 32,
+  "afterCaptures": 8,
+  "labelsRetained": 32,
+  "captureReductionPercent": 75,
+  "beforeMedianMs": 1070.1708339999968,
+  "afterMedianMs": 346.3427919999958,
+  "elapsedReductionPercent": 67.6366818271935,
+  "identicalPixelsForAllLabels": true,
+  "trials": [
+    {
+      "trial": 1,
+      "order": [
+        "baseline",
+        "planned"
+      ],
+      "baselineMs": 1157.7774579999968,
+      "plannedMs": 346.3427919999958
+    },
+    {
+      "trial": 2,
+      "order": [
+        "planned",
+        "baseline"
+      ],
+      "baselineMs": 1020.8405839999978,
+      "plannedMs": 348.859457999999
+    },
+    {
+      "trial": 3,
+      "order": [
+        "baseline",
+        "planned"
+      ],
+      "baselineMs": 1070.1708339999968,
+      "plannedMs": 304.7483340000035
+    }
+  ],
+  "limits": "Synthetic React example; measures avoided repeated navigation/capture work, not GPU/FPS/native emulator speed or universal project duration."
+}
