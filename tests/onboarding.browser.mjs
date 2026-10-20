@@ -1,3 +1,4 @@
+process.env.APP_CANVAS_TELEMETRY = "0";
 import assert from "node:assert/strict";
 import { mkdtemp, cp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -40,6 +41,9 @@ try {
       );
   await exec(process.execPath, [fileURLToPath(new URL("./population.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   await exec(process.execPath, [fileURLToPath(new URL("./import.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
+  await exec(process.execPath, [fileURLToPath(new URL("./import-agent.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
+  const agentExports = "import {captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates} from '@tombelieber/app-canvas/import'; console.log([captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates].every(x=>typeof x==='function'));";
+  assert.equal((await exec(process.execPath, ["--input-type=module", "-e", agentExports], { cwd: project })).stdout.trim(), "true");
   const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
   assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /6 source inventory items mapped/);
   inventory.items.pop();
@@ -61,7 +65,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto(app.address);
-  await page.getByRole("button", {name:"▶ 操作 App",exact:true}).click();
+  await page.getByRole("button", {name:"▶ Use app",exact:true}).click();
   const frame = page.frameLocator('iframe[data-screen="tasks"]');
   await frame.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
   const abort = new AbortController();

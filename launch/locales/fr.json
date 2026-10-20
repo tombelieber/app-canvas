@@ -1,0 +1,88 @@
+{
+  "name": "Français",
+  "title": "Toute votre UI. Un canevas. Le vrai code.",
+  "description": "Explorez les écrans, états et parcours interactifs réels dans un canevas zoomable, créé et maintenu avec votre agent de programmation.",
+  "demo": "Ouvrir la démo",
+  "source": "Code sur GitHub",
+  "start": "Ajouter à votre dépôt",
+  "release": "Article de lancement",
+  "languages": "Choisir la langue",
+  "eyebrow": "App Canvas · Open source · Pensé pour les agents",
+  "summary": "TL;DR",
+  "tldr": [
+    "Voyez ensemble les écrans complets, leurs états nommés et les parcours implémentés.",
+    "Une seule implémentation UI. Votre agent crée fixtures, adapter et contrôles de couverture.",
+    "Essayez {states} états et {flows} parcours avec des données synthétiques, sans compte ni clé API."
+  ],
+  "tour": "Voir, utiliser, rejouer",
+  "features": [
+    [
+      "Dézoomez pour comprendre l’application",
+      "Écrans complets regroupés par page, recherche, filtres et panneaux repliables. Un lien de parcours déplace la caméra vers sa destination."
+    ],
+    [
+      "Zoomez pour utiliser la vraie UI",
+      "Browse verrouille les contrôles pendant le déplacement. Sélectionnez un écran puis Interact pour utiliser son code original avec des données jetables."
+    ],
+    [
+      "Lancez Demo pour expliquer un parcours",
+      "Rejouez succès, échec et récupération dans une session continue : repères d’action, légendes, pause, vitesse et chronologie des étapes."
+    ]
+  ],
+  "overviewAlt": "États réels de StoolSense sur le canevas App Canvas",
+  "playbackAlt": "Relecture réelle après un échec de sauvegarde hors ligne, avec brouillon conservé",
+  "phoneAlt": "App Canvas dans Safari sur un iPhone physique",
+  "overviewCaption": "Démo réelle : {states} états, {flows} parcours et {entries} entrées lisibles. La file inclut des cas isolés, pas {entries} parcours E2E.",
+  "playbackCaption": "Vraie UI d’échec et de récupération. La lecture exécute des actions et vérifications ; tracer un lien ne constitue pas un test.",
+  "phoneCaption": "Capture Safari sur iPhone physique. L’article technique décrit le passage du crash au fonctionnement et les limites des mesures.",
+  "guideTitle": "Du dépôt existant au canevas interactif",
+  "guideIntro": "Confiez l’intégration à un agent capable de lire, modifier et exécuter des commandes. Aucun Storybook ni inventaire manuel préalable requis. Installer le paquet ne peuple pas le canevas.",
+  "promptLabel": "À coller dans votre agent",
+  "steps": [
+    [
+      "Installer l’outil partagé",
+      "Utilisez Node.js 22+ et le gestionnaire et lockfile du projet. Installez la version GitHub épinglée, puis le navigateur. Avec npm 12, ajoutez --allow-git=root seulement si cette dépendance Git directe est bloquée ; ne changez pas la politique globale."
+    ],
+    [
+      "Inventorier avant de choisir les cas",
+      "Lancez discover sur toute la racine de l’application. L’agent examine chaque région et candidat, résout pending et énumère les états sémantiques indépendamment du catalog. Les blocages restent visibles."
+    ],
+    [
+      "Afficher la vraie UI avec des fixtures",
+      "Créez config, catalog, fixtures synthétiques, preview entry et journeys dans ui-review. L’adapter importe pages, providers et styles d’origine. Remplacez données et dépendances, jamais l’UI ; refusez les requêtes inconnues."
+    ],
+    [
+      "Vérifier états et interactions",
+      "Couvrez normal, vide, chargement, erreur, accès refusé, dialogues et récupération. Vérifiez chaque cas et les vrais contrôles dans des parcours continus. Réconciliez inventory, assertions liées au code et routes ; passez --complete sur la même racine."
+    ],
+    [
+      "Réviser et maintenir depuis le code",
+      "Lancez ui:review, examinez le canevas et rejouez un parcours. Faites modifier le vrai code. Les aperçus existants se reconstruisent ; nouveaux états et routes exigent inventory, fixtures et journeys actualisés. Exigez le contrôle complet avant livraison."
+    ]
+  ],
+  "filesTitle": "Ce qui reste dans votre application",
+  "filesText": "Le paquet partagé possède viewer, CLI et skill. Votre dépôt conserve adapter, fixtures, inventory indépendant, catalog et tests d’interaction. Partez de l’exemple React/Vite exécutable ; les autres stacks ont leur adapter.",
+  "skillTitle": "Skill facultative",
+  "skillText": "Codex et Claude Code peuvent installer la skill fournie. Tout autre agent peut lire AGENT_GUIDE.md. Le runtime n’appelle aucun modèle et ne demande aucune clé API ; votre agent garde ses propres coûts et permissions.",
+  "limitsTitle": "Portée et limites",
+  "limits": [
+    "Le Web utilise le vrai HTML/CSS et le JavaScript original pour les interactions. UIKit, SwiftUI et Android exigent des harnesses et preuves du runtime d’origine ; une capture n’est pas une app native interactive.",
+    "La couverture relie du code examiné à des cas, sans découverte automatique de toutes les conditions métier. Les tests UI ne qualifient ni backends de production, ni précision clinique ou des modèles.",
+    "Viewer : anglais par défaut, 11 langues. La démo publique est un frontend synthétique figé ; les intégrations locales suivent votre source. Les performances sur iPad physique ne sont pas mesurées."
+  ],
+  "storyTitle": "Pourquoi j’ai créé App Canvas",
+  "story": [
+    "L’IA facilitait la création d’une nouvelle page, pas la compréhension d’une application grandissante. Je voulais voir les écrans implémentés et leurs échecs sans tout parcourir ni maintenir un second fichier de design.",
+    "App Canvas transforme cette revue en paysage navigable. L’agent intègre le dépôt ; l’outil partagé apporte canevas, aperçus du vrai code, navigation suivie par la caméra et lecture vérifiée.",
+    "StoolSense est l’exemple public synthétique. Aucune session de production, donnée de santé réelle ou requête IA. Les événements facultatifs d’utilisation sont séparés des données de l’app."
+  ],
+  "versionLabel": "Version CLI",
+  "docsLabel": "Guide de l’agent",
+  "technical": "Article technique Safari",
+  "privacy": "Données synthétiques · sans backend d’app · sans compte · sans clé API",
+  "readmeMore": "API détaillée, procédure native, alternatives et maintenance dans le README anglais et le guide de l’agent.",
+  "readmeGuide": "Guide d’intégration",
+  "skip": "Aller au contenu",
+  "flowAlt": "Graphe réel : échec de sauvegarde, brouillon conservé, puis nouvelle tentative réussie",
+  "flowCaption": "Choisissez un parcours pour voir ses écrans complets et transitions nommées. Un lien déplace la caméra vers sa destination."
+}

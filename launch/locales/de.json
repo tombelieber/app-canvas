@@ -1,0 +1,88 @@
+{
+  "name": "Deutsch",
+  "title": "Deine ganze UI. Eine Zeichenfläche. Echter Code.",
+  "description": "Erkunde echte App-Seiten, Zustände und interaktive Abläufe auf einer zoombaren Fläche, erstellt und gepflegt mit deinem Coding-Agenten.",
+  "demo": "Demo öffnen",
+  "source": "Quellcode auf GitHub",
+  "start": "Zum Repository hinzufügen",
+  "release": "Release-Artikel",
+  "languages": "Sprache wählen",
+  "eyebrow": "App Canvas · Open Source · Für Coding-Agenten",
+  "summary": "TL;DR",
+  "tldr": [
+    "Sieh vollständige implementierte Seiten, benannte Zustände und verbundene Abläufe zusammen.",
+    "Eine UI-Implementierung. Dein Agent erstellt Fixtures, Adapter und Abdeckungsprüfungen.",
+    "Teste {states} Zustände und {flows} Abläufe mit synthetischen Daten, ohne Anmeldung oder API-Schlüssel."
+  ],
+  "tour": "Überblicken, bedienen, abspielen",
+  "features": [
+    [
+      "Herauszoomen und die App verstehen",
+      "Vollständige Seiten, nach Seite gruppiert, mit Suche, Filtern und einklappbaren Panels. Ablauf-Links bewegen die Kamera zum Ziel."
+    ],
+    [
+      "Hineinzoomen und die echte UI bedienen",
+      "Browse sperrt Bedienelemente zum Verschieben. Wähle eine Seite und Interact, um ihren Originalcode mit Wegwerfdaten zu bedienen."
+    ],
+    [
+      "Mit Demo einen Ablauf erklären",
+      "Erfolg, Fehler und Wiederherstellung laufen in einer fortlaufenden App-Sitzung, mit Aktionshinweisen, Texten, Pause, Tempo und Schritt-Zeitleiste."
+    ]
+  ],
+  "overviewAlt": "Echte StoolSense-Zustände in der App-Canvas-Übersicht",
+  "playbackAlt": "Echte Wiedergabe nach fehlgeschlagenem Offline-Speichern mit erhaltenem Entwurf",
+  "phoneAlt": "App Canvas in Safari auf einem echten iPhone",
+  "overviewCaption": "Echte Demo: {states} Zustände, {flows} Abläufe, {entries} abspielbare Einträge. Darunter einzelne Fälle, nicht {entries} E2E-Abläufe.",
+  "playbackCaption": "Echte Fehler- und Wiederherstellungs-UI. Die Wiedergabe führt definierte Aktionen und Prüfungen aus; eine gezeichnete Kante ist kein Test.",
+  "phoneCaption": "Safari-Aufnahme auf einem echten iPhone. Der Technikartikel erklärt den Weg vom Absturz zur nutzbaren App und die Messgrenzen.",
+  "guideTitle": "Vom vorhandenen Repository zur interaktiven Übersicht",
+  "guideIntro": "Beauftrage einen Agenten, der Dateien lesen, ändern und Befehle ausführen kann. Vorhandenes Storybook oder manuelle Seitenlisten sind nicht nötig. Die Installation allein füllt die Übersicht nicht.",
+  "promptLabel": "Diesen Auftrag an den Agenten geben",
+  "steps": [
+    [
+      "Gemeinsames Werkzeug installieren",
+      "Nutze Node.js 22+ sowie Paketverwaltung und Lockfile des Projekts. Installiere das feste GitHub-Release und den Browser. Blockiert npm 12 diese direkte Git-Abhängigkeit, ergänze nur dann --allow-git=root; ändere keine globale Richtlinie."
+    ],
+    [
+      "Erst inventarisieren, dann Fälle wählen",
+      "Führe discover im gesamten App-Stamm aus. Der Agent prüft jede Quellregion und jeden Kandidaten, löst pending auf und erfasst semantische Zustände unabhängig vom Catalog. Blockaden bleiben sichtbar."
+    ],
+    [
+      "Original-UI mit Fixtures rendern",
+      "Erstelle Config, Catalog, synthetische Fixtures, Preview-Einstieg und Journeys unter ui-review. Der Adapter importiert echte Seiten, Provider und Styles. Ersetze Daten und Abhängigkeiten, nicht die UI; lehne unbekannte Netzwerkanfragen ab."
+    ],
+    [
+      "Zustände und Interaktionen prüfen",
+      "Erfasse Normal-, Leer-, Lade-, Fehler-, Zugriffs-, Dialog- und Wiederherstellungszustände. Prüfe jeden Fall und echte Bedienelemente in fortlaufenden Abläufen. Gleiche Inventory, quellbezogene Assertions und Routen ab; bestehe --complete im selben Stamm."
+    ],
+    [
+      "Aus dem Quellcode pflegen",
+      "Starte ui:review, prüfe Übersicht und Zustandsgraph und spiele einen Ablauf ab. Lass den Agenten den echten App-Code ändern. Bestehende Vorschauen werden neu gebaut; neue Routen und Zustände brauchen Inventory-, Fixture- und Journey-Updates. Vor Übergabe gilt die vollständige Prüfung."
+    ]
+  ],
+  "filesTitle": "Was in deiner App bleibt",
+  "filesText": "Das gemeinsame Paket enthält Viewer, CLI und Skill. Dein Repository pflegt Adapter, Fixtures, unabhängiges Inventory, Catalog und Interaktionsprüfungen. Starte mit dem ausführbaren React/Vite-Beispiel; andere Stacks brauchen eigene Adapter.",
+  "skillTitle": "Optionaler Agent-Skill",
+  "skillText": "Codex und Claude Code können den enthaltenen Skill installieren. Andere Agenten lesen AGENT_GUIDE.md direkt. Die Laufzeit ruft keine Modelle auf und braucht keinen API-Schlüssel; dein Agent hat eigene Kosten und Berechtigungen.",
+  "limitsTitle": "Umfang und Grenzen",
+  "limits": [
+    "Web-Vorschauen nutzen echtes HTML/CSS und Original-JavaScript bei Interaktionen. UIKit, SwiftUI und Android brauchen Harnesses und Nachweise aus der ursprünglichen Laufzeit; ein Bild ist keine interaktive native App.",
+    "Abdeckung ist eine geprüfte Zuordnung von Quellen zu Fällen, keine automatische Erkennung jeder Geschäftsbedingung. UI-Prüfungen qualifizieren weder Produktions-Backends noch klinische oder Modellgenauigkeit.",
+    "Viewer: standardmäßig Englisch, 11 Sprachen. Die öffentliche Demo ist ein eingefrorenes synthetisches Frontend; lokale Integrationen folgen dem Quellcode. Physische iPad-Leistung wurde nicht gemessen."
+  ],
+  "storyTitle": "Warum ich App Canvas gebaut habe",
+  "story": [
+    "KI machte die nächste Seite einfach, aber eine wachsende App nicht verständlicher. Ich wollte implementierte Seiten und Fehlerzustände sehen, ohne alles durchzuklicken oder eine zweite Designdatei zu pflegen.",
+    "App Canvas macht die Prüfung zu einer navigierbaren Übersicht. Der Agent integriert das Repository; das gemeinsame Werkzeug liefert Canvas, echte Code-Vorschauen, Kameraführung und geprüfte Wiedergabe.",
+    "StoolSense ist das synthetische öffentliche Beispiel. Keine Produktionssitzung, echten Gesundheitsdaten oder KI-Anfragen. Optionale Nutzungsereignisse sind von App-Daten getrennt."
+  ],
+  "versionLabel": "CLI-Release",
+  "docsLabel": "Agent-Anleitung",
+  "technical": "Safari-Technikartikel",
+  "privacy": "Synthetische Daten · kein App-Backend · keine Anmeldung · kein API-Schlüssel",
+  "readmeMore": "Detaillierte API, native Abläufe, Alternativen und Release-Pflege stehen im englischen README und Agent-Guide.",
+  "readmeGuide": "Integrationsanleitung",
+  "skip": "Zum Inhalt",
+  "flowAlt": "Echter Zustandsgraph für Speicherfehler, erhaltenen Entwurf und erfolgreichen Wiederholungsversuch",
+  "flowCaption": "Wähle einen Ablauf für vollständige Seiten und benannte Übergänge. Ein Link bewegt die Kamera zum Ziel."
+}

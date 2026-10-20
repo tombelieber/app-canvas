@@ -22,6 +22,14 @@ const { values, positionals } = parseArgs({
     headless: { type: "boolean" },
     "no-record": { type: "boolean" },
     profile: { type: "string" },
+    agent: { type: "boolean" },
+    input: { type: "string" },
+    label: { type: "string" },
+    action: { type: "string" },
+    from: { type: "string" },
+    to: { type: "string" },
+    redacted: { type: "boolean" },
+    "allow-text": { type: "string" },
   },
 });
 if (values.version) {
@@ -33,13 +41,30 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> --out <new-private-directory> --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status",
   );
+  process.exit(0);
+}
+const telemetryCommand = positionals[0] === "telemetry";
+const trackable = !values.check && !values.verify && !values.complete && !["browsers", "discover", "pending", "export", "import", "open", "capture-script", "capture", "status", "link"].includes(positionals[0]);
+let telemetry;
+if (trackable) {
+  const { createTelemetry } = await import("../lib/telemetry.mjs");
+  const version = JSON.parse(await readFile(new URL("../package.json", import.meta.url))).version;
+  telemetry = await createTelemetry({version, source: process.env.APP_CANVAS_INSTALL_SOURCE || "npx", surface: positionals[0] === "demo" ? "official_demo" : "real_project"});
+  if (!telemetryCommand) await telemetry.notice();
+}
+if (telemetryCommand) {
+  const choice = positionals[1];
+  if (choice && !["on", "off", "status"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status");
+  if (choice === "on" || choice === "off") await telemetry.setEnabled(choice === "on");
+  console.log(`Anonymous usage analytics: ${telemetry.config().enabled ? "enabled" : "disabled"}`);
   process.exit(0);
 }
 if (positionals[0] === "install") {
   const { install } = await import("../lib/install.mjs");
   await install({ target: values.target || "both" });
+  await telemetry?.once("install");
   process.exit(0);
 }
 if (positionals[0] === "browsers") {
@@ -54,7 +79,10 @@ if (positionals[0] === "browsers") {
 }
 let app;
 try {
-  if (["import", "open"].includes(positionals[0])) {
+  if (["capture-script", "capture", "status", "link"].includes(positionals[0]) || positionals[0] === "import" && values.agent) {
+    const { runAgentCommand } = await import("../lib/import/agent-cli.mjs");
+    console.log(JSON.stringify(await runAgentCommand(positionals, values)));
+  } else if (["import", "open"].includes(positionals[0])) {
     const { runImportCommand } = await import("../lib/import/cli.mjs");
     await runImportCommand(positionals, values);
   } else {
@@ -101,6 +129,7 @@ try {
     if (typeof completeProject.verify !== "function") throw Error("Complete validation requires a project verify hook with source-linked runtime evidence");
   }
   app = await startCanvas({
+    telemetry,
     config: completeProject,
     root: positionals[0] === "demo" ? packageRoot : process.cwd(),
     configPath:

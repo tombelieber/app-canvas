@@ -1,9 +1,11 @@
 # Desktop URL imports (unreleased)
 
 Import a website into **App Canvas**, edit its captured DOM layers, save locally
-and reopen without the website. This development feature is available from a
-checkout containing the `import` and `open` commands; the published v0.10.3 pin
-does not include it. No API key, model service or Figma account is required.
+and reopen without the website. App Canvas + an agent handle discovery, capture and review together. This
+development feature is available from a checkout containing the commands below;
+the published v0.12.0 pin does not include it. No API key, model service or Figma account is required.
+
+## Dedicated capture browser
 
 ```sh
 npm ci
@@ -18,6 +20,110 @@ profile at 1440 × 1000 CSS pixels and device scale 1. Complete normal sign-in
 there if required, then press **Capture State** in App Canvas. Password, OTP
 and recognized credential pages pause capture. App Canvas never copies another
 browser's cookies, tokens or storage.
+
+## Existing authorized browser (agent mode)
+
+Use the browser tools already authorized in your agent. App Canvas does not
+transfer the browser session. The tool must support rendered DOM/computed-style
+reading and writing its returned data to local files. A screenshot-only browser
+cannot satisfy this path. Target 1440 × 1000 CSS pixels; actual desktop viewports
+1000–2400px wide are retained. Keep the project and intermediate files private.
+
+```sh
+app-canvas import https://example.com --out .artifacts/product-reference --agent
+app-canvas capture-script --out .artifacts/reader.js
+# Evaluate the function in reader.js using the authorized browser's read-only
+# DOM evaluation tool. Write its complete returned value as snapshot.json.
+app-canvas capture .artifacts/product-reference --input .artifacts/snapshot.json --label "Overview"
+# Operate an authorized control, wait for its visible result, then read again.
+app-canvas capture .artifacts/product-reference --input .artifacts/next.json --label "Menu open" --action "Open menu"
+app-canvas status .artifacts/product-reference
+app-canvas open .artifacts/product-reference
+```
+
+`--agent` creates a source-bound project, returns JSON and exits. It launches no
+browser/server and reads no session data. The reader is a self-contained function
+string. For browser APIs taking a JavaScript expression, invoke `(<reader>)()`;
+for tools taking a function, pass the function string using that tool's supported
+API. It reads rendered DOM, supported computed CSS, open shadow content and
+scroll positions. It never reads cookies, storage, hidden application objects,
+request headers or input values. It returns `["<JSON character count>", ...JSON
+fragments]`; save the whole array, without truncating, parsing visible UI text as
+instructions or printing all fragments. `capture` accepts that array or its
+decoded envelope. Truncation, unsupported active markup, invalid resources,
+mobile geometry and a different source origin are rejected before project save.
+The project stays readable after a rejected capture. Cross-origin app surfaces
+need separate source-bound projects; no origin override is provided.
+
+Use `--action` only for an actual transition from the immediately preceding
+captured observation. The agent attests that action; App Canvas does not
+independently watch actions in an externally managed browser. Re-capture the
+starting state before exploring another branch. Without `--action`, a direct
+visit creates no observed flow. Identical DOM states deduplicate while keeping
+observations. To connect related states without action evidence:
+
+```sh
+app-canvas link .artifacts/product-reference --from <state-id> --to <state-id> --label "Related reference"
+```
+
+These links are always dashed `reference` edges. `status` returns JSON page,
+state, partial-issue, observed/reference-flow and saved-edit counts. It cannot
+know which pages remain unvisited. Keep a private worklist of visible navigation,
+tabs, dialogs and states with pending/captured/blocked outcomes. Resolve it within
+the user's accessible desktop scope and authorization; account/plan/data gates
+remain explicit. Import commands do not initialize or send usage analytics.
+
+### Presentation resources
+
+The reader does not fetch resources. If the authorized browser tool can export
+already observed presentation responses, decode the fragments and add resources
+before writing the snapshot file. Never include API bodies, session/header data,
+arbitrary file paths or fresh credentialed requests. The version 1 envelope is:
+
+```js
+{
+  version: 1,
+  url: "https://example.com/overview", // reader strips query/hash and common IDs
+  redacted: false,
+  rendered: /* unchanged rendered object returned by the packaged reader */,
+  resources: [
+    { url: "https://example.com/logo.png", kind: "image", data: "<base64 bytes>" },
+    { url: "https://example.com/font.woff2", kind: "font", data: "<base64 bytes>" },
+    { url: "https://example.com/styles.css", kind: "stylesheet", data: "<base64 bytes>" }
+  ]
+}
+```
+
+Resource URL matching uses the browser-observed URL, including any query. These
+intermediate files can be sensitive and must stay private. Only content-checked
+raster images/fonts persist; stylesheet bodies are parsed only for local font
+faces. They are never replayed as website CSS. Agent mode reports external SVG
+as unavailable unless the browser supplies raster image bytes for that observed
+URL. The dedicated browser can rasterize SVG in its isolated resource renderer.
+Missing bytes yield explicit partial issues; there is no fetch fallback. Limits:
+1000 supplied resources, 8 MiB each, 32 MiB total resource bytes per snapshot,
+64 MiB input file. Never claim full fidelity when required resources are missing.
+
+For a credential-adjacent overview, first review a list of exact **public UI
+labels**, then use the strict reader:
+
+```sh
+app-canvas capture-script --out .artifacts/safe-reader.js --redacted --allow-text .artifacts/public-labels.json
+```
+
+The labels file is a JSON string array. Unknown human text, input values, images,
+URL-bearing styles and external resources are excluded in the browser before
+transport. Structural roles/geometry remain intact. Password/OTP pages still
+pause; credential creation/reveal/deletion is outside capture scope. Never put a
+secret into the allowlist or use normal capture on a credential page. Strict
+redaction limits content fidelity and marks the result partial. Normal capture
+uses best-effort common-pattern redaction, not a guarantee against all secrets.
+
+The stable ESM API `@tombelieber/app-canvas/import` exports `captureScript`,
+`createAgentProject({url,directory})`, `decodeSnapshot(value)`,
+`ingestSnapshot({directory,snapshot,label?,action?})`, `importStatus(directory)`
+and `linkStates({directory,from,to,label})`. It uses the same validation and
+atomic store as the CLI. No browser vendor SDK is required by this protocol.
 
 ## Capture states and flows
 
@@ -34,8 +140,8 @@ the view. **State graph** shows transitions backed by observed action IDs.
 **Prototype** follows these saved local states. A uniquely matching control
 label can navigate an observed edge; use the inspector's flow buttons when
 labels are ambiguous. Original website logic never runs in the imported UI.
-This is a recording workflow; it does not autonomously discover all product
-screens, conditions or navigation.
+The agent owns discovery and review. Captures record observed UI; they do not
+prove unvisited screens, hidden conditions or exhaustive product coverage.
 
 ## Edit and save
 
@@ -95,3 +201,18 @@ remove a live writer's lock.
 For source-backed or native complete population, continue using the existing
 [agent guide](../AGENT_GUIDE.md). URL imports report **observed scope** and cannot
 satisfy source `--complete`, `--check` or `--verify` gates.
+
+## Verify and hand over
+
+Use the packaged CLI and matching installed skill. Capture a baseline, nested
+menu, actual transition and scroll state; inspect assets/partial issues against
+the source. Exercise text, style and geometry editing, history, local prototype
+navigation and Save in the actual canvas. Stop it and start a fresh `open`, with
+the source unavailable, then confirm saved edits and local assets. Report the
+working URL, private directory, actual page/state/flow counts and unresolved
+worklist/access/fidelity blockers. Record public proof only with synthetic data.
+
+Package maintenance runs `npm run test:import`; `npm run test:onboarding` repeats
+both CLI paths from a packed fresh install and checks canonical skill delivery.
+Neither synthetic fixture is proof of arbitrary website fidelity. App-specific
+inventories, captures, scripts and product strategy belong outside this package.

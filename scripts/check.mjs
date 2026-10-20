@@ -1,5 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { loadContent } from "../launch/content.mjs";
+import { syncReadmes } from "../launch/readmes.mjs";
 async function checkFolder(folder) {
   for (const entry of await readdir(folder, { withFileTypes: true })) {
     const path = `${folder}/${entry.name}`;
@@ -22,3 +24,4 @@ if (marketplace.name !== plugin.name || marketplace.plugins.length !== 1 ||
 for (const file of ["README.md", "AGENT_GUIDE.md", "skills/app-canvas/SKILL.md"])
   if (!(await readFile(file, "utf8")).includes(`github:tombelieber/app-canvas#v${p.version}`))
     throw Error(`${file} must pin the current App Canvas release`);
+await syncReadmes(await loadContent(), true);

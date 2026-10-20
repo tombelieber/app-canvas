@@ -15,14 +15,23 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
     dagre.layout(graph);
     return nodes.map(n => { const p = graph.node(n.id); return { ...n, position: { x: p.x - n.initialWidth / 2, y: p.y - (n.initialHeight + 52) / 2 } }; });
   }
+  // Large captured catalogs need a board-shaped overview, not tall strips.
+  // Keep page ownership and the graph layout; ordinary Web geometry is exact.
+  const balanced = options.nativeOverview && screens.length > 128;
+  const areaFor = s => (((manifest.screens?.[s.id]?.height || 1100) * 390) / (s.viewport?.width || 390) + 158) * 490;
+  const totalArea = balanced ? screens.reduce((sum, s) => sum + areaFor(s), 0) : 0;
+  const aspect = Math.max(.5, Math.min(2, (options.area?.width || 1000) / (options.area?.height || 800)));
+  const targetHeight = balanced ? Math.sqrt(totalArea / aspect) : 0;
+  const desiredColumns = balanced ? Math.ceil(Math.sqrt(totalArea * aspect) / 490) : 20;
+  const boardColumns = balanced ? Math.max(20, desiredColumns + Math.min(groups.length, Math.ceil(desiredColumns * .1))) : 20;
   const nodes = [],
     blocks = [],
-    skyline = Array(20).fill(0);
+    skyline = Array(boardColumns).fill(0);
   for (const g of groups) {
     const members = screens.filter((s) => s.group === g.id);
     if (!members.length) continue;
     const columns =
-        g.id === "app"
+        balanced ? Math.max(3, Math.min(boardColumns, Math.ceil(members.reduce((sum, s) => sum + areaFor(s), 0) / targetHeight / 490))) : g.id === "app"
           ? 5
           : Math.max(
               3,
@@ -43,7 +52,7 @@ export function layoutScreens(screens, manifest, groups, options = {}) {
       width = columns * 490;
     let slot = 0,
       blockY = Infinity;
-    for (let n = 0; n <= 20 - columns; n++) {
+    for (let n = 0; n <= boardColumns - columns; n++) {
       const y = Math.max(...skyline.slice(n, n + columns));
       if (y < blockY) {
         slot = n;

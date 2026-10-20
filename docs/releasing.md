@@ -9,6 +9,8 @@ CLI. No Tomstack checkout, copied skill or paired release is required.
 1. Update `package.json`, `package-lock.json`, `.claude-plugin/plugin.json`,
    the install pins in `README.md`, `AGENT_GUIDE.md` and
    `skills/app-canvas/SKILL.md`, and the current `CHANGELOG.md` entry together.
+   Run `npm run docs:generate` to refresh all localized install pins. See
+   [product localization](localization.md) for the shared launch content contract.
 2. Run `npm run check`, `npm test`, `npm run test:onboarding`,
    `npm run check:privacy`, and strict Claude validation of
    `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.

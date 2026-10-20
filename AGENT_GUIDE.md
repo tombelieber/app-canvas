@@ -16,8 +16,12 @@ Follow the user's repository instructions and authorization boundaries.
 For a website URL and editable captured landscape, follow the separate
 [desktop URL import guide](docs/url-import.md) and the canonical
 [URL skill reference](skills/app-canvas/references/url-import.md). This development
-path is unreleased; verify the installed CLI exposes `import`/`open`. Imports
-report observed scope, and cannot pass the source completeness gates below.
+path is unreleased; verify the installed CLI exposes `import`, `capture-script`,
+`capture`, `status`, `link` and `open`. App Canvas + the agent support an existing
+authorized browser or a dedicated capture browser. Resolve the accessible
+worklist, review fidelity, edit, Save and verify a fresh offline reopen. Keep
+app-specific captures and trials private. Imports report observed scope and
+cannot pass the source completeness gates below.
 
 ## The outcome
 
@@ -67,7 +71,7 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.10.3
+npm install --save-dev github:tombelieber/app-canvas#v0.12.0
 npx app-canvas browsers
 ```
 
@@ -284,3 +288,13 @@ Native Swift/Kotlin/Java and React Native UI use agent-authored simulator/device
 harnesses and adapters. This package supplies the shared viewer/coverage
 mechanisms and native workflow contract; it does not ship a universal native
 renderer or automatically discover semantic states without the coding agent.
+
+## Viewer language and usage privacy
+
+The viewer defaults to English with an in-place switcher for all eleven launch
+languages. Application content and authored case labels keep their own language.
+Official CLI downloads enable minimal anonymous tool usage events; users can
+run `app-canvas telemetry off` or set `APP_CANVAS_TELEMETRY=0`. CI, DNT/GPC and
+self-hosted exports can disable transmission. No application data, source or
+paths are sent. See [telemetry](docs/telemetry.md). Do not send fixture or
+repository content to analytics when extending an adapter.

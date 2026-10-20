@@ -1,0 +1,88 @@
+{
+  "name": "Nederlands",
+  "title": "Je hele UI. Eén canvas. Echte code.",
+  "description": "Verken echte schermen, toestanden en interactieve flows op een zoombaar canvas, gebouwd en onderhouden met je coding agent.",
+  "demo": "Open de demo",
+  "source": "Broncode op GitHub",
+  "start": "Voeg toe aan je repo",
+  "release": "Releaseverhaal",
+  "languages": "Kies je taal",
+  "eyebrow": "App Canvas · Open source · Voor coding agents",
+  "summary": "TL;DR",
+  "tldr": [
+    "Bekijk volledige geïmplementeerde schermen, benoemde toestanden en verbonden flows samen.",
+    "Onderhoud één UI-implementatie. Je agent maakt fixtures, adapter en dekkingscontroles.",
+    "Probeer {states} toestanden en {flows} flows met synthetische data, zonder account of API-sleutel."
+  ],
+  "tour": "Bekijk, gebruik en speel af",
+  "features": [
+    [
+      "Zoom uit om de app te begrijpen",
+      "Volledige schermen per pagina, zoeken, filters en inklapbare panelen. Flowlinks verplaatsen de camera naar hun bestemming."
+    ],
+    [
+      "Zoom in om de echte UI te gebruiken",
+      "Browse vergrendelt bediening tijdens het schuiven. Kies een scherm en Interact om de oorspronkelijke code met tijdelijke data te bedienen."
+    ],
+    [
+      "Druk op Demo om een flow uit te leggen",
+      "Speel succes, fouten en herstel af in één doorlopende appsessie, met actieaanwijzingen, bijschriften, pauze, snelheid en tijdlijn."
+    ]
+  ],
+  "overviewAlt": "Echte StoolSense-toestanden op het App Canvas-overzicht",
+  "playbackAlt": "Echte weergave na mislukte offline opslag met behoud van het concept",
+  "phoneAlt": "App Canvas in Safari op een fysieke iPhone",
+  "overviewCaption": "Echte demo: {states} toestanden, {flows} flows en {entries} afspeelbare items. Daaronder losse cases, geen {entries} E2E-flows.",
+  "playbackCaption": "Echte fout- en herstel-UI. Afspelen voert vastgelegde acties en controles uit; een getekende verbinding is geen test.",
+  "phoneCaption": "Safari-opname op een fysieke iPhone. Het technische artikel beschrijft de weg van crash naar werkende app en de meetgrenzen.",
+  "guideTitle": "Van bestaande repo naar interactief canvas",
+  "guideIntro": "Geef de integratie aan een agent die bestanden kan lezen, wijzigen en opdrachten uitvoeren. Bestaand Storybook of een handmatige schermlijst is niet nodig. Installatie alleen vult het canvas niet.",
+  "promptLabel": "Plak dit in je agent",
+  "steps": [
+    [
+      "Installeer het gedeelde gereedschap",
+      "Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid."
+    ],
+    [
+      "Inventariseer vóór je cases kiest",
+      "Voer discover uit op de volledige app-root. De agent bekijkt elke bronregio en kandidaat, lost pending op en inventariseert semantische toestanden onafhankelijk van de catalog. Blokkades blijven zichtbaar."
+    ],
+    [
+      "Render de oorspronkelijke UI met fixtures",
+      "Maak config, catalog, synthetische fixtures, preview entry en journeys in ui-review. De adapter importeert echte pagina’s, providers en stijlen. Vervang data en afhankelijkheden, niet de UI; weiger onbekende netwerkverzoeken."
+    ],
+    [
+      "Verifieer toestanden en interacties",
+      "Neem normaal, leeg, laden, fouten, toegang geweigerd, dialogen en herstel op. Controleer elke case en echte bediening in doorlopende flows. Vergelijk inventory, brongebonden assertions en routes; slaag voor --complete op dezelfde root."
+    ],
+    [
+      "Beoordeel en onderhoud vanuit de code",
+      "Start ui:review, bekijk overzicht en toestandsgraaf en speel een flow af. Laat de agent echte app-code wijzigen. Bestaande previews herbouwen; nieuwe routes en toestanden vragen updates van inventory, fixtures en journeys. Vereis de volledige controle vóór overdracht."
+    ]
+  ],
+  "filesTitle": "Wat in jouw toepassing blijft",
+  "filesText": "Het gedeelde pakket beheert viewer, CLI en skill. Je repo beheert adapter, fixtures, onafhankelijke inventory, catalog en interactiecontroles. Begin met het uitvoerbare React/Vite-voorbeeld; andere stacks hebben een eigen adapter nodig.",
+  "skillTitle": "Optionele agentskill",
+  "skillText": "Codex en Claude Code kunnen de meegeleverde skill installeren. Andere agents lezen AGENT_GUIDE.md rechtstreeks. De runtime roept geen modellen aan en vraagt geen API-sleutel; je eigen agent heeft eigen kosten en rechten.",
+  "limitsTitle": "Reikwijdte en beperkingen",
+  "limits": [
+    "Web gebruikt echte HTML/CSS en oorspronkelijke JavaScript voor interacties. UIKit, SwiftUI en Android vereisen harnesses en bewijs uit de oorspronkelijke runtime; een opname is geen interactieve native app.",
+    "Dekking verbindt beoordeelde broncode met cases en ontdekt niet automatisch elke bedrijfsconditie. UI-controles kwalificeren geen productiebackend, klinische juistheid of modelprecisie.",
+    "Viewer: standaard Engels, met 11 talen. De openbare demo is een vast synthetisch frontend; lokale integraties volgen je broncode. Prestaties op een fysieke iPad zijn niet gemeten."
+  ],
+  "storyTitle": "Waarom ik App Canvas bouwde",
+  "story": [
+    "AI maakte een nieuwe pagina bouwen eenvoudig, maar een groeiende app niet begrijpelijker. Ik wilde geïmplementeerde schermen en fouten samen zien, zonder alles door te klikken of een tweede ontwerpbestand te onderhouden.",
+    "App Canvas maakt de beoordeling een navigeerbaar landschap. De agent integreert de repo; het gedeelde gereedschap biedt canvas, previews van echte code, cameravolging en geverifieerd afspelen.",
+    "StoolSense is het synthetische openbare voorbeeld. Geen productiesessie, echte gezondheidsgegevens of AI-verzoeken. Optionele gebruiksgebeurtenissen staan los van app-data."
+  ],
+  "versionLabel": "CLI-release",
+  "docsLabel": "Agentgids",
+  "technical": "Safari-techniekartikel",
+  "privacy": "Synthetische data · geen app-backend · geen account · geen API-sleutel",
+  "readmeMore": "Uitgebreide API, native aanpak, alternatieven en releaseonderhoud staan in de Engelse README en agentgids.",
+  "readmeGuide": "Integratiegids",
+  "skip": "Naar inhoud",
+  "flowAlt": "Echte toestandsgraaf van opslagfout, bewaard concept en geslaagde herhaling",
+  "flowCaption": "Kies een flow voor volledige schermen en benoemde overgangen. Een link verplaatst de camera naar de bestemming."
+}

@@ -1,0 +1,88 @@
+{
+  "name": "English",
+  "title": "Your whole UI. One canvas. Real code.",
+  "description": "Explore real application screens, states and interactive flows on a zoomable canvas, built and maintained with your coding agent.",
+  "demo": "Open live demo",
+  "source": "GitHub source",
+  "start": "Add to your repo",
+  "release": "Release story",
+  "languages": "Read in your language",
+  "eyebrow": "App Canvas · Open source · Agent native",
+  "summary": "TL;DR",
+  "tldr": [
+    "See the implemented UI together: full screens, named conditions and connected flows.",
+    "Keep one UI implementation. Your coding agent creates the fixtures, adapter and coverage checks.",
+    "Try {states} states and {flows} flows in the public synthetic demo. No login or API key."
+  ],
+  "tour": "See it, use it, play it",
+  "features": [
+    [
+      "Zoom out to understand the app",
+      "Browse full screens grouped by page. Search, filter and collapse sidebars. Follow a flow link and the camera moves to the destination."
+    ],
+    [
+      "Zoom in to use the real UI",
+      "Browse locks controls for safe panning. Select a screen, choose Interact, and use its original application code with disposable synthetic data."
+    ],
+    [
+      "Press Demo to explain a journey",
+      "Play happy, failure and recovery flows in a continuing app session, with action cues, captions, pause, speed and a step timeline."
+    ]
+  ],
+  "overviewAlt": "Real StoolSense UI states arranged on the App Canvas overview",
+  "playbackAlt": "Actual Demo playback after an offline save failure, with the draft retained for retry",
+  "phoneAlt": "App Canvas running in Safari on a physical iPhone",
+  "overviewCaption": "Actual public demo: {states} authored states, {flows} flows, {entries} playable entries. The queue includes standalone cases, not {entries} end-to-end journeys.",
+  "playbackCaption": "Actual failure and recovery UI. Playback executes authored actions and checks; a drawn edge alone is not a test.",
+  "phoneCaption": "Real iPhone Safari capture. See the engineering article for the crash-to-working investigation and measurement limits.",
+  "guideTitle": "From an existing repo to an interactive canvas",
+  "guideIntro": "Give the job to an agent that can read and edit your repository and run commands. No existing Storybook or manually prepared screen list is required. Installation alone does not populate the canvas.",
+  "promptLabel": "Paste this into your coding agent",
+  "steps": [
+    [
+      "Install the shared tool",
+      "Use Node.js 22+ and the project's package manager and lockfile. Install the pinned GitHub release, then its browser. On npm 12, add --allow-git=root only if Git admission blocks this direct dependency; do not change global policy."
+    ],
+    [
+      "Discover before choosing cases",
+      "Run discover on the whole application root. The agent reviews every generated source region and candidate, resolves pending items, and enumerates semantic states independently of the eventual catalog. Keep unresolved blockers visible."
+    ],
+    [
+      "Render the original UI with fixtures",
+      "The agent adds ui-review/canvas.config.mjs, a catalog, synthetic fixtures, a preview entry and checked journeys. The web adapter imports real pages, providers and styles; fixtures replace data and dependencies, not the UI. Reject unknown network requests."
+    ],
+    [
+      "Verify states and interactions",
+      "Author the implemented normal, empty, loading, error, denied, dialog and recovery conditions. Check every case and run real controls in continuing flows. Reconcile the inventory, source-linked assertions and route coverage, then pass --complete against the same application root."
+    ],
+    [
+      "Review and maintain from source",
+      "Run ui:review, inspect the overview and state graph, then play a flow. Ask the agent to edit the actual app source. Existing previews rebuild; new routes and conditions need inventory, fixture and journey updates. Require the complete gate before handover."
+    ]
+  ],
+  "filesTitle": "What stays in your application",
+  "filesText": "The shared package owns the viewer, CLI and skill. Your repo owns its adapter, fixtures, independent inventory, catalog and interaction checks. Start with the runnable React/Vite reference; use a project-specific adapter for other stacks.",
+  "skillTitle": "Optional agent skill",
+  "skillText": "Codex and Claude Code can install the bundled skill. Any other coding agent can follow AGENT_GUIDE.md directly. The canvas runtime makes no model calls and requires no model API key. Your chosen agent has its own costs and permissions.",
+  "limitsTitle": "What this release does and does not prove",
+  "limits": [
+    "Web previews use actual HTML/CSS and original JavaScript for interaction. Native UIKit, SwiftUI and Android need original-runtime harnesses and evidence; a capture is not a live native app.",
+    "Coverage is a reviewed source-to-case contract, not automatic discovery of every possible business condition. UI checks do not qualify production backends, clinical accuracy or model precision.",
+    "Viewer: English by default, with 11 languages. The public demo is a frozen synthetic frontend; live integrations watch your source. Physical iPad performance has not been measured."
+  ],
+  "storyTitle": "Why I built App Canvas",
+  "story": [
+    "AI made it easy to build another page. It did not make a growing application easy to understand. I wanted to see the implemented screens and their failure states together without clicking through the whole app or maintaining a second design file.",
+    "App Canvas turns that review into a navigable landscape. A coding agent does the repository-specific integration; the shared tool supplies the canvas, original-code web previews, camera-following navigation and checked playback.",
+    "StoolSense is the synthetic public example. It has no production session, real health records or AI requests. Optional anonymous tool usage events are separate from app data."
+  ],
+  "versionLabel": "CLI release",
+  "docsLabel": "Agent guide",
+  "technical": "Safari engineering story",
+  "privacy": "Synthetic demo · no app backend · no login · no API key",
+  "readmeMore": "Detailed API, native workflow, alternatives and release maintenance are documented in the English README and agent guide.",
+  "readmeGuide": "Agent walkthrough",
+  "skip": "Skip to content",
+  "flowAlt": "A real state graph for save failure, retained draft and successful retry",
+  "flowCaption": "Choose a flow to see its full screens and labeled transitions. Following a link moves the camera to that destination."
+}

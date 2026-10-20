@@ -1,0 +1,88 @@
+{
+  "name": "Português",
+  "title": "Toda a sua UI. Uma tela. Código real.",
+  "description": "Explore páginas, estados e fluxos interativos reais numa tela com zoom, criada e mantida com o seu agente de programação.",
+  "demo": "Abrir demonstração",
+  "source": "Código no GitHub",
+  "start": "Adicionar ao repositório",
+  "release": "Artigo de lançamento",
+  "languages": "Escolher idioma",
+  "eyebrow": "App Canvas · Código aberto · Para agentes",
+  "summary": "TL;DR",
+  "tldr": [
+    "Veja juntas as páginas completas, os estados identificados e os fluxos implementados.",
+    "Mantenha uma única implementação de UI. O agente cria fixtures, adapter e verificações de cobertura.",
+    "Experimente {states} estados e {flows} fluxos com dados sintéticos, sem conta nem chave API."
+  ],
+  "tour": "Explore, interaja e reproduza",
+  "features": [
+    [
+      "Afaste para entender a aplicação",
+      "Páginas completas agrupadas, pesquisa, filtros e painéis recolhíveis. Os links de fluxo movem a câmara para o destino."
+    ],
+    [
+      "Aproxime para usar a UI real",
+      "Browse bloqueia os controlos para mover a tela. Selecione uma página e Interact para usar o código original com dados descartáveis."
+    ],
+    [
+      "Prima Demo para explicar um percurso",
+      "Reproduza sucesso, falha e recuperação numa sessão contínua, com indicações, legendas, pausa, velocidade e linha temporal."
+    ]
+  ],
+  "overviewAlt": "Estados reais de StoolSense na tela App Canvas",
+  "playbackAlt": "Reprodução real após falha ao guardar offline, com rascunho preservado",
+  "phoneAlt": "App Canvas no Safari de um iPhone físico",
+  "overviewCaption": "Demo real: {states} estados, {flows} fluxos e {entries} entradas reproduzíveis. Inclui casos isolados; não são {entries} percursos E2E.",
+  "playbackCaption": "UI real de falha e recuperação. A reprodução executa ações e verificações; uma ligação desenhada não é um teste.",
+  "phoneCaption": "Captura do Safari num iPhone físico. O artigo técnico mostra a passagem de crash a funcionamento e os limites das medições.",
+  "guideTitle": "De um repositório existente a uma tela interativa",
+  "guideIntro": "Peça a integração a um agente capaz de ler, editar e executar comandos. Não exige Storybook nem uma lista manual de páginas. Instalar o pacote não preenche a tela por si só.",
+  "promptLabel": "Cole no seu agente",
+  "steps": [
+    [
+      "Instale a ferramenta partilhada",
+      "Use Node.js 22+ e o gestor e lockfile do projeto. Instale a versão GitHub fixa e o navegador. No npm 12, adicione --allow-git=root apenas se bloquear esta dependência Git direta; não altere a política global."
+    ],
+    [
+      "Faça o inventário antes dos casos",
+      "Execute discover em toda a raiz da aplicação. O agente revê cada região e candidato, resolve pending e enumera estados semânticos independentemente do catalog. Os bloqueios continuam visíveis."
+    ],
+    [
+      "Renderize a UI original com fixtures",
+      "Crie config, catalog, fixtures sintéticos, preview entry e journeys em ui-review. O adapter importa páginas, providers e estilos reais. Substitua dados e dependências, nunca a UI; rejeite pedidos de rede desconhecidos."
+    ],
+    [
+      "Verifique estados e interações",
+      "Inclua normal, vazio, carregamento, erro, acesso negado, diálogos e recuperação. Verifique cada caso e controlos reais em fluxos contínuos. Concilie inventory, assertions ligadas ao código e rotas; passe --complete na mesma raiz."
+    ],
+    [
+      "Reveja e mantenha a partir do código",
+      "Execute ui:review, veja a tela e o grafo e reproduza um fluxo. Peça alterações ao código real. Os previews existentes são reconstruídos; novas rotas e estados exigem atualizar inventory, fixtures e journeys. Exija a verificação completa antes da entrega."
+    ]
+  ],
+  "filesTitle": "O que fica na sua aplicação",
+  "filesText": "O pacote partilhado mantém viewer, CLI e skill. O repositório mantém adapter, fixtures, inventory independente, catalog e testes de interação. Comece pelo exemplo React/Vite executável; outras stacks precisam do seu adapter.",
+  "skillTitle": "Skill opcional",
+  "skillText": "Codex e Claude Code podem instalar a skill incluída. Outros agentes seguem AGENT_GUIDE.md diretamente. O runtime não chama modelos nem exige chave API; o agente escolhido tem os seus custos e permissões.",
+  "limitsTitle": "Âmbito e limites",
+  "limits": [
+    "Web usa HTML/CSS reais e JavaScript original nas interações. UIKit, SwiftUI e Android exigem harnesses e evidência do runtime original; uma captura não é uma aplicação nativa interativa.",
+    "A cobertura liga código revisto a casos; não descobre automaticamente todas as condições de negócio. Os testes UI não qualificam backends de produção nem precisão clínica ou de modelos.",
+    "Viewer: inglês por defeito, com 11 idiomas. A demo pública é um frontend sintético fixo; as integrações locais seguem o código. Não foi medido o desempenho num iPad físico."
+  ],
+  "storyTitle": "Porque criei App Canvas",
+  "story": [
+    "A IA facilitou criar outra página, mas não compreender uma aplicação em crescimento. Queria ver páginas implementadas e falhas sem percorrer tudo nem manter um segundo ficheiro de design.",
+    "App Canvas transforma a revisão numa paisagem navegável. O agente integra o repositório; a ferramenta partilhada oferece tela, previews de código real, navegação com câmara e reprodução verificada.",
+    "StoolSense é o exemplo público sintético. Não contém sessões de produção, dados de saúde reais ou pedidos de IA. Eventos de utilização opcionais são separados dos dados da app."
+  ],
+  "versionLabel": "Versão CLI",
+  "docsLabel": "Guia do agente",
+  "technical": "Artigo técnico Safari",
+  "privacy": "Dados sintéticos · sem backend da app · sem conta · sem chave API",
+  "readmeMore": "API detalhada, fluxo nativo, alternativas e manutenção no README inglês e guia do agente.",
+  "readmeGuide": "Guia de integração",
+  "skip": "Ir para o conteúdo",
+  "flowAlt": "Grafo real de falha ao guardar, rascunho preservado e nova tentativa bem-sucedida",
+  "flowCaption": "Escolha um fluxo para ver páginas completas e transições identificadas. Uma ligação move a câmara para o destino."
+}

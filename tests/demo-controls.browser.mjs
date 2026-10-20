@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { chromium, webkit } from "playwright";
+import { chromium, webkit } from "./locale-browser.mjs";
 import { startCanvas } from "../lib/server.mjs";
+import { withNativeOverview } from "./native-overview-fixture.mjs";
 
 let holdFixture = false;
 const config = {
@@ -35,7 +36,7 @@ const config = {
     return true;
   } }),
 };
-const app = await startCanvas({ config, port: 0, watchFiles: false });
+const app = await startCanvas({ config: await withNativeOverview(config), port: 0, watchFiles: false });
 try {
   await app.firstBuild;
   for (const engine of [chromium, webkit]) {
@@ -45,6 +46,12 @@ try {
       const errors = []; page.on("pageerror", error => errors.push(error.message));
       await page.goto(app.address);
       await page.locator('.review-workspace[data-live-ready="true"][data-camera-ready="true"]').waitFor();
+      if (process.env.APP_CANVAS_TEST_NATIVE_ATLAS === "1") {
+        await page.locator('.native-overview').waitFor();
+        const supported = await page.locator('.native-overview canvas').evaluate(c => !!c.getContext('webgl2', { alpha: true, antialias: false }));
+        await page.locator(`.native-overview[data-status="${supported ? 'ready' : 'fallback'}"]`).waitFor();
+        console.log(`Native atlas ${engine.name()}: ${supported ? 'GPU active' : 'original renderer fallback'}`);
+      }
       // The new scope control must be available before playback, including pages.
       assert.equal(await page.getByLabel("播放流程").locator('option[value="__page__:settings"]').count(), 1, "a page is a first-class demo scope");
       await page.getByRole("button", { name: "自動播放 Demo", exact: true }).click();

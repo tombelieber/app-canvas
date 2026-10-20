@@ -23,6 +23,7 @@ try {
   await page.goto(address); await page.getByText("Content calendar", { exact: true }).first().waitFor();
   await page.frameLocator("iframe[data-overview]").locator('[data-visible="true"][data-ready="true"]').waitFor({ state: "visible", timeout: 5000 });
   await page.getByRole("button", { name: "Edit", exact: true }).click();
+  await page.locator('iframe[data-import-editor][data-ready="true"]').waitFor();
   await page.getByRole("button", { name: "Content calendar", exact: true }).last().click();
   await page.getByLabel("Text content", { exact: true }).fill("Edited landscape");
   await page.getByRole("button", { name: "Apply text", exact: true }).click();
@@ -41,9 +42,12 @@ try {
   const authorized = { Origin: address, "Content-Type": "application/json", "X-App-Canvas-Token": project.sessionToken };
   const second = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
   await second.goto(address); await second.getByRole("button", { name: "Edit", exact: true }).click();
+  await second.locator('iframe[data-import-editor][data-ready="true"]').waitFor();
   await second.getByRole("button", { name: "Edited landscape", exact: true }).click();
   await second.getByLabel("Text content", { exact: true }).fill("Unsaved second window");
   await second.getByRole("button", { name: "Apply text", exact: true }).click();
+  await second.frameLocator("iframe[data-import-editor]").getByText("Unsaved second window", { exact: true }).waitFor();
+  await second.getByText("Unsaved changes", { exact: true }).waitFor();
   assert.equal((await fetch(`${address}/api/import/capture`, { method: "POST", headers: authorized, body: "{}" })).status, 200);
   await second.getByRole("button", { name: "Save", exact: true }).click();
   await second.getByText("Project revision conflict; reload before saving", { exact: true }).waitFor();

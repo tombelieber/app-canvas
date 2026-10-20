@@ -1,0 +1,88 @@
+{
+  "name": "简体中文",
+  "title": "整个 UI，一张画布，来自真实代码。",
+  "description": "与 coding agent 一起创建和维护可缩放画布，同时查看真实页面、状态和交互流程。",
+  "demo": "打开交互 Demo",
+  "source": "GitHub 源码",
+  "start": "接入现有 Repo",
+  "release": "产品发布文章",
+  "languages": "选择语言",
+  "eyebrow": "App Canvas · 开源 · 为 Coding Agent 而设计",
+  "summary": "TL;DR",
+  "tldr": [
+    "一次看清已实现的完整页面、命名状态和连接流程。",
+    "只维护一份 UI。Coding agent 负责 fixtures、adapter 和 coverage checks。",
+    "公开合成数据 Demo 有 {states} 个状态和 {flows} 条流程，无需登录或 API key。"
+  ],
+  "tour": "看全貌、直接操作、播放流程",
+  "features": [
+    [
+      "缩小，看清整个 App",
+      "按页面分组查看完整画面，搜索、筛选或收起侧栏。点击流程链接后，镜头会移动到目标画面。"
+    ],
+    [
+      "放大，操作真实 UI",
+      "Browse 锁定控件，便于拖动画布。选中画面后点击 Interact，即可用合成数据操作原有 App 代码。"
+    ],
+    [
+      "点击 Demo，展示完整旅程",
+      "在持续运行的 App session 中播放成功、失败和恢复流程，附操作提示、字幕、暂停、速度和步骤时间轴。"
+    ]
+  ],
+  "overviewAlt": "真实 StoolSense UI 状态排列在 App Canvas 画布中",
+  "playbackAlt": "真实 Demo 在离线保存失败后保留草稿，等待重试",
+  "phoneAlt": "App Canvas 在实体 iPhone Safari 中运行",
+  "overviewCaption": "公开 Demo 真实画面：{states} 个已编写状态、{flows} 条流程、{entries} 个可播放项目。队列包含独立 case，并非 {entries} 条端到端流程。",
+  "playbackCaption": "实际失败和恢复画面。播放会执行已编写操作与检查；画一条连线本身不等于测试。",
+  "phoneCaption": "实体 iPhone Safari 截图。从崩溃到可运行的过程和测量限制，详见技术文章。",
+  "guideTitle": "从现有 Repo 到完整交互画布",
+  "guideIntro": "交给能读写 Repo 并执行命令的 coding agent。无需事先准备 Storybook 或手写画面清单；仅安装包不会自动填满画布。",
+  "promptLabel": "粘贴给你的 Coding Agent",
+  "steps": [
+    [
+      "安装共享工具",
+      "使用 Node.js 22+，沿用项目的包管理器与 lockfile。安装固定版本的 GitHub release，再安装浏览器。npm 12 若阻止此直接 Git 依赖，才添加 --allow-git=root；无需更改全局设置。"
+    ],
+    [
+      "先盘点，再选择 Case",
+      "从整个 App 根目录运行 discover。Agent 逐一检查源代码区域和候选项，解决 pending，独立列出语义状态，不能反过来由 catalog 决定范围。未解决的 blocker 必须保留。"
+    ],
+    [
+      "用 Fixtures 渲染原有 UI",
+      "Agent 创建 ui-review/canvas.config.mjs、catalog、合成 fixtures、preview entry 和可检查 journeys。Web adapter 导入原有页面、providers 与样式；fixtures 只替代数据和依赖，不能重写 UI。拒绝未知网络请求。"
+    ],
+    [
+      "验证状态和交互",
+      "覆盖已实现的正常、空白、加载、错误、拒绝访问、对话框和恢复状态。检查每个 case，流程要操作真实控件。核对 inventory、关联源码的 assertions 和 routes，再对同一 App 根目录通过 --complete。"
+    ],
+    [
+      "从源代码维护和检查",
+      "运行 ui:review，查看总览和状态图，再播放流程。让 Agent 修改真正的 App 源码；既有 preview 会重新构建。新 route 或状态需要更新 inventory、fixture 和 journey，交付前必须通过完整检查。"
+    ]
+  ],
+  "filesTitle": "哪些文件留在你的 App Repo",
+  "filesText": "共享包维护 viewer、CLI 和 skill；各 Repo 维护自己的 adapter、fixtures、独立 inventory、catalog 和交互检查。从可运行的 React/Vite 示例开始；其他技术栈使用专属 adapter。",
+  "skillTitle": "可选的 Agent Skill",
+  "skillText": "Codex 和 Claude Code 可以安装附带的 skill，其他 coding agent 可直接阅读 AGENT_GUIDE.md。Canvas runtime 不调用模型，也无需模型 API key；你选择的 Agent 有自己的费用和权限。",
+  "limitsTitle": "这个版本能证明什么，有哪些限制",
+  "limits": [
+    "Web preview 使用真实 HTML/CSS，交互时执行原有 JavaScript。UIKit、SwiftUI 和 Android 需要原生 runtime harness 和证据；原生截图不等于可操作的原生 App。",
+    "Coverage 是经过审查的源码与 case 对照，不会自动推断所有业务场景。UI checks 不代表 production backend、医疗准确率或模型 precision 已达标。",
+    "Viewer 默认 English，支持 11 种语言。公开 Demo 是固定的虚构前端；本机集成会跟随源码更新。尚未测量实体 iPad 性能。"
+  ],
+  "storyTitle": "为什么我创建 App Canvas",
+  "story": [
+    "AI 让创建新页面变得容易，却未让整个 App 更容易理解。我想一次看到实际页面和失败状态，无需逐页点击，也无需另外维护一份设计文件。",
+    "App Canvas 将审查变成可导航的画布。Coding agent 负责各 Repo 的集成；共享工具提供画布、真实代码 web previews、跟随流程的镜头和可检查播放。",
+    "StoolSense 是公开的虚构示例，没有生产会话、真实健康记录或 AI 请求。可选的匿名工具使用事件与 App 数据分开。"
+  ],
+  "versionLabel": "CLI 版本",
+  "docsLabel": "Agent 指南",
+  "technical": "Safari 优化实录",
+  "privacy": "合成数据 Demo · 无 App backend · 无需登录 · 无需 API key",
+  "readmeMore": "完整 API、原生流程、替代工具和 release 维护，详见英文 README 和 Agent 指南。",
+  "readmeGuide": "Agent 集成教程",
+  "skip": "跳转到主要内容",
+  "flowAlt": "保存失败、保留草稿和重试成功的真实状态图",
+  "flowCaption": "选择流程即可看到完整画面和命名转换。点击流程链接，镜头会移动到目标画面。"
+}

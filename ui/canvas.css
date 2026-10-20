@@ -69,6 +69,7 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
 .screen-frame.shared-preview,.shared-preview .screen-surface {background:transparent}
 .overview-plane {position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none;z-index:4;overflow:hidden}
 .overview-plane iframe {display:block;width:100%;height:100%;border:0;background:transparent;pointer-events:none}
+.native-overview-notice {position:absolute;bottom:12px;left:12px;padding:8px 12px;background:#fff8e9;color:#715b34;border:1px solid #dcb663;border-radius:6px;font-size:12px}
 .journey-live {position:absolute;z-index:20;background:white;outline:4px solid #e1a329;overflow:hidden}
 .render-error {padding:32px 20px;color:#a54641;font-size:16px}
 .react-flow__handle {background:#6f8eb8;border:2px solid white;width:10px;height:10px}
@@ -135,7 +136,7 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
  .operate-app {display:none}
 }
 @media (max-width:650px) {
- .workspace-identity,.workspace-dock > button[aria-label^="切換"],.canvas-view-controls {display:none}
+ .workspace-identity,.workspace-dock > .navigation-toggle,.canvas-view-controls {display:none}
  .fit-button,.playback-toggle span {display:none}
  .workspace-dock {padding:3px 5px;gap:3px}
  .workspace-dock button {padding:8px;font-size:12px;white-space:nowrap}
@@ -201,3 +202,6 @@ kbd {font:11px inherit;opacity:.65;border:1px solid currentColor;border-radius:3
  .demo-player select {font-size:16px}
 }
 .preview-deferred{height:100%;display:grid;place-items:center;padding:24px;box-sizing:border-box;color:#66717a;background:#f4f5f6;font:14px/1.5 system-ui;pointer-events:none}
+
+.language-picker {width:110px;max-width:110px;min-width:76px;height:44px;padding:6px;border:1px solid #d6dde1;border-radius:6px;background:white;color:#24444b;font:inherit;font-size:12px}
+@media(max-width:600px){.language-picker{width:76px;max-width:76px;font-size:11px}.workspace-dock .operate-app{display:none}}

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Package an agent-owned desktop browser workflow: source-bound private projects,
+  a portable read-only DOM reader, validated snapshot/resource ingestion, observed
+  coverage reports and explicit reference links through CLI and `./import` API.
+- Add allowlisted text capture before transport for credential-adjacent overviews;
+  retain authentication pauses and keep import commands out of usage telemetry.
+- Preserve actual desktop viewport dimensions and qualify both browser paths,
+  editor Save and fresh offline reopen through a packed CLI and installed skill.
+
 - Desktop URL capture into App Canvas with observed states/flows, normalized
   local DOM/assets, editable layers, history, atomic save and offline reopen.
 - Dedicated capture profiles, authentication pauses, partial-fidelity reports
@@ -13,6 +21,20 @@
 - Reuse validated import snapshots when capturing and saving; avoid copying the
   entire landscape again just to report capture status.
 - Accept SVG mask references under the same local-resource validation as other SVG paint attributes.
+
+## 0.12.0
+
+- Default the viewer to English and add all eleven launch languages, with persistent switching that keeps app drafts, previews, camera and playback alive.
+- Add an optional hosted-workspace interest list using Cloudflare Workers and a dedicated D1 database, with explicit consent, deduplication, removal codes and one-year retention. Cloud itself is not launched.
+- Add minimal default-on CLI/download and official-demo usage events through an allowlisted PostHog proxy; keep persistent opt-out, DNT/GPC, CI controls, self-host configuration and generic exports disabled by default. Never transmit app content, source, names, paths or waitlist email to analytics.
+- Localize the product waitlist/privacy controls and qualify the viewer in Chromium and WebKit while preserving the existing native GPU and interaction gates.
+
+## 0.11.0
+
+- Add an explicit, checksummed GPU atlas overview for captured native UI. Keep Web/React source DOM, original selected/retained app instances, Demo/Play and clickable flow links. Fall back to the existing renderer on asset or GPU failure.
+- Fit large native page groups to the available board and reuse unchanged graph nodes during camera movement. Keep the original Web layout and existing runtime budgets.
+- Retain the last event-driven GPU frame so WebKit GTK displays it between camera changes; keep the backing surface bounded and preserve original-renderer fallback.
+- Qualify the integrated viewer on 1,756 real native cases in Chromium and WebKit; include measured results, source-pixel checks and regression boundaries in the native overview benchmark report.
 
 ## 0.10.3
 

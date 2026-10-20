@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
+import { chromium } from "./locale-browser.mjs";
 import { startCanvas, packageRoot } from "../lib/server.mjs";
 
 // Exercise the actual audience entry point against the complete public app,
