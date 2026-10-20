@@ -51,12 +51,21 @@ const config = {
       if (url.pathname !== "/frame") return false;
       res.setHeader("Content-Type", "text/html");
       res.end(`<!doctype html><html data-review-ready="true"><head></head><body>
-        <h1>${url.searchParams.get("id")}</h1><label>Draft <input oninput="localStorage.setItem('draft',this.value)"></label>
+        <h1>${url.searchParams.get("id")}</h1><label>Draft <input oninput="window.draftWrites=(window.draftWrites||0)+1;localStorage.setItem('draft',this.value)"></label>
         <button id="save" onclick="document.querySelector('output').textContent=document.querySelector('input').value">Save</button>
         <output>Initial</output><a id="next" href="/frame?id=fresh" onclick="localStorage.setItem('navigations',String(Number(localStorage.getItem('navigations')||0)+1))">Next page</a>
         <button id="open-dialog" onclick="document.querySelector('dialog').showModal()">Open dialog</button>
         <dialog><label>Message <input id="dialog-note"></label></dialog>
-        <script>document.querySelector('input').value=localStorage.getItem('draft')||'';</script></body></html>`);
+        <script>
+          document.querySelector('input').value=localStorage.getItem('draft')||'';
+          // Register against the parsed fixture body before its bridge is ready.
+          const cueObserver = new MutationObserver(() => {
+            if (!document.querySelector('[data-canvas-demo-pointer]')) return;
+            parent.postMessage({ testFirstDemoCue: true }, '*');
+            cueObserver.disconnect();
+          });
+          cueObserver.observe(document.body, { childList: true, subtree: true });
+        </script></body></html>`);
       return true;
     },
   }),
@@ -75,6 +84,16 @@ try {
       await page.locator(".react-flow__controls-zoomin").click();
       await page.locator('.review-workspace[data-camera-ready="true"]').waitFor();
       const priorCamera = await page.locator(".react-flow__viewport").getAttribute("style");
+      // Handle the fixture's first cue inside the browser, before a remote
+      // driver round trip can let the short cue and the next action finish.
+      await page.evaluate(() => addEventListener('message', event => {
+        if (window.__pausedFirstDemoCue || event.data?.testFirstDemoCue !== true ||
+            event.source !== document.querySelector('iframe[data-screen="journey"]')?.contentWindow) return;
+        const pause = document.querySelector('.demo-player button[aria-label="暫停 Demo"]');
+        if (!pause || pause.disabled) return;
+        window.__pausedFirstDemoCue = true;
+        pause.click();
+      }));
       const start = page.getByRole("button", { name: "自動播放 Demo", exact: true });
       assert.equal(await start.count(), 1, "one visible click starts the demo without opening a picker");
       await start.click();
@@ -88,13 +107,13 @@ try {
       assert.equal(await page.getByRole("complementary", { name: "頁面導航" }).isVisible(), false);
       assert.equal(await page.getByRole("complementary", { name: "流程與資料" }).isVisible(), false);
       const live = page.frameLocator('iframe[data-screen="journey"]');
-      await live.locator("[data-canvas-demo-pointer]").waitFor();
+      await page.locator('.demo-player[data-status="paused"]').waitFor();
       assert.equal(await page.locator(".screen-frame.is-selected").isVisible(), false, "editing cards and connections must not compete with the presentation");
       assert.equal(await page.locator(".react-flow__edge-text").first().isVisible(), false, "graph captions stay out of the audience view");
-      await demo.getByRole("button", { name: "暫停 Demo", exact: true }).click();
-      await page.locator('.demo-player[data-status="paused"]').waitFor();
+      assert.equal(await page.evaluate(() => window.__pausedFirstDemoCue), true, "the real Pause control handles the first in-flight action cue");
       assert.equal(await live.locator("output").innerText(), "Initial", "pause stops before the next real action");
       assert.equal(await live.locator("input").first().inputValue(), "Demo draft", "the in-flight action finishes once");
+      assert.equal(await live.locator("html").evaluate(() => window.draftWrites), 1, "pause neither cancels nor repeats the in-flight fill");
       await demo.getByLabel("Demo 播放速度").selectOption("0");
       await demo.getByRole("button", { name: "繼續 Demo", exact: true }).click();
       await finishDemo();
