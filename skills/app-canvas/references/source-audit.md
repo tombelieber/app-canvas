@@ -157,3 +157,25 @@ UI-mapped obligation requires evidence. Record the source digest during build/
 capture; never attach a current digest to an old capture. The gate validates
 bindings and integrity; harness correctness and semantic inspection remain
 engineering responsibilities. Unavailable prerequisites stay incomplete.
+
+## Supported Objective-C data effects
+
+Objective-C discovery can mark a branch `nonRenderingOutcome` with kind
+`objc-nonrendering-method` only after inspecting its enclosing supported method,
+resolved source helpers and concretely bound continuations. This permits an
+explicit, source-specific `nonUiReason`; it does not remove the source ID or
+review it automatically. The method offset and native-source dependency digest
+bind the annotation to fresh canonical discovery. Keep the owning UI file,
+regions, caller UI effects and separate visible states mapped and reviewed.
+
+The bounded model includes explicit Foundation data, SQLite and queue/task
+contracts. It inspects callback bodies scheduled by those contracts. Unknown
+calls, invoked unbound callbacks, escaping blocks, UI operations, opaque object
+contents/casts, recursion and unsupported syntax remain unresolved. A generic
+callback helper cannot inherit a data-only classification from one caller.
+Unused local block bodies do not inherit an enclosing method's annotation.
+Source overrides of modeled platform behavior, KVO callback registration,
+custom shared network caches/protocols and runtime mutation prevent this analysis; it is not a claim of universal runtime noninterference,
+IO success, callback timing or absence of later UI effects from stored data.
+Do not copy an annotation into the inventory to create eligibility: the gate
+uses fresh source discovery, not an inventory's self-asserted flags.
