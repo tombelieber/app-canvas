@@ -12,7 +12,7 @@ try{
   try{
    const page=await browser.newPage({viewport:{width:1280,height:800}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
    const received=page.waitForResponse(r=>new URL(r.url()).pathname==='/telemetry'&&r.status()===204),request=page.waitForRequest(r=>new URL(r.url()).pathname==='/telemetry');await page.goto(app.address);await received;
-   assert.equal((await request).postDataJSON().properties.cohort_class,'internal_test');assert.equal(sent.at(-1).properties.cohort_class,'internal_test');
+   const emitted=(await request).postDataJSON();assert.equal(emitted.properties.cohort_class,'internal_test');assert.equal(emitted.properties.environment,'qualification');assert.equal(sent.at(-1).properties.cohort_class,'internal_test');assert.equal(sent.at(-1).properties.environment,'qualification');
    await page.getByRole('button',{name:'Panels',exact:true}).click();const toggle=page.getByLabel('Anonymous usage analytics',{exact:true});await Promise.all([page.waitForResponse(r=>new URL(r.url()).pathname==='/telemetry/preference'&&r.status()===204),toggle.uncheck()]);
    assert.equal(telemetry.config().enabled,false);const count=sent.length;
    await page.reload();await page.locator('.language-picker').waitFor();await page.locator('.language-picker').selectOption('ja');assert.equal(sent.length,count);

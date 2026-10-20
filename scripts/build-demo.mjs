@@ -14,7 +14,7 @@ try {
   const project = JSON.parse(await readFile(`${outDir}/project.json`));
   const coverage = caseCoverage(project);
   await writeFile(`${outDir}/build.json`, JSON.stringify({ commit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(), version: pkg.version, cases: result.total, playableCases: coverage.checked, flows: coverage.flows, journeys: project.journeys.length, connections: graphFlows(project).length }, null, 2));
-  await writeFile(`${outDir}/telemetry.json`, JSON.stringify({enabled:true,configurable:true,version:pkg.version,source:"browser",surface:"official_demo",endpoint:officialEndpoint}));
+  await writeFile(`${outDir}/telemetry.json`, JSON.stringify({enabled:true,configurable:true,version:pkg.version,source:"browser",surface:"official_demo",environment:"production",endpoint:officialEndpoint}));
   await writeFile(`${outDir}/index.html`, canvasHtml({assetVersion: app.getManifest().canvasHash, telemetryOrigin:new URL(officialEndpoint).origin}));
   const launch = await buildLaunch(outDir);
   console.log(`Launch materials: ${launch.pages} pages in ${launch.languages} languages`);

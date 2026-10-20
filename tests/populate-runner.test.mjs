@@ -58,7 +58,8 @@ test('resource leases prevent different project actors competing for one device'
   const a = await fixture(t), b = await fixture(t), resource = 'device-' + randomUUID();
   let started;
   const ready = new Promise(done => started = done);
-  const first = runPopulation({ root: a.root, tasks: [a.task('one', { kind: 'capture', resources: [resource], command: [process.execPath, '-e', "require('fs').writeFileSync('started','');setTimeout(()=>require('fs').writeFileSync('one.txt','done'),400)"] })], onEvent: event => { if (event.status === 'running') started(); } });
+  const actor = "const fs=require('fs');const watcher=fs.watch('.',(_,name)=>{if(name==='release'&&fs.existsSync('release')){watcher.close();fs.writeFileSync('one.txt','done')}});fs.writeFileSync('started','')";
+  const first = runPopulation({ root: a.root, tasks: [a.task('one', { kind: 'capture', resources: [resource], command: [process.execPath, '-e', actor] })], onEvent: event => { if (event.status === 'running') started(); } });
   await ready;
   // Running is emitted before lease acquisition. Wait on the actual actor's
   // filesystem event, rather than assuming an arbitrary sleep is sufficient.
@@ -67,9 +68,13 @@ test('resource leases prevent different project actors competing for one device'
     const watcher = watch(a.root, (_, name) => { if (name === 'started') { watcher.close(); done(); } });
     try { await readFile(join(a.root, 'started')); watcher.close(); done(); } catch (error) { if (error.code !== 'ENOENT') { watcher.close(); fail(error); } }
   });
-  const second = await runPopulation({ root: b.root, tasks: [b.task('two', { kind: 'capture', resources: [resource] })] });
-  assert.equal(second.tasks[0].status, 'blocked'); assert.match(second.tasks[0].error, /another active owner/);
-  await first;
+  try {
+    const second = await runPopulation({ root: b.root, tasks: [b.task('two', { kind: 'capture', resources: [resource] })] });
+    assert.equal(second.tasks[0].status, 'blocked'); assert.match(second.tasks[0].error, /another active owner/);
+  } finally {
+    await writeFile(join(a.root, 'release'), '');
+    await first;
+  }
 });
 
 test('interruption stops the actor and resumes; timeout is bounded and a failed UI gate never accepts', async t => {

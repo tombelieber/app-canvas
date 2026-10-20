@@ -68,6 +68,18 @@ Classification applies to new events; earlier events are not rewritten.
 
 ## Shared product analytics project
 
+Deployment environment and audience are independent dimensions. Official
+installed CLI/local viewers and the hosted demo/landing send
+`environment: "production"`; loopback alone does not make an installed dev tool
+a development deployment. Use `APP_CANVAS_ENVIRONMENT=development` (or
+`staging`, `test`, `qualification`) for a non-production deployment. Invalid
+values are rejected, and the qualification surface always forces
+`environment: "qualification"`. Legacy payloads with no environment remain
+accepted as `unknown`; earlier events are not rewritten.
+
+Dogfood remains `cohort_class: "internal_test"` and the publisher derives
+External / Dogfood / Unknown separately. It never replaces environment.
+
 Publisher-operated tools share one PostHog project, **Product**.
 App Canvas events always carry `product: "app_canvas"` and `schema_version: 1`.
 Event names describe actions (`viewer_ready`, `flow_completed`); `surface`
