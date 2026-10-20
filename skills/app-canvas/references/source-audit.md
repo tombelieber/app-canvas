@@ -85,9 +85,24 @@ the module's literal minimum SDK range. This is limited to same-name drawable,
 color, anim and animator XML under `src/main/res`, without additional qualifiers
 or declared source-set overrides. The source build and replacement hashes remain
 attached to the old tags. Keep every old file/region/element review; the selected
-alternative still requires real UI evidence. Values entries, opaque SDK bounds,
-other qualifiers and direct loading of a specific resource file need separate
-source/runtime proof. See [Android resource selection](https://developer.android.com/guide/topics/resources/providing-resources#BestMatch).
+alternative still requires real UI evidence. Opaque SDK bounds, other qualifiers
+and direct loading of a specific resource file need separate source/runtime
+proof. See [Android resource selection](https://developer.android.com/guide/topics/resources/providing-resources#BestMatch).
+
+For `values` XML, the filename is not a resource identity. Fresh discovery can
+separately prove that an individual same-name **style bag** has a version-only
+replacement throughout the module's literal minimum-SDK range. Only the lower
+bag's declaration and own item tags receive this canonical proof, with exact
+build, declaration and replacement hashes/offsets. Keep the file, regions, root,
+neighboring entries, parents and selected replacement mapped and reviewed.
+Duplicate or opaque XML, aliases, unsupported packaging/source-set changes and
+recognizable custom package/table/file loading remain pending. The rule concerns
+ordinary Android Resources selection; inspect the real build/capture boundary
+before writing a specific non-UI reason. It never reviews the entry automatically,
+proves an unused resource, or authorizes a hand-edited annotation to waive UI.
+Literal standard resource shrinking does not remove individual alternative
+configurations; explicit configuration filters still need separate proof.
+See [Android resource optimization](https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep#remove-unused-alternative-resources).
 
 Fresh discovery may also mark a narrowly recognized canonical Objective-C
 initializer outcome `nonRenderingOutcome`: a nil return constructs no own UI,
