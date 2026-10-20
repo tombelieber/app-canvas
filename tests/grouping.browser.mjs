@@ -58,8 +58,20 @@ try {
       // grouped -> all -> grouped and the continuing Demo's separate session.
       await page.getByLabel('Search screens').fill(''); await page.getByLabel('Page scope').selectOption('all');
       await page.locator('.demo-start').click();
-      await page.locator('.demo-player select').filter({ has: page.locator('option[value="0"]') }).selectOption('0');
-      await page.locator('.demo-player[data-status=complete]').waitFor();
+      // This check owns the authored continuing flow. The whole-app playlist
+      // also includes 260 standalone fixtures and has its own bulk-playback gates.
+      await page.getByLabel('Demo scope', { exact: true }).selectOption('continue');
+      await page.getByLabel('Demo speed', { exact: true }).selectOption('0');
+      const player = page.locator('.demo-player');
+      try {
+        await page.waitForFunction(() => ['complete', 'error'].includes(document.querySelector('.demo-player')?.dataset.status));
+      } catch (error) {
+        throw Error(`Grouped flow did not finish: ${await player.innerText()}`, { cause: error });
+      }
+      assert.equal(await player.getAttribute('data-status'), 'complete', await player.innerText());
+      assert.equal(await page.getByLabel('Demo scope', { exact: true }).inputValue(), 'continue');
+      assert.equal(await player.getAttribute('data-finished'), '1');
+      assert.equal(await player.getAttribute('data-skipped'), '0');
       assert.equal(await page.frameLocator('iframe[data-screen="journey"]').locator('output').innerText(), 'Player state');
       await page.keyboard.press('Escape'); await ready();
       assert.equal(await original.getByLabel('Draft').inputValue(), 'Retained draft');
