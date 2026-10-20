@@ -17,6 +17,7 @@ export function ImportCanvas({ project: initial }) {
   const [stored, setStored] = useState(null), [history, setHistory] = useState([]), [cursor, setCursor] = useState(0), [capture, setCapture] = useState(null);
   const [selected, setSelected] = useState(null), [layer, setLayer] = useState(null), [cache, setCache] = useState({});
   const [mode, setMode] = useState("browse"), [view, setView] = useState("overview"), [page, setPage] = useState("all"), [query, setQuery] = useState("");
+  const [conflicted, setConflicted] = useState(false);
   const [notice, setNotice] = useState(""), [saving, setSaving] = useState(false), [errors, setErrors] = useState({}), [revision, setRevision] = useState(0);
   const [measured, setMeasured] = useState({ screens: {} });
   const areaRef = useRef(null), [area, setArea] = useState({ width: 1000, height: 800 }), camera = useReactFlow(), viewport = useViewport();
@@ -30,13 +31,14 @@ export function ImportCanvas({ project: initial }) {
     const next = await request("/api/import/state"); setCapture(next.session); if (next.manifest) setMeasured(next.manifest);
     if ((dirtyRef.current || busy.current) && !force) return;
     if (loadedRevision.current !== next.project.revision) setCache({});
+    if (force) setConflicted(false);
     setStored(next.project); setHistory(next.project.history); setCursor(next.project.cursor); setRevision(next.project.revision); loadedRevision.current = next.project.revision;
     setSelected(old => old && next.screens.some(s => s.id === old) ? old : next.screens[0]?.id || null);
   }, [request]);
   useEffect(() => {
     load().catch(e => setNotice(e.message));
     const events = new EventSource("/events");
-    events.onmessage = e => { const event = JSON.parse(e.data); setCapture(event.session); setMeasured(event); if (loadedRevision.current !== event.revision && !busy.current) { if (dirtyRef.current) setNotice("Project changed. Your unsaved edits are retained; save may require reloading the latest project."); else load().catch(e => setNotice(e.message)); } };
+    events.onmessage = e => { const event = JSON.parse(e.data); setCapture(event.session); setMeasured(event); if (loadedRevision.current !== event.revision && !busy.current) { if (dirtyRef.current) setNotice(old => old.includes("conflict") ? old : "Project changed. Your unsaved edits are retained; save may require reloading the latest project."); else load().catch(e => setNotice(e.message)); } };
     return () => events.close();
   }, [load]);
   const screens = useMemo(() => stored ? screenList(stored, history, cursor) : [], [stored, history, cursor]);
@@ -82,7 +84,7 @@ export function ImportCanvas({ project: initial }) {
   const save = useCallback(async () => {
     if (!stored) return; busy.current = true; setSaving(true);
     try { const result = await request("/api/import/save", { expectedRevision: stored.revision, history, cursor }); setStored(old => ({ ...old, revision: result.revision, history, cursor })); loadedRevision.current = result.revision; setRevision(result.revision); setNotice("Saved"); }
-    catch (error) { setNotice(error.message); } finally { busy.current = false; setSaving(false); }
+    catch (error) { if (error.message.includes("conflict")) setConflicted(true); setNotice(error.message); } finally { busy.current = false; setSaving(false); }
   }, [stored, history, cursor, request]);
   const upload = async file => {
     if (file.size > 8 * 1024 ** 2) return setNotice("Image exceeds 8 MiB limit");
@@ -93,7 +95,7 @@ export function ImportCanvas({ project: initial }) {
       setStored(old => ({ ...old, revision: result.revision, assets: [...old.assets.filter(a => a.id !== result.assetId), { id: result.assetId, mime: result.asset.mime }] }));
       setCache(old => ({ ...old, [screen.documentId]: { ...old[screen.documentId], assets: { ...old[screen.documentId].assets, [result.assetId]: result.asset } } }));
       setHistory([...history.slice(0, cursor), { type: "setImage", screenId: selected, layerId: layer, value: result.assetId }]); setCursor(cursor + 1); loadedRevision.current = result.revision; setNotice("Unsaved changes");
-    } catch (error) { setNotice(error.message); } finally { busy.current = false; setSaving(false); }
+    } catch (error) { if (error.message.includes("conflict")) setConflicted(true); setNotice(error.message); } finally { busy.current = false; setSaving(false); }
   };
   const fit = useCallback(() => camera.fitView({ padding: .12, duration: 200, maxZoom: 1 }), [camera]);
   useEffect(() => { if (camera.viewportInitialized && nodes.length) { const item = nodes.find(n => n.id === selected); if (item && mode !== "browse") camera.fitBounds({ x: item.position.x - 20, y: item.position.y - 50, width: 430, height: editorHeight + 100 }, { duration: 180, padding: .08 }); else fit(); } }, [selected, mode, view, page, query, screens.length, editorHeight, camera.viewportInitialized]);
@@ -120,7 +122,7 @@ export function ImportCanvas({ project: initial }) {
       <div className="import-states">{filtered.map(s => <button key={s.id} className={selected === s.id ? "active" : ""} onClick={() => navigate(s.id)}>{s.title}<small>{s.quality}</small></button>)}</div>
       {mode === "edit" && <LayerTree key={selected} document={document} selected={layer} onSelect={setLayer} />}
     </aside>
-    <main className="canvas-area"><div className="import-view-controls"><button aria-pressed={view === "overview"} onClick={() => setView("overview")}>Landscape</button><button aria-pressed={view === "machine"} onClick={() => setView("machine")}>State graph</button><button onClick={fit}>Fit</button><span role="status">{notice || (dirty ? "Unsaved changes" : "Saved")}</span>{notice.includes("conflict") || notice.includes("Project changed") ? <button onClick={() => { if (!dirty || confirm("Reload the saved project and discard unsaved edits?")) { setCache({}); load(true).then(() => setNotice("Saved")); } }}>Reload saved project</button> : null}</div>
+    <main className="canvas-area"><div className="import-view-controls"><button aria-pressed={view === "overview"} onClick={() => setView("overview")}>Landscape</button><button aria-pressed={view === "machine"} onClick={() => setView("machine")}>State graph</button><button onClick={fit}>Fit</button><span role="status">{notice || (dirty ? "Unsaved changes" : "Saved")}</span>{conflicted || notice.includes("conflict") || notice.includes("Project changed") ? <button onClick={() => { if (!dirty || confirm("Reload the saved project and discard unsaved edits?")) { setCache({}); load(true).then(() => setNotice("Saved")); } }}>Reload saved project</button> : null}</div>
       <div className="flow-stage" ref={areaRef}><ReactFlow nodes={nodes} edges={edges} nodeTypes={types} defaultViewport={{ x: 20, y: 20, zoom: .6 }} onNodeClick={(_, n) => { if (n.type === "screen") navigate(n.id); }} onEdgeClick={(_, edge) => navigate(edge.target)} minZoom={.02} maxZoom={5} nodesDraggable={false} nodesConnectable={false} deleteKeyCode={null} panOnScroll zoomOnDoubleClick={false}>
         <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable />
         <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={hidden} revision={revision} onError={setErrors} overrides={overrides} />

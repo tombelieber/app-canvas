@@ -49,10 +49,19 @@ try {
   await second.frameLocator("iframe[data-import-editor]").getByText("Unsaved second window", { exact: true }).waitFor();
   await second.getByText("Unsaved changes", { exact: true }).waitFor();
   assert.equal((await fetch(`${address}/api/import/capture`, { method: "POST", headers: authorized, body: "{}" })).status, 200);
+  const conflict = second.waitForResponse(response => response.url() === `${address}/api/import/save` && response.request().method() === "POST");
   await second.getByRole("button", { name: "Save", exact: true }).click();
+  assert.equal((await conflict).status(), 409, "stale writer is rejected before any UI notification");
+  // A later capture event must not erase the actionable save-conflict error.
+  assert.equal((await fetch(`${address}/api/import/capture`, { method: "POST", headers: authorized, body: "{}" })).status, 200);
   await second.getByText("Project revision conflict; reload before saving", { exact: true }).waitFor();
   await second.frameLocator("iframe[data-import-editor]").getByText("Unsaved second window", { exact: true }).waitFor();
-  await second.getByRole("button", { name: "Reload saved project", exact: true }).waitFor(); await second.close();
+  await second.getByRole("button", { name: "Reload saved project", exact: true }).waitFor();
+  await second.getByLabel("Text content", { exact: true }).fill("Edited after conflict");
+  await second.getByRole("button", { name: "Apply text", exact: true }).click();
+  await second.frameLocator("iframe[data-import-editor]").getByText("Edited after conflict", { exact: true }).waitFor();
+  await second.getByRole("button", { name: "Reload saved project", exact: true }).waitFor();
+  await second.close();
   assert.equal((await fetch(`${address}/api/import/more`, { method: "POST", headers: authorized, body: "{}" })).status, 200);
   assert.equal((await fetch(`${address}/project.json`, { headers: { Origin: "null" } })).status, 403, "opaque imported frame cannot read privileged APIs");
   const beforeImage = await (await fetch(`${address}/api/import/state`)).json();

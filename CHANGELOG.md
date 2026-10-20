@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Retain actionable save conflicts across capture updates and keep explicit reload
+  available while the user continues editing the retained draft.
+
 - Package an agent-owned desktop browser workflow: source-bound private projects,
   a portable read-only DOM reader, validated snapshot/resource ingestion, observed
   coverage reports and explicit reference links through CLI and `./import` API.
