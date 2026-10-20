@@ -48,8 +48,10 @@ Without it the endpoint returns unavailable. Do not call that analytics-ready.
 Set RELEASE_VERSION to the exact promoted package version. Verify actual
 PostHog ingestion as well as HTTP delivery before claiming analytics shipped.
 
-Deploy the collector's expanded `environment` and `cohort_class` allowlist before distributing
+Deploy the collector's expanded `environment` and `cohort_class` allowlists before distributing
 clients that send this field. Legacy clients that omit it remain valid and
 receive `unknown`; only `internal_test` and `unknown` are accepted from clients.
-The ingestion-side verified audience mapping may then override that value.
+Missing environment remains accepted as `unknown`, while qualification traffic
+is forced to `qualification`. Deployment and audience remain independent.
+The ingestion-side verified audience mapping may then override the audience value.
 Do not roll the collector back to a contract that rejects a supported client.
