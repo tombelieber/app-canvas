@@ -3,7 +3,7 @@
 Import a website into **App Canvas**, edit its captured DOM layers, save locally
 and reopen without the website. App Canvas + an agent handle discovery, capture
 and review together. Available in v0.13.0 with the matching CLI and skill. No API
-key, model service or Figma account is required. For durable storage, verify the
+key, model service or Figma account is required. Durable storage requires v0.14.1 or later. Verify the
 installed CLI lists `projects`, `backup`, `recover` and `--allow-ephemeral`; older
 releases require an upgrade to a revision containing these commands.
 

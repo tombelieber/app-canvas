@@ -44,7 +44,7 @@ Encarga la integración a un agente que pueda leer, editar y ejecutar comandos. 
 ### Pega esto en tu agente
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.14.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.14.1/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Instala la herramienta compartida
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.14.0/AGENT_GUIDE.md and a
 Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global. Hasta publicar v0.13.0, utiliza un commit de desarrollo verificado para estos comandos UI.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.14.0
+npm install --save-dev github:tombelieber/app-canvas#v0.14.1
 npx app-canvas browsers
 ```
 
@@ -90,7 +90,7 @@ npm run ui:review
 
 El paquete compartido mantiene viewer, CLI y skill. Tu repo mantiene adapter, fixtures, inventory independiente, catalog y comprobaciones. Empieza con el ejemplo ejecutable React/Vite; otros stacks necesitan su adapter.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.14.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.14.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.14.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.14.1/examples/react-vite)
 
 ### Skill opcional
 

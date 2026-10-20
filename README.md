@@ -5,7 +5,7 @@
 
 **[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
 
-CLI **v0.14.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
+CLI **v0.14.1** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
 <!-- launch:end -->
 
 A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
@@ -66,7 +66,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.14.0
+npm install -g github:tombelieber/app-canvas#v0.14.1
 app-canvas browsers
 app-canvas demo
 ```

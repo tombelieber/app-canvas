@@ -1,6 +1,6 @@
 # App Canvas
 
-## Unreleased
+## 0.14.1
 
 - Keep URL projects in an independent private library by default, checkpoint
   capture/assets/links/Save outside disposable checkouts, and provide project
