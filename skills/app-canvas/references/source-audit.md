@@ -179,3 +179,24 @@ custom shared network caches/protocols and runtime mutation prevent this analysi
 IO success, callback timing or absence of later UI effects from stored data.
 Do not copy an annotation into the inventory to create eligibility: the gate
 uses fresh source discovery, not an inventory's self-asserted flags.
+
+A second bounded annotation, `objc-stable-native-guard`, applies to a
+contradictory nested `selectedSegmentIndex == 0` outcome. It requires an exact,
+strong ivar binding to a standard Interface Builder `UISegmentedControl`, a
+source-bound UI action or standard text-field Return delegate and a closed
+synchronous interval between the enclosing and repeated reads. Any strings
+used in that interval need inspected concrete Foundation producers and writer
+checks; a declared object type is insufficient. Dormant blocks, unknown
+receivers, callbacks, source helpers, UI effects, mutable receiver ownership,
+reflective dispatch through unknown targets and runtime mutation remain
+pending. Mixed Swift files must fit a closed data-declaration subset with no UI
+capabilities, reflection, object escapes, string interpolation or unknown calls;
+other Swift and unsupported native languages prevent this proof. Controller index setters and indirect writes remain unresolved. The interval
+uses UIKit's main-thread control/action contract; it does not establish safety
+for arbitrary off-main UIKit mutation or undefined native memory behavior. This does not waive the controller, enclosing
+guard or reachable nested outcome, and does not review an ID automatically.
+
+The Return delegate contract follows Apple's [UITextFieldDelegate method](https://developer.apple.com/documentation/uikit/uitextfielddelegate/textfieldshouldreturn(_:))
+and [UIKit text-field isolation](https://developer.apple.com/documentation/uikit/uitextfield).
+All source and Interface Builder dependencies are fingerprinted by fresh
+discovery; inventory annotations cannot establish their own eligibility.
