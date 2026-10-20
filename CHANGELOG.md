@@ -2,6 +2,8 @@
 
 ## 0.14.0
 
+- Keep deployment environment independent from usage audience across CLI, viewer, demo and landing telemetry. Preserve legacy unknown values and explicit qualification traffic.
+
 - Preserve Objective-C data-only source eligibility through resolved helpers and concrete callbacks, with fresh dependency evidence and the unchanged strict source review boundary.
 - Persist self-declared Dogfood usage across CLI and local-viewer restarts without changing anonymous IDs, opt-out preferences or CI/DNT/GPC protections. Keep unmarked usage Unknown and reject client claims of verified external usage.
 - Preserve all desktop URL import, editable landscape, offline reopen and complete source/UI population workflows from v0.13.0.

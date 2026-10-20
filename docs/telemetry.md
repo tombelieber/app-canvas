@@ -21,7 +21,7 @@ canvas, installation or app interactions.
 
 Only the allowlisted event name, fixed product/schema identifiers, random installation/browser ID, tool version,
 source channel, one of the fixed product surfaces, selected language and fixed
-landing-page/CTA enums, plus an optional self-declared usage audience. Installations and browsers are **not people**. Events
+landing-page/CTA enums, deployment environment and an optional self-declared usage audience. Installations and browsers are **not people**. Events
 from the public synthetic demo are **not activation in a real repository**.
 Qualification traffic has its own surface and must be excluded from adoption
 reports. Opt-outs and blockers mean observed usage is incomplete.
@@ -57,7 +57,7 @@ and local-viewer events carry `cohort_class: "internal_test"`. This persists
 across restarts without changing your anonymous ID or analytics preference.
 Reload an already-open viewer after changing the preference.
 `app-canvas telemetry unknown` clears the declaration. For temporary use,
-`APP_CANVAS_DOGFOOD=1` labels that process only. Neither setting enables
+`APP_CANVAS_DOGFOOD=1` or `APP_CANVAS_COHORT_CLASS=internal_test` labels that process only. Neither setting enables
 disabled analytics or overrides CI, Do Not Track or Global Privacy Control.
 
 Unmarked installations are **Unknown**, not confirmed External. A client can
@@ -74,6 +74,14 @@ Event names describe actions (`viewer_ready`, `flow_completed`); `surface`
 separates demo, real-project, landing and qualification traffic, while `source`
 identifies the distribution channel. Do not infer product from an app name,
 repository URL or event-name substring.
+
+`environment` describes deployment (`production`, `development`, `staging`,
+`test`, `qualification`, or `unknown`), independently of usage audience.
+Official demo/landing and normal installed CLI usage stamp `production`; a local
+CLI is an installed product, not automatically a development build. Developers
+can set `APP_CANVAS_ENVIRONMENT`. Qualification surfaces always stamp
+`qualification`. Older payloads remain accepted as `unknown`; no historical
+event or installation ID is rewritten.
 
 The App Canvas collector rejects other product values and sends a distinct ID
 prefixed with `app_canvas:`. This keeps IDs from different tools separate even

@@ -5,7 +5,7 @@ test('default-on, persistent opt-out, environment controls and private event bou
  try{
   const make=env=>createTelemetry({home,env,version:'0.12.0',fetcher:async(url,options)=>{sent.push({url,payload:JSON.parse(options.body)});return{ok:true};}});
   const first=await make({});assert.equal(first.config().enabled,true);await first.once('install');await first.once('install');assert.equal(sent.length,1);
-  assert.ok(!JSON.stringify(sent).includes(home));assert.deepEqual(Object.keys(sent[0].payload.properties).sort(),['cohort_class','product','schema_version','source','surface','version']);
+  assert.ok(!JSON.stringify(sent).includes(home));assert.deepEqual(Object.keys(sent[0].payload.properties).sort(),['cohort_class','environment','product','schema_version','source','surface','version']);
   assert.equal(sent[0].payload.properties.product,'app_canvas');assert.equal(sent[0].payload.properties.schema_version,1);
   await first.capture('screen_selected',{screen:'private'});assert.equal(sent.length,1);
   await first.setEnabled(false);const second=await make({});assert.equal(second.config().enabled,false);await second.capture('viewer_ready');assert.equal(sent.length,1);
