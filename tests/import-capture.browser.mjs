@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -9,7 +10,7 @@ assert.equal(typeof startCaptureSession, "function", "real URL capture session m
 const root = await mkdtemp(join(tmpdir(), "app-canvas-capture-")), site = await startImportSite();
 let session, browser;
 try {
-  session = await startCaptureSession({ url: `${site.url}/calendar`, directory: join(root, "project"), headless: true, record: true });
+  session = await startCaptureSession({ allowEphemeral: true, url: `${site.url}/calendar`, directory: join(root, "project"), headless: true, record: true });
   await session.ready;
   let saved = await session.store.read();
   assert.equal(saved.project.screens.length, 1); assert.ok(JSON.stringify(saved).includes("Content calendar"));

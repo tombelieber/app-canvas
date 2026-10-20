@@ -3,16 +3,67 @@
 Import a website into **App Canvas**, edit its captured DOM layers, save locally
 and reopen without the website. App Canvas + an agent handle discovery, capture
 and review together. Available in v0.13.0 with the matching CLI and skill. No API
-key, model service or Figma account is required.
+key, model service or Figma account is required. For durable storage, verify the
+installed CLI lists `projects`, `backup`, `recover` and `--allow-ephemeral`; older
+releases require an upgrade to a revision containing these commands.
+
+## Project ownership and recovery
+
+Omit `--out` to create a private project under
+`~/.local/share/app-canvas/projects/<name>-<unique-id>`, independent of the current
+checkout. The CLI prints the exact directory and recovery ID. `APP_CANVAS_HOME`
+can explicitly select another **durable, private** library directory; it must be
+absolute and outside Git checkouts. A temporary override creates a temporary
+library: do not use one for work you intend to keep.
+
+Every accepted capture, image replacement, reference link and **Save** first
+checkpoints the complete project in the library, including immutable documents,
+images/fonts, reference PNGs, observations, flows and the full undo/redo history.
+Checkpoint objects are content-addressed and verified; the latest checkpoint is
+atomically replaced before the project write succeeds. Unwritable or
+corrupt recovery storage rejects the write. Existing version 1 directories are
+validated and checkpointed in place when opened; no format migration or silent
+relocation is needed. Existing projects must still exist for this first adoption.
+
+```sh
+app-canvas projects
+# Restore a listed recovery ID into a NEW durable project directory:
+app-canvas recover <recovery-id>
+app-canvas open <recovered-directory>
+# A portable project directory, including every local resource and edit:
+app-canvas backup <project-directory> --out /durable/private-backups/reference
+```
+
+`recover` and `backup` refuse existing destinations. The backup opens with only
+the matching installed package, without the original project, website or recovery
+library. Copy it to an independently retained disk/location for disaster recovery.
+The local checkpoint protects against removal of the project/worktree; deleting
+the library as well, disk loss and edits never Saved are outside that guarantee.
+The library keeps the latest checkpoint per canonical project path, plus immutable
+objects; it currently does not automatically prune retained objects. Keep it
+private and plan storage accordingly.
+
+For a team-owned project, use an explicit private repository path, for example
+`--out designs/product-reference`. Commit the entire directory (documents,
+assets, references and `project.json`) with the team's normal review/backup
+workflow. This remains the authoritative project path; machine-specific recovery
+paths are never embedded in its files. Each machine maintains its own local
+checkpoint. Public sharing still needs review and authorization.
+
+Temporary directories, Git-ignored paths and linked Git worktrees are rejected
+**before project creation** unless explicitly acknowledged with
+`--allow-ephemeral` (ESM API: `allowEphemeral: true`). The explicit path is retained
+and checkpointed outside the checkout. This flag acknowledges the disposable
+working copy; it does not move it or turn Git snapshots into capture backups.
+Reader scripts and input JSON are intermediate files, not the saved project.
 
 ## Dedicated capture browser
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.13.0
 app-canvas browsers
-app-canvas import https://example.com --out .artifacts/product-reference
+app-canvas import https://example.com
 # Stop the capture process with Ctrl+C, then reopen the saved project:
-app-canvas open .artifacts/product-reference
+app-canvas open <printed-project-directory>
 ```
 
 Open the printed loopback URL. The capture browser uses a dedicated Chromium
@@ -30,15 +81,15 @@ cannot satisfy this path. Target 1440 × 1000 CSS pixels; actual desktop viewpor
 1000–2400px wide are retained. Keep the project and intermediate files private.
 
 ```sh
-app-canvas import https://example.com --out .artifacts/product-reference --agent
+app-canvas import https://example.com --agent
 app-canvas capture-script --out .artifacts/reader.js
 # Evaluate the function in reader.js using the authorized browser's read-only
 # DOM evaluation tool. Write its complete returned value as snapshot.json.
-app-canvas capture .artifacts/product-reference --input .artifacts/snapshot.json --label "Overview"
+app-canvas capture <printed-project-directory> --input .artifacts/snapshot.json --label "Overview"
 # Operate an authorized control, wait for its visible result, then read again.
-app-canvas capture .artifacts/product-reference --input .artifacts/next.json --label "Menu open" --action "Open menu"
-app-canvas status .artifacts/product-reference
-app-canvas open .artifacts/product-reference
+app-canvas capture <printed-project-directory> --input .artifacts/next.json --label "Menu open" --action "Open menu"
+app-canvas status <printed-project-directory>
+app-canvas open <printed-project-directory>
 ```
 
 `--agent` creates a source-bound project, returns JSON and exits. It launches no
@@ -63,7 +114,7 @@ visit creates no observed flow. Identical DOM states deduplicate while keeping
 observations. To connect related states without action evidence:
 
 ```sh
-app-canvas link .artifacts/product-reference --from <state-id> --to <state-id> --label "Related reference"
+app-canvas link <printed-project-directory> --from <state-id> --to <state-id> --label "Related reference"
 ```
 
 These links are always dashed `reference` edges. `status` returns JSON page,
@@ -120,9 +171,11 @@ redaction limits content fidelity and marks the result partial. Normal capture
 uses best-effort common-pattern redaction, not a guarantee against all secrets.
 
 The stable ESM API `@tombelieber/app-canvas/import` exports `captureScript`,
-`createAgentProject({url,directory})`, `decodeSnapshot(value)`,
-`ingestSnapshot({directory,snapshot,label?,action?})`, `importStatus(directory)`
-and `linkStates({directory,from,to,label})`. It uses the same validation and
+`createAgentProject({url,directory?,allowEphemeral?})`, `decodeSnapshot(value)`,
+`ingestSnapshot({directory,snapshot,label?,action?})`, `importStatus(directory)`,
+`linkStates({directory,from,to,label})`, `listProjects()`,
+`recoverProject(recoveryId,{directory?,allowEphemeral?})` and
+`backupProject(directory,{directory,allowEphemeral?})`. It uses the same validation and
 atomic store as the CLI. No browser vendor SDK is required by this protocol.
 
 ## Capture states and flows
@@ -194,9 +247,13 @@ capture without continuous recording. `--profile <directory>` accepts only an
 empty or previously marked App Canvas dedicated profile, outside the exported
 project. It persists login state until you remove that profile; keep it private.
 The default temporary profile is removed on normal shutdown. An interrupted
-process may leave temporary profile/runtime files or a `.write-lock`; confirm
-the owning process has stopped before manually removing its stale lock. Never
-remove a live writer's lock.
+process may leave temporary profile/runtime files. The project writer lock
+expires after 10 seconds without a heartbeat; a live writer remains exclusive.
+A legacy `.write-lock` file requires confirming that the old writer has stopped
+before manually removing it. Never remove a live writer's lock. If interruption
+occurs after the checkpoint but before the local commit, reopening explicitly
+reports that recovery is ahead and provides the recovery command. Restore to a
+new directory; no automatic rollback or overwrite is performed.
 
 For source-backed or native complete population, continue using the existing
 [agent guide](../AGENT_GUIDE.md). URL imports report **observed scope** and cannot
@@ -209,7 +266,8 @@ menu, actual transition and scroll state; inspect assets/partial issues against
 the source. Exercise text, style and geometry editing, history, local prototype
 navigation and Save in the actual canvas. Stop it and start a fresh `open`, with
 the source unavailable, then confirm saved edits and local assets. Report the
-working URL, private directory, actual page/state/flow counts and unresolved
+working URL, durable private directory, recovery ID, portable backup location,
+actual page/state/flow counts and unresolved
 worklist/access/fidelity blockers. Record public proof only with synthetic data.
 
 Package maintenance runs `npm run test:import`; `npm run test:onboarding` repeats

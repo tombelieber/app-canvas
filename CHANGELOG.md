@@ -1,5 +1,14 @@
 # App Canvas
 
+## Unreleased
+
+- Keep URL projects in an independent private library by default, checkpoint
+  capture/assets/links/Save outside disposable checkouts, and provide project
+  discovery, recovery and portable backups. Preserve explicit repository paths
+  and existing project files; require acknowledgement for disposable output.
+- Recover interrupted writes without silently replacing a newer checkpoint,
+  retain full documents/resources/undo/redo, and expire interrupted writer locks.
+
 ## 0.14.0
 
 - Keep deployment environment independent from usage audience across CLI, viewer, demo and landing telemetry. Preserve legacy unknown values and explicit qualification traffic.

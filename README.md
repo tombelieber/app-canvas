@@ -29,7 +29,10 @@ existing authorized browser through the packaged DOM reader, or the dedicated
 capture browser. No Figma account or model API key is required by the package.
 See the [desktop URL import guide](docs/url-import.md) for commands, sign-in,
 privacy, editing and fidelity limits. Available in v0.13.0 with the matching CLI and skill. Source-backed and native workflows keep their existing
-complete-population contracts.
+complete-population contracts. URL projects default to an independent private
+library; `projects`, `recover` and `backup` provide discovery, recovery and
+portable copies in revisions supporting durable storage. See the guide for
+explicit repository ownership and disposable-path acknowledgement.
 
 ## Give this to your coding agent
 

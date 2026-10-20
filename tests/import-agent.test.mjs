@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -11,7 +12,7 @@ const snapshot = (path = "/calendar") => {
   const doc = documentFixture();
   return { version: 1, url: `https://example.test${path}`, redacted: false, rendered: { ...doc, baseUrl: "https://example.test/", families: [], embeddedStyles: [], title: "Calendar" }, resources: [] };
 };
-const project = async fn => { const root = await mkdtemp(join(tmpdir(), "canvas-agent-")); try { const directory = join(root, "project"); await createAgentProject({ directory, url: "https://example.test/calendar?private=removed" }); await fn(directory); } finally { await rm(root, { recursive: true, force: true }); } };
+const project = async fn => { const root = await mkdtemp(join(tmpdir(), "canvas-agent-")); try { const directory = join(root, "project"); await createAgentProject({ directory, allowEphemeral: true, url: "https://example.test/calendar?private=removed" }); await fn(directory); } finally { await rm(root, { recursive: true, force: true }); } };
 
 test("agent ingest retains saved edits, separates observations and reference edges", () => project(async directory => {
   const first = await ingestSnapshot({ directory, snapshot: snapshot(), label: "Calendar" });

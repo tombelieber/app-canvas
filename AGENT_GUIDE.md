@@ -19,7 +19,10 @@ For a website URL and editable captured landscape, follow the separate
 `capture`, `status`, `link` and `open`. App Canvas + the agent support an existing
 authorized browser or a dedicated capture browser. Resolve the accessible
 worklist, review fidelity, edit, Save and verify a fresh offline reopen. Keep
-app-specific captures and trials private. Imports report observed scope and
+app-specific captures and trials private. Require the durable-storage commands
+`projects`, `backup`, `recover` and `--allow-ephemeral`; omit `--out` to use the
+independent private library, preserve explicit repository-owned paths, and verify
+a portable backup before handover. Imports report observed scope and
 cannot pass the source completeness gates below.
 
 ## The outcome

@@ -31,6 +31,7 @@ const { values, positionals } = parseArgs({
     to: { type: "string" },
     redacted: { type: "boolean" },
     "allow-text": { type: "string" },
+    "allow-ephemeral": { type: "boolean" },
   },
 });
 if (values.version) {
@@ -42,12 +43,12 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> --out <new-private-directory> [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> --out <new-private-directory> --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> [--out <new-private-directory>] --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas projects\napp-canvas recover <recovery-id> [--out <new-directory>]\napp-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
   );
   process.exit(0);
 }
 const telemetryCommand = positionals[0] === "telemetry";
-const trackable = !values.check && !values.verify && !values.complete && !values["ui-complete"] && !["browsers", "discover", "pending", "export", "plan", "status", "guide", "populate", "import", "open", "capture-script", "capture", "link"].includes(positionals[0]);
+const trackable = !values.check && !values.verify && !values.complete && !values["ui-complete"] && !["browsers", "discover", "pending", "export", "plan", "status", "guide", "populate", "import", "open", "capture-script", "capture", "link", "projects", "recover", "backup"].includes(positionals[0]);
 let telemetry;
 if (trackable) {
   const { createTelemetry } = await import("../lib/telemetry.mjs");
@@ -84,7 +85,7 @@ if (positionals[0] === "browsers") {
 }
 let app;
 try {
-  if (["capture-script", "capture", "link"].includes(positionals[0]) || positionals[0] === "status" && positionals.length > 1 || positionals[0] === "import" && values.agent) {
+  if (["capture-script", "capture", "link", "projects", "recover", "backup"].includes(positionals[0]) || positionals[0] === "status" && positionals.length > 1 || positionals[0] === "import" && values.agent) {
     const { runAgentCommand } = await import("../lib/import/agent-cli.mjs");
     console.log(JSON.stringify(await runAgentCommand(positionals, values)));
   } else if (["import", "open"].includes(positionals[0])) {

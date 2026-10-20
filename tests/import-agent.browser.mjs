@@ -1,7 +1,8 @@
+import "./fixtures/import-storage.mjs";
 import assert from "node:assert/strict";
 import { spawn, execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,8 +21,14 @@ const start = directory => new Promise((resolve, reject) => {
 });
 const stop = () => new Promise(resolve => { if (!child || child.exitCode !== null) return resolve(); child.once("exit", resolve); child.kill("SIGTERM"); });
 try {
-  const directory = join(root, "project"), reader = join(root, "reader.js"), input = join(root, "snapshot.json");
-  const created = await run(["import", `${site.url}/calendar`, "--out", directory, "--agent"]);
+  const repo = join(root, "repository"), worktree = join(root, "worktree");
+  await mkdir(repo); await exec("git", ["init", repo]);
+  await writeFile(join(repo, ".gitignore"), ".artifacts/\n");
+  await exec("git", ["-C", repo, "add", ".gitignore"]);
+  await exec("git", ["-C", repo, "-c", "user.name=Synthetic Test", "-c", "user.email=fixture@example.test", "commit", "-m", "fixture"]);
+  await exec("git", ["-C", repo, "worktree", "add", "--detach", worktree]);
+  const directory = join(worktree, ".artifacts", "targets", "reference"), reader = join(root, "reader.js"), input = join(root, "snapshot.json");
+  const created = await run(["import", `${site.url}/calendar`, "--out", directory, "--allow-ephemeral", "--agent"]);
   assert.equal(created.coverage, "observed");
   await run(["capture-script", "--out", reader]); const script = await readFile(reader, "utf8");
   browser = await chromium.launch(); source = await browser.newPage({ viewport: { width: 1600, height: 900 } });
@@ -82,7 +89,18 @@ try {
   await page.getByLabel("Text content", { exact: true }).fill("Saved agent landscape");
   await page.getByRole("button", { name: "Apply text", exact: true }).click(); await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.getByText("Saved", { exact: true }).waitFor(); assert.equal(outside, 0);
-  await stop(); await page.unroute("**/*"); const reopened = await start(directory);
+  const saved = JSON.parse(await readFile(join(directory, "project.json")));
+  const assetBytes = await Promise.all(saved.assets.map(asset => readFile(join(directory, "assets", asset.id))));
+  const backup = await run(["backup", directory, "--out", join(root, "portable"), "--allow-ephemeral"]);
+  assert.deepEqual(JSON.parse(await readFile(join(backup.directory, "project.json"))), saved);
+  const exited = new Promise(resolve => child.once("exit", resolve)); child.kill("SIGKILL"); await exited;
+  await exec("git", ["-C", repo, "worktree", "remove", "--force", worktree]);
+  const library = await run(["projects"]);
+  assert.ok(library.projects.some(project => project.recoveryId === created.storage.recoveryId));
+  const restored = await run(["recover", created.storage.recoveryId]);
+  assert.deepEqual(JSON.parse(await readFile(join(restored.directory, "project.json"))), saved);
+  for (const [i, asset] of saved.assets.entries()) assert.deepEqual(await readFile(join(restored.directory, "assets", asset.id)), assetBytes[i]);
+  await page.unroute("**/*"); const reopened = await start(restored.directory);
   await page.route("**/*", route => { if (!route.request().url().startsWith(reopened)) { outside++; return route.abort(); } return route.continue(); });
   await page.goto(reopened); await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page.frameLocator("iframe[data-import-editor]").getByText("Saved agent landscape", { exact: true }).waitFor();
@@ -95,5 +113,5 @@ try {
   await page.locator(".import-states button.active").filter({ hasText: "Filter menu" }).waitFor();
   await page.frameLocator("iframe[data-import-editor]").getByRole("button", { name: "Published", exact: true }).waitFor();
   assert.equal((await page.locator("iframe").count()), 2, "bounded overview + active editor");
-  console.log("PASS agent CLI → portable DOM reader → 5 states / observed + reference flows → local image/font assets → edit/Save → stop source + fresh offline reopen; private surfaces paused and allowlist masks before transport.");
+  console.log("PASS agent CLI → portable DOM reader → 5 states / observed + reference flows → local image/font assets → edit/Save → SIGKILL → Git worktree removal → CLI recovery + offline reopen with identical metadata/image/font assets; private surfaces paused and allowlist masks before transport.");
 } finally { await stop(); await source?.close(); await browser?.close(); if (!siteClosed) await site.close(); await rm(root, { recursive: true, force: true }); }

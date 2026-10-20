@@ -1,9 +1,11 @@
+import "./fixtures/import-storage.mjs";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, execFile } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import { chromium } from "playwright";
 import { startImportSite } from "./fixtures/import-site.mjs";
 const root = await mkdtemp(join(tmpdir(), "app-canvas-import-e2e-")), site = await startImportSite();
@@ -18,7 +20,10 @@ const start = args => new Promise((resolve, reject) => {
 });
 const stop = () => new Promise(resolve => { if (!child || child.exitCode !== null) return resolve(); child.once("exit", resolve); child.kill("SIGTERM"); });
 try {
-  const directory = join(root, "project"), address = await start(["import", `${site.url}/calendar`, "--out", directory, "--headless", "--no-record"]);
+  const address = await start(["import", `${site.url}/calendar`, "--headless", "--no-record"]);
+  const { projects } = JSON.parse((await promisify(execFile)(process.execPath, [cli, "projects"])).stdout);
+  const directory = projects.at(-1).directory;
+  assert.ok(directory.startsWith(join(process.env.APP_CANVAS_HOME, "projects")));
   browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
   await page.goto(address); await page.getByText("Content calendar", { exact: true }).first().waitFor();
   await page.frameLocator("iframe[data-overview]").locator('[data-visible="true"][data-ready="true"]').waitFor({ state: "visible", timeout: 5000 });

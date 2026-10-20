@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp, rm} from 'node:fs/promises';
@@ -9,7 +10,7 @@ import {captureFixture} from './fixtures/import-model.mjs';
 
 test('HTTP state never mixes new capture metadata with an older materialized snapshot', async t => {
   const root=await mkdtemp(join(tmpdir(),'canvas-state-revision-'));
-  const store=await createStore(join(root,'project'),{create:true}); let inject=true;
+  const store=await createStore(join(root,'project'),{create:true,allowEphemeral:true}); let inject=true;
   const wrapped={...store, async read() {
     const state=await store.read();
     if(inject){inject=false;await store.capture(captureFixture());}
@@ -27,7 +28,7 @@ test('HTTP state never mixes new capture metadata with an older materialized sna
 
 test('materialized snapshots keep immutable base metadata across save and capture', async t => {
   const root=await mkdtemp(join(tmpdir(),'canvas-state-base-'));t.after(()=>rm(root,{recursive:true,force:true}));
-  const store=await createStore(join(root,'project'),{create:true});
+  const store=await createStore(join(root,'project'),{create:true,allowEphemeral:true});
   let current=await store.capture(captureFixture()); const id=current.project.screens[0].id;
   current=await store.save({expectedRevision:current.project.revision,history:[{type:'duplicateScreen',screenId:id,newId:'alternative',value:'Design alternative'}],cursor:1});
   assert.equal(current.baseProject.screens.length,1);assert.equal(current.project.screens.length,2);

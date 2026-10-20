@@ -13,7 +13,10 @@ For a website URL, read [references/url-import.md](references/url-import.md)
 and use its desktop capture/edit/save/reopen contract. URL imports report
 observed scope; the source completeness requirements below remain unchanged for
 repository population. The URL workflow requires v0.13.0 or later: verify the CLI supports
-`import`, `capture-script`, `capture`, `status`, `link` and `open` instead of assuming the published pin has it. App Canvas + the agent form the URL workflow; prefer the user-authorized browser without moving its session.
+`import`, `capture-script`, `capture`, `status`, `link` and `open` instead of assuming the published pin has it. Durable URL projects also require
+`projects`, `backup`, `recover` and `--allow-ephemeral`; omit `--out` for the
+independent private library, and preserve explicit repository-owned paths. Never
+place long-running project data in disposable ignored artifacts by default. App Canvas + the agent form the URL workflow; prefer the user-authorized browser without moving its session.
 
 ## Required completion contract
 

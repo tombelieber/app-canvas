@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, writeFile, symlink, mkdir, rm, readdir } from "node:fs/promises";
@@ -8,7 +9,7 @@ const { createStore } = await import("../lib/import/store.mjs").catch(() => ({})
 async function setup(t) {
   assert.equal(typeof createStore, "function", "atomic import store must exist");
   const root = await mkdtemp(join(tmpdir(), "app-canvas-import-test-")); t.after(() => rm(root, { recursive: true, force: true }));
-  const path = join(root, "project"), store = await createStore(path, { create: true }); return { root, path, store };
+  const path = join(root, "project"), store = await createStore(path, { create: true, allowEphemeral: true }); return { root, path, store };
 }
 test("capture, edit save and reopen preserve history and reject stale writers", async t => {
   const { path, store } = await setup(t);
@@ -21,7 +22,7 @@ test("capture, edit save and reopen preserve history and reject stale writers", 
   assert.equal(reopened.project.history.length, 1);
   await assert.rejects(() => store.save({ expectedRevision: saved.project.revision, history: [], cursor: 0 }), /revision|conflict/i);
   assert.equal(JSON.parse(await readFile(join(path, "project.json"))).history.length, 1);
-  await assert.rejects(() => createStore(path, { create: true }), /exist/i);
+  await assert.rejects(() => createStore(path, { create: true, allowEphemeral: true }), /exist/i);
 });
 test("duplicate captures keep observations without inventing transitions", async t => {
   const { store } = await setup(t);

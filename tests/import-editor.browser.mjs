@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import assert from "node:assert/strict";
 import { mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -11,7 +12,7 @@ const root = await mkdtemp(join(tmpdir(), "app-canvas-editor-")), site = await s
 let session, app, browser;
 try {
   const directory = join(root, "project");
-  session = await startCaptureSession({ url: `${site.url}/calendar`, directory, headless: true, record: false }); await session.ready;
+  session = await startCaptureSession({ allowEphemeral: true, url: `${site.url}/calendar`, directory, headless: true, record: false }); await session.ready;
   await session.page.getByRole("button", { name: "All posts", exact: true }).click(); await session.capture("Status menu");
   await session.page.getByRole("button", { name: "Published", exact: true }).click(); await session.capture("Published state");
   await session.page.getByRole("link", { name: "Settings", exact: true }).click(); await session.capture("Settings page");

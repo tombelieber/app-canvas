@@ -42,7 +42,7 @@ try {
   await exec(process.execPath, [fileURLToPath(new URL("./population.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   await exec(process.execPath, [fileURLToPath(new URL("./import.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   await exec(process.execPath, [fileURLToPath(new URL("./import-agent.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
-  const agentExports = "import {captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates} from '@tombelieber/app-canvas/import'; console.log([captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates].every(x=>typeof x==='function'));";
+  const agentExports = "import {captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject} from '@tombelieber/app-canvas/import'; console.log([captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject].every(x=>typeof x==='function'));";
   assert.equal((await exec(process.execPath, ["--input-type=module", "-e", agentExports], { cwd: project })).stdout.trim(), "true");
   const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
   assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /8 source inventory items mapped/);

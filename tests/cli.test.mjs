@@ -1,3 +1,4 @@
+import "./fixtures/import-storage.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
@@ -84,7 +85,7 @@ test('desktop project status and source UI worklist status keep separate CLI pat
   const root = await mkdtemp(join(tmpdir(), 'app-canvas-dual-status-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const project = join(root, 'desktop');
-  await exec(process.execPath, [cli, 'import', 'https://example.test/overview', '--agent', '--out', project]);
+  await exec(process.execPath, [cli, 'import', 'https://example.test/overview', '--agent', '--out', project, '--allow-ephemeral']);
   const status = JSON.parse((await exec(process.execPath, [cli, 'status', project])).stdout);
   assert.equal(status.coverage, 'observed'); assert.equal(status.states, 0);
   await assert.rejects(() => exec(process.execPath, [cli, 'status', project, '--inventory', 'ambiguous.json']), error => /Unsupported --inventory/.test(error.stderr));
