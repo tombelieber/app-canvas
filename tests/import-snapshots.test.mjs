@@ -34,3 +34,13 @@ test('writes wait for in-flight reads, serialize, and recover after failed write
   await assert.rejects(cache.update(async()=>{throw Error('Write rejected');}),/rejected/);
   assert.equal((await cache.refresh()).project.revision,3);
 });
+
+test('a source change during an older read is delivered once after that read', async () => {
+  const entered=deferred(),finish=deferred();let revision=1,reads=0;
+  const cache=snapshotCache({metadata:async()=>({revision}),read:async()=>{reads++;const observed=revision;entered.resolve();await finish.promise;return {project:{revision:observed}};}});
+  const first=cache.refresh();await entered.promise;revision=2;
+  const changed=cache.changed(),second=cache.changed();finish.resolve();
+  assert.equal((await first).project.revision,1);
+  const results=await Promise.all([changed,second]);assert.equal(results[0].project.revision,2);assert.equal(results[0],results[1]);
+  assert.equal(reads,2,'one materialized load per actual revision');
+});
