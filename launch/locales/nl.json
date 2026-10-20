@@ -41,11 +41,11 @@
   "steps": [
     [
       "Installeer het gedeelde gereedschap",
-      "Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid."
+      "Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid. Gebruik tot de release van v0.13.0 een gekwalificeerde ontwikkelcommit voor deze UI-opdrachten."
     ],
     [
       "Inventariseer vóór je cases kiest",
-      "Voer discover uit op de volledige app-root. De agent bekijkt elke bronregio en kandidaat, lost pending op en inventariseert semantische toestanden onafhankelijk van de catalog. Blokkades blijven zichtbaar."
+      "Voer plan uit op de hele oorspronkelijke repository. Controleer elk bestand, UI-anker, relevante afhankelijkheid en de echte navigatie. Inventariseer schermen en toestanden onafhankelijk van de catalogus; houd onopgeloste UI zichtbaar."
     ],
     [
       "Render de oorspronkelijke UI met fixtures",
@@ -53,7 +53,7 @@
     ],
     [
       "Verifieer toestanden en interacties",
-      "Neem normaal, leeg, laden, fouten, toegang geweigerd, dialogen en herstel op. Controleer elke case en echte bediening in doorlopende flows. Vergelijk inventory, brongebonden assertions en routes; slaag voor --complete op dezelfde root."
+      "Neem normaal, leeg, laden, fouten, toegang geweigerd, dialogen en herstel op. Controleer elke case en echte bediening in doorlopende flows. Vergelijk inventory, brongebonden assertions en routes; slaag voor --ui-complete op dezelfde root. --complete blijft een afzonderlijke strikte audit van alle broncode. Open auditpunten zijn geen aantal ontbrekende schermen."
     ],
     [
       "Beoordeel en onderhoud vanuit de code",

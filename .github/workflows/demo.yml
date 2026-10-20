@@ -29,7 +29,7 @@ jobs:
       - run: npm run test:queue && npm run test:file && node tests/action-focus.browser.mjs && npm run test:demo && npm run test:demo-controls
       - run: npm run test:native-overview && APP_CANVAS_TEST_NATIVE_ATLAS=1 npm run test:demo-controls
       - run: npm run test:touch && xvfb-run -a env APP_CANVAS_HEADED=1 npm run test:tablet
-      - run: npm run test:import
+      - run: npm run test:import && npm run test:grouping
       - run: npm run test:onboarding
       - run: npm run test:population
       # test:tablet already runs shared-preview and all 480 zoom samples on a rendered display.

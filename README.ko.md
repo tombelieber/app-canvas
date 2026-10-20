@@ -44,25 +44,25 @@ Browse는 이동 중 컨트롤을 잠급니다. 화면을 선택하고 Interact�
 ### 코딩 에이전트에 붙여 넣기
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 공유 도구 설치
 
-Node.js 22+와 프로젝트의 패키지 관리자 및 lockfile을 사용합니다. 고정한 GitHub 릴리스와 브라우저를 설치하세요. npm 12가 이 직접 Git 의존성을 차단할 때만 --allow-git=root를 추가하고 전역 정책은 바꾸지 마세요.
+Node.js 22+와 프로젝트의 패키지 관리자 및 lockfile을 사용합니다. 고정한 GitHub 릴리스와 브라우저를 설치하세요. npm 12가 이 직접 Git 의존성을 차단할 때만 --allow-git=root를 추가하고 전역 정책은 바꾸지 마세요. v0.13.0 출시 전에는 이 UI 제공 명령에 검증된 개발 커밋을 사용하세요.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.12.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 ```
 
 ### 2. 케이스 선택 전에 소스 조사
 
-전체 앱 루트에서 discover를 실행합니다. 에이전트는 모든 소스 영역과 후보를 검토하고 pending을 해결하며 catalog와 독립적으로 의미 있는 상태를 열거합니다. 미해결 문제는 그대로 표시합니다.
+원래 앱 저장소 전체에서 plan을 실행합니다. 모든 파일과 UI 앵커, UI에 영향을 주는 의존성, 실제 탐색을 검토하고 카탈로그와 독립적으로 화면과 상태를 열거합니다. 미해결 UI는 남겨 둡니다.
 
 ```sh
-npx app-canvas discover --source-root . --out .artifacts/app-canvas/inventory.json
-npx app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx app-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. Fixtures로 원래 UI 렌더링
@@ -71,12 +71,10 @@ ui-review에 config, catalog, 합성 fixtures, preview entry, 검증 가능한 j
 
 ### 4. 상태와 상호작용 검증
 
-정상, 빈 화면, 로딩, 오류, 접근 거부, 대화상자, 복구를 포함합니다. 각 케이스와 연속 흐름의 실제 컨트롤을 검증하세요. Inventory, 소스와 연결된 assertions, routes를 대조하고 같은 루트에서 --complete를 통과합니다.
+정상, 빈 화면, 로딩, 오류, 접근 거부, 대화상자, 복구를 포함합니다. 각 케이스와 연속 흐름의 실제 컨트롤을 검증하세요. Inventory, 소스와 연결된 assertions, routes를 대조하고 같은 루트에서 --ui-complete를 통과합니다. --complete는 별도의 엄격한 전체 소스 감사입니다. 감사 잔여 건수는 누락 화면 수가 아닙니다.
 
 ```sh
-npx app-canvas --config ui-review/canvas.config.mjs --check
-npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas --config ui-review/canvas.config.mjs --complete --source-root .
+npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. 소스에서 검토하고 유지
@@ -92,7 +90,7 @@ npm run ui:review
 
 공유 패키지는 viewer, CLI, skill을 관리합니다. 각 저장소는 adapter, fixtures, 독립 inventory, catalog, 상호작용 검증을 관리합니다. 실행 가능한 React/Vite 예제로 시작하고 다른 스택에는 전용 adapter를 사용하세요.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.13.0/examples/react-vite)
 
 ### 선택 사항인 Agent Skill
 

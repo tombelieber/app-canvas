@@ -1,4 +1,9 @@
-# Source walkthrough and population acceptance
+# Strict all-source audit (`--complete`)
+
+This stricter audit is separate from [UI landscape delivery](completion.md). Its
+existing `--complete` requirements remain unchanged. Audit-only internal code
+checks are not automatically missing screens; do not weaken them or report
+a UI gate pass as an all-source audit pass. When requested, finish this work too.
 
 Start before choosing convenient canvas cases:
 
@@ -25,6 +30,16 @@ semantic state inventory. JavaScript/TypeScript use the TypeScript parser;
 other source uses conservative lexical candidates. Enumerate additional states
 in `items`, including database/remote content IDs and justified boundaries.
 Opaque or unresolved dependencies remain blockers until inspected.
+
+UIKit toolbar/bar-item construction and `inputAccessoryView` attachment receive
+explicit worklist entries, including Objective-C message and property syntax.
+Trace their object lifetime as well as their source location. An accessory can
+be nil during first render and become a real toolbar when a field is regenerated
+after navigation or retry. Inspect first entry and the reachable reused-controller
+path; map the visibly attached accessory, its real controls and dismissal state.
+Allocation, an unattached object or the initial nil value does not establish
+coverage of the later visible state. These lexical entries remain prompts for
+source-driven inspection, not an exhaustive lifecycle or UI-state analysis.
 
 Add one review per generated obligation:
 
@@ -63,6 +78,16 @@ container as non-rendering: it declares no resources. Keep its file, region and
 element obligations and give each a specific source-based non-UI explanation.
 Attributes, active children, other directories and opaque XML retain their UI
 review requirements; a recorded annotation cannot override fresh source.
+
+For ordinary Android resource selection, fresh discovery can also identify a
+version-only XML alternative that shadows a lower/default resource throughout
+the module's literal minimum SDK range. This is limited to same-name drawable,
+color, anim and animator XML under `src/main/res`, without additional qualifiers
+or declared source-set overrides. The source build and replacement hashes remain
+attached to the old tags. Keep every old file/region/element review; the selected
+alternative still requires real UI evidence. Values entries, opaque SDK bounds,
+other qualifiers and direct loading of a specific resource file need separate
+source/runtime proof. See [Android resource selection](https://developer.android.com/guide/topics/resources/providing-resources#BestMatch).
 
 Fresh discovery may also mark a narrowly recognized canonical Objective-C
 initializer outcome `nonRenderingOutcome`: a nil return constructs no own UI,

@@ -91,9 +91,12 @@ Bound native runtime concurrency and close task-owned processes after the batch.
 Reconcile the entire independent inventory, including all implemented native
 branches, against captures and native assertions. Native state/provenance
 failures must fail the project's verification command. Connect that command
-to the adapter's `verify` hook and return the source-linked native records
-required by the [source walkthrough](source-audit.md). Final acceptance uses
-`--complete`; image existence and viewer-only checks cannot satisfy it. Deliver
+to the adapter's `verifyUi` hook and return the state/transition-linked native
+records required by the [population workflow](population.md). Use the separate
+`verify` / [source walkthrough](source-audit.md) contract for strict audit. UI acceptance uses
+`--ui-complete` (and the unchanged `--complete` when all-source audit is requested); image existence and viewer-only checks cannot satisfy either gate. Deliver
 the working populated canvas and separate viewer/native results. Report actual
 blockers without marking the full population complete, and continue all work
 that does not depend on them.
+
+Use the [population workflow](population.md) to share builds, plan exact equivalent captures and lease device actors. Prioritize the supported phone targets; inspect tablet-specific source and capture only distinct implemented tablet layouts. State, control, error and object-lifetime differences must survive deduplication.

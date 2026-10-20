@@ -1,6 +1,6 @@
 {
   "name": "@tombelieber/app-canvas",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "An interactive overview of real application screens, states and flows.",
   "type": "module",
   "license": "MIT",
@@ -16,7 +16,8 @@
     "./preview": "./lib/preview.js",
     "./inventory": "./lib/inventory.mjs",
     "./routes": "./lib/routes.mjs",
-    "./import": "./lib/import/agent.mjs"
+    "./import": "./lib/import/agent.mjs",
+    "./population": "./lib/populate.mjs"
   },
   "files": [
     "bin/",
@@ -32,6 +33,7 @@
     "docs/*.png",
     "docs/*.jpg",
     "docs/*.md",
+    "docs/ui-delivery-benchmark.json",
     "AGENT_GUIDE.md"
   ],
   "scripts": {
@@ -72,7 +74,8 @@
     "test:readiness": "node tests/readiness.browser.mjs",
     "test:i18n": "node tests/i18n.browser.mjs",
     "test:telemetry": "node tests/telemetry.browser.mjs",
-    "test:waitlist": "node tests/waitlist-runtime.mjs"
+    "test:waitlist": "node tests/waitlist-runtime.mjs",
+    "test:grouping": "node tests/grouping.browser.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -83,6 +86,7 @@
     "css-tree": "3.2.1",
     "esbuild": "^0.28.2",
     "playwright": "^1.64.1",
+    "proper-lockfile": "4.1.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "typescript": "5.9.3"

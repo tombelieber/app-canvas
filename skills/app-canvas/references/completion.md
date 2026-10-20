@@ -1,138 +1,104 @@
-# Complete population contract
+# Complete UI landscape delivery
 
-Read this before installing or populating App Canvas. The coding agent owns the
-whole integration. The user's default request is one installation followed by a
-populated landscape; it does not require them to list screens, write stories,
-prepare fixtures or repeatedly ask the agent to continue.
+The user supplies a repository. Deliver one working overview of everything the
+app can visibly do, grouped by real page/feature and connected by named flows.
+Own discovery, fixtures, original-runtime rendering, population and verification.
+Do not ask the user to list screens, write stories or keep saying “continue”.
+A few representative screens are an intermediate result.
 
-## Discover independently, then reconcile
+## Discover before capturing
 
-Inspect the whole first-party UI surface before selecting convenient examples.
-Inventory entry points, navigation/redirects, screens, shared components,
-dialogs/overlays, conditional rendering, state models, permissions, feature
-flags, responsive/platform layouts and content-driven UI. Follow imports and
-resource/metadata references beyond the initial UI folder. Cross-check code
-discovery against actual app navigation and existing stories/tests/resources;
-record unresolved dynamic destinations as blockers. A controller count or list
-of routes alone is not the state denominator.
+Run `app-canvas guide` from the installed package to use matching instructions,
+then `plan --source-root <original-repository> --out <new-ui-inventory.json>`.
+Inspect the whole first-party repository: entry points, imports, navigation,
+controllers, resources, state inputs, permissions, feature flags and content.
+Cross-check the source against runtime navigation and existing stories/tests.
+Inspect every file; follow UI dependencies beyond the initial UI folder. The
+worklist is independent of the catalog. Its syntax anchors are inspection
+prompts, not an exhaustive semantic state enumerator. An unknown dynamic
+route/condition remains an unresolved UI blocker, never a support-file waiver.
 
-Record stable item IDs, kind, source paths plus symbols/locations, implemented
-condition, applicable platform/layout and eventual canvas case IDs. Inspect all
-implemented finite UI branches. For continuous inputs or repeated content,
-record visually equivalent classes and boundary conditions with their source
-justification; enumerate all content IDs without duplicating identical layouts.
-Different outcomes, error messages, layouts or controls are distinct states.
-Do not silently replace a feature family with one representative screen.
+Enumerate implemented finite visible states: populated/empty, loading, distinct
+errors and recovery, denied, forms, overlays, media/download/update states and
+completion. Follow first entry, back/retry and reused controller lifetimes;
+a late attached keyboard accessory is a state even when it was initially nil.
+Keep distinct outcomes, controls, layouts and messages. Shared components may
+map to containing screens when every distinct variant is visible there.
 
-Scope comes from the user's repository and requested platforms. The agent must
-discover it, not ask the user to enumerate it. Explain source-root choices and
-non-UI classifications in `ui-review/README.md`. An unreachable declaration can
-be classified using source evidence; inconvenience, missing credentials, old
-code or rendering difficulty cannot justify exclusion. A smaller pilot needs
-an explicit user request. Discovery uncertainty remains visible and incomplete.
+Use the app's actual platform targets. Start with supported phones; add tablet
+cases only for distinct implemented tablet layouts/behavior. Do not multiply
+all cases by every resolution or invent iPad support. Treat screen size as a
+variant under the page/feature. Enumerate repeated content IDs and validate
+content/boundaries without duplicating the same UI/flow per record. Do not
+collapse meaningful user-visible differences.
 
-## Populate and keep working
+## Populate autonomously
 
-Create missing dependency injection, fixture data, preview entries or native
-harnesses. Render original code with local synthetic dependencies. Preserve
-the app's real authorization and business behavior. Inspect every output for
-the intended condition, full layout, assets and source correspondence. Loading
-states need controlled pending dependencies; fast APIs are not an excuse to
-omit them. A component may map to its containing screen when the required
-variant is visible and checked; it need not have a duplicate standalone card.
+Create missing harnesses/fixtures at existing dependency boundaries and render
+original UI. Fixtures supply data, identity, pending/failure outcomes and
+isolated mutations, never duplicate screen markup. Keep external requests
+blocked and production sessions/data/providers out. Native captures follow
+[native.md](native.md), including source/build provenance and real device
+interaction evidence. A screenshot viewer's buttons are not native controls.
 
-Maintain a durable pending list in the inventory. After a batch, process the
-remaining items without asking "continue?". Check installed tool/version/API
-support and resolve ordinary build issues yourself. Stop dependent work only
-for an actual unavailable credential/device, unauthorized external action,
-destructive data change, irreconcilable user-owned changes or product decision;
-continue independent items. A blocker report is an incomplete handover, never
-permission to drop the item or announce completion. Context limits and the
-first successful screens are not stopping conditions.
+Use the durable [population workflow](population.md): plan exact equivalent
+captures before device work, union read-only observations, build once per
+changed input and resume from checkpoints. One actor owns each device and
+project writer. Avoid competing chats or repeated builds/captures for evidence
+labels alone. Continue independent work after a genuine blocker. Fix a failed
+cause before retrying; do not loop on an unchanged error.
 
-## Machine-checked inventory
+Declare `pages` from actual navigation and `pageId`/`feature` on every case.
+Keep an overview of the whole app, with page → feature → state navigation;
+size/platform are secondary variants. Reuse the viewer's group/depth filters
+and bounded preview pools. Preserve original DOM, Demo/Play, clickable flow
+links, retained drafts and isolated reset.
+New UI deliveries above 128 cases open at page/feature depth; above 128 features
+they open at page depth. “All states”, search and links still reveal every case.
+Existing integrations keep their starting view. This is a browsing default,
+not a reduction in population, graph or evidence coverage. Draw `condition`/`reference` links
+for seeded variants; label actual user actions and recoveries separately.
+Author checked case journeys and continuing action/recovery journeys. A drawn
+edge alone is not interaction evidence.
 
-Full population requires the generated **version 2** worklist and `--complete`:
-follow the [source walkthrough](source-audit.md). `discover` supplies `files`,
-`obligations` and `sourceRoot`; `reviews` resolve each obligation into semantic
-items or a specific non-UI explanation. Process every region and candidate.
-The version 1 schema below remains compatible for construction/legacy checks,
-but cannot pass full-population acceptance.
+## UI gate and strict source audit are separate
 
-Use an installed tool revision that exports `@tombelieber/app-canvas/inventory`.
-Pin that verified commit and lockfile. An older CLI must be updated rather than
-silently omitting the gate. The fingerprint helper scans declared files and
-directories; the agent supplies semantic discovery separately.
+Configure `uiCoverage: { inventory: 'ui-review/ui-inventory.json' }` and
+`coverage: { requireAllCases: true, requireConnected: true }`. Follow the
+inventory schema and original-runtime `verifyUi` proof in [population.md](population.md).
+Run `--ui-complete --source-root <original-repository>` for UI delivery, or
+`populate` for resumable preparation followed by the same fresh gate.
 
-```js
-import { inventorySources } from '@tombelieber/app-canvas/inventory';
-const files = await inventorySources(process.cwd(), ['src/ui', 'src/router.tsx']);
-// Inspect every file and its conditions before writing files + items to JSON.
-```
+UI delivery requires every file inspected, every discovered UI anchor bound,
+every semantic state rendered and checked, actual grouping, connected cases,
+and checked transitions. Omitted source UI cannot disappear merely because it
+was left out of both the inventory and catalog. New/changed source invalidates
+the snapshot. Never blindly refresh hashes, delete difficult states, narrow the
+source root or label rendering source “support” to pass. Inspect each rendered
+state for its distinguishing condition, assets, long content and layout.
 
-```js
-// canvas.config.mjs: required at final handover, in addition to routeCoverage
-coverage: { requireSourceInventory: true, requireAllCases: true, requireConnected: true },
-sourceCoverage: {
-  roots: ['src/ui', 'src/router.tsx'], // all actual UI owners + relevant resources
-  inventory: 'ui-review/inventory.json',
-},
-```
+`--complete` retains its existing stricter **all-source audit** contract:
+[source-audit.md](source-audit.md). It still requires every generated region,
+predicate and obligation reviewed, with obligation-linked runtime evidence.
+An internal telemetry branch may be audit work without being a new screen.
+Report audit pending separately from missing UI. Never turn a failed
+`--complete` into a pass by renaming it, relaxing its rules or reporting UI
+acceptance as source-audit acceptance. If the user requests both, finish both.
+Legacy version 1 source inventories remain construction checks only.
 
-`inventory.json` has this structure; `files` comes from the helper above:
+## Final delivery
 
-```json
-{
-  "version": 1,
-  "files": [{ "path": "src/ui/Login.tsx", "sha256": "<actual SHA-256>" }],
-  "items": [
-    {
-      "id": "login-denied",
-      "kind": "state",
-      "sources": ["src/ui/Login.tsx"],
-      "condition": "invalid credentials returns the implemented error",
-      "cases": ["login-denied"]
-    }
-  ]
-}
-```
+1. Reconcile the independent source/UI inventory and inspect every actual case.
+   Zero missing UI and zero unresolved UI suspects are required for UI delivery.
+2. Run the actual installed package path and original-runtime checks. Verify
+   Demo/Play, flow navigation, retained input, reset and platform/layout variants.
+3. Prove a state omitted from both inventory and catalog fails; prove source
+   drift and missing state/transition evidence fail. Restore and rerun the gate.
+4. Deliver the working URL, page/state counts, grouping, what the app can do,
+   refresh command and any genuine blockers. Keep source audit status separate.
 
-Kinds are `screen`, `component`, `state`, `variant` and `navigation`. Each item
-needs real source references and at least one existing case. Every catalog case
-must map back to an item. Each scanned file needs an item, or a specific
-`nonUiReason` on its file record when it contributes no UI. Keep non-UI reasons
-auditable; categorizing an inconvenient UI file as non-UI defeats the contract.
-A blocked item retains `cases: []` and a `blocker` explaining the actual missing
-dependency. It fails the final gate. A placeholder absence panel does not make
-the original UI rendered. During construction, keep the incomplete inventory
-on disk; activate the strict config when reconciling the final population.
-
-`--check` rejects missing mappings and new/modified/deleted source files in the
-declared roots. Reinspect changes before refreshing hashes. Watch those source
-roots and the inventory for refresh; never derive the denominator by merely
-copying the catalog, delete a difficult item, narrow roots, disable checks or
-blindly regenerate fingerprints to get green. The gate cannot prove the agent
-chose sufficient roots or discovered every branch: semantic cross-checking and
-output inspection remain required work.
-
-## Final gate and delivery
-
-1. Reconcile the source inventory against the complete catalog. Resolve every
-   pending UI item and inspect every rendered state, including layout/platform
-   variants and long/off-screen content. No unexplained omissions remain.
-2. Resolve the version 2 worklist. Run `--complete` and project-native
-   render/capture checks. Every case needs a distinguishing assertion; generic
-   "body exists" or "image exists" checks cannot establish its intended state.
-3. Demonstrate removing a state from both inventory and catalog still fails,
-   and a new/changed source fails the gate, then
-   restore them. Verify original-source edits refresh web UI or trigger native
-   rebuild/recapture; a stale screenshot cannot prove the current source.
-4. Deliver the working URL, discovered/rendered/pending counts by kind and
-   platform, source/build/content revisions, actual checks and refresh commands.
-   Zero unresolved required items is necessary to call population complete.
-   Viewer tests, native render tests and full app E2E are separate results;
-   unrelated production acceptance is not a canvas-population requirement.
-
-Do not stop at an installed CLI, an inventory document, a proposed adapter,
-representative screenshots or a passing self-selected catalog. Deliver the
-landscape the user asked the agent to populate.
+Do not stop at an installed tool, inventory report, proposed adapter, subset or
+passing self-selected catalog. A real unavailable credential/device, unauthorized
+external action, destructive data change, irreconcilable user-owned edit or
+product decision can block dependent work. Bundle only necessary questions;
+continue everything else. Context limits are not a completion condition.

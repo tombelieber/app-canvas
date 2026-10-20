@@ -44,25 +44,25 @@ Browse は操作をロックして移動を優先。画面を選び Interact を
 ### エージェントに貼り付ける指示
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Run --complete against the original source root. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 共通ツールを導入
 
-Node.js 22+ とプロジェクトのパッケージ管理・lockfile を使用。固定した GitHub リリースとブラウザをインストールします。npm 12 が直接 Git 依存を拒否する場合のみ --allow-git=root を追加。グローバル設定は変更しません。
+Node.js 22+ とプロジェクトのパッケージ管理・lockfile を使用。固定した GitHub リリースとブラウザをインストールします。npm 12 が直接 Git 依存を拒否する場合のみ --allow-git=root を追加。グローバル設定は変更しません。 v0.13.0 の公開までは、これらの UI 配信コマンドに検証済みの開発コミットを使用してください。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.12.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 ```
 
 ### 2. ケース選択の前に棚卸し
 
-アプリ全体のルートで discover を実行。エージェントは全ソース領域と候補を確認し、pending を解消。catalog とは独立して意味のある状態を列挙します。未解決の問題は残して明示します。
+元のアプリ全体で plan を実行します。全ファイルと UI アンカー、UI に影響する依存関係、実際のナビゲーションを確認し、カタログとは独立して画面と状態を列挙します。未解決の UI は残します。
 
 ```sh
-npx app-canvas discover --source-root . --out .artifacts/app-canvas/inventory.json
-npx app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx app-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. Fixtures で元の UI を描画
@@ -71,12 +71,10 @@ ui-review/canvas.config.mjs、catalog、合成 fixtures、preview entry、検証
 
 ### 4. 状態と操作を検証
 
-通常、空、読み込み、エラー、アクセス拒否、ダイアログ、復旧を網羅。全ケースを確認し、連続フローで実際のコントロールを操作。inventory、ソースに紐づく assertions、routes を照合し、同じルートで --complete を通します。
+通常、空、読み込み、エラー、アクセス拒否、ダイアログ、復旧を網羅。全ケースを確認し、連続フローで実際のコントロールを操作。inventory、ソースに紐づく assertions、routes を照合し、同じルートで --ui-complete を通します。 --complete は別の厳格な全ソース監査です。監査の残件数は不足画面数ではありません。
 
 ```sh
-npx app-canvas --config ui-review/canvas.config.mjs --check
-npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas --config ui-review/canvas.config.mjs --complete --source-root .
+npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. ソースからレビューと保守
@@ -92,7 +90,7 @@ npm run ui:review
 
 共通パッケージは viewer、CLI、skill を管理。各リポジトリは adapter、fixtures、独立 inventory、catalog、操作検証を管理します。動作する React/Vite 例を参考にし、他の構成には専用 adapter を用意します。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.12.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.12.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.13.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.13.0/examples/react-vite)
 
 ### 任意のエージェント Skill
 

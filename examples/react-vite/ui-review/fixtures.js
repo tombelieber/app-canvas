@@ -13,6 +13,7 @@ export function fixtureTransport(scenario) {
       const task = { id: crypto.randomUUID(), ...JSON.parse(options.body) }; tasks.push(task); return json(task, 201);
     }
     if (url.pathname === "/api/profile") {
+      if (scenario.id === "settings-loading") return new Promise(() => {});
       if (scenario.id === "settings-denied") return json({ error: "synthetic denial" }, 403);
       if (method === "PATCH") profile = { ...profile, ...JSON.parse(options.body) };
       return json(profile);

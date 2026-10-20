@@ -7,13 +7,13 @@ providers and data contracts. Do not copy these Tasks pages into your app.
 
 ```sh
 npm install
-npm install --save-dev github:tombelieber/app-canvas#v0.3.0
+npm install --save-dev github:tombelieber/app-canvas#v0.13.0
 npx app-canvas browsers
 npm run ui:review
 npm run test:ui:review
 ```
 
-The six cases cover both routes plus empty, loading, recoverable error and denied
+The eight cases cover both routes plus empty, loading, recoverable error, denied, pending profile and saved
 states. The interaction gate saves a profile, navigates, adds a task, resets the
 fixture and retries a failed request. No application backend is needed by the
 preview. `npm run dev` is the ordinary app and expects its normal `/api` backend.
@@ -26,3 +26,18 @@ node --input-type=module -e 'import {inventoryRoutes} from "@tombelieber/app-can
 
 The checked snapshot detects newly added routes; it does not discover every
 conditional state. Add those to `catalog.json`, fixtures and the flow checks.
+
+
+For the development UI-delivery workflow, install the verified revision that
+contains these commands (the v0.12.0 release predates them), then run:
+
+```sh
+npx app-canvas populate --config ui-review/delivery.config.mjs --verify
+# Remove --verify to keep the verified viewer open. Repeat to resume.
+```
+
+`prepare.mjs` records the explicit source review for this small example;
+`delivery.config.mjs` checks all eight original states and performs real
+navigation/add/retry/save actions. It does not generate UI markup. The final
+UI gate runs again even when preparation artifacts are reused. The unchanged
+`--complete` still fails without its separate full source-audit inventory.

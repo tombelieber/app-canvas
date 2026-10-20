@@ -6,10 +6,10 @@ operates authorized UI; App Canvas captures, edits, links, saves and reopens it.
 The output is an App Canvas project. For repository input, use the separate
 source/native complete-population contract.
 
-This feature is unreleased. Use a verified checkout/packed installation whose
-`app-canvas --help` lists `import`, `capture-script`, `capture`, `status`, `link`
-and `open`. The public v0.12.0 pin predates this feature. Read the matching
-package's `docs/url-import.md`; never assume a newer skill upgrades an older CLI.
+Use App Canvas v0.13.0 or later with its matching skill. The CLI help lists
+`import`, `capture-script`, `capture`, `status`, `link`
+and `open`. v0.12.0 predates this workflow. Run `app-canvas guide` for the
+installed contract. Read the matching package's `docs/url-import.md`; never assume a newer skill upgrades an older CLI.
 
 ## Choose the browser
 

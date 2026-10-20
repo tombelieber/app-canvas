@@ -1,18 +1,18 @@
-# Desktop URL imports (unreleased)
+# Desktop URL imports
 
 Import a website into **App Canvas**, edit its captured DOM layers, save locally
-and reopen without the website. App Canvas + an agent handle discovery, capture and review together. This
-development feature is available from a checkout containing the commands below;
-the published v0.12.0 pin does not include it. No API key, model service or Figma account is required.
+and reopen without the website. App Canvas + an agent handle discovery, capture
+and review together. Available in v0.13.0 with the matching CLI and skill. No API
+key, model service or Figma account is required.
 
 ## Dedicated capture browser
 
 ```sh
-npm ci
-node bin/app-canvas.mjs browsers
-node bin/app-canvas.mjs import https://example.com --out .artifacts/product-reference
+npm install -g github:tombelieber/app-canvas#v0.13.0
+app-canvas browsers
+app-canvas import https://example.com --out .artifacts/product-reference
 # Stop the capture process with Ctrl+C, then reopen the saved project:
-node bin/app-canvas.mjs open .artifacts/product-reference
+app-canvas open .artifacts/product-reference
 ```
 
 Open the printed loopback URL. The capture browser uses a dedicated Chromium

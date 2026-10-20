@@ -5,7 +5,7 @@
 
 **[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
 
-CLI **v0.12.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
+CLI **v0.13.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
 <!-- launch:end -->
 
 A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
@@ -21,15 +21,14 @@ conditional variants using complete real UI screens.
 
 One runtime serves multiple projects. Each project keeps its **screen catalog, preview adapter, synthetic fixtures and interaction checks**. Components, layouts and CSS come from the application. There is no second design file to synchronize.
 
-## Import a website (unreleased desktop v1)
+## Import a website (desktop v1)
 
 **App Canvas + an agent** can turn a URL into an editable desktop landscape,
 record observed screens/states/flows, and save/reopen local design edits. Use an
 existing authorized browser through the packaged DOM reader, or the dedicated
 capture browser. No Figma account or model API key is required by the package.
 See the [desktop URL import guide](docs/url-import.md) for commands, sign-in,
-privacy, editing and fidelity limits. The published v0.12.0 pin below does not
-include this feature. Source-backed and native workflows keep their existing
+privacy, editing and fidelity limits. Available in v0.13.0 with the matching CLI and skill. Source-backed and native workflows keep their existing
 complete-population contracts.
 
 ## Give this to your coding agent
@@ -64,7 +63,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.12.0
+npm install -g github:tombelieber/app-canvas#v0.13.0
 app-canvas browsers
 app-canvas demo
 ```
@@ -220,25 +219,39 @@ case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
 
-For complete-population acceptance, use the [source walkthrough](skills/app-canvas/references/source-audit.md):
-`app-canvas discover --source-root <application> --out .artifacts/app-canvas/inventory.json`,
-resolve the `pending --inventory <file>` queue, then run `--complete` with
-source-linked runtime evidence. The gate recomputes the whole recorded scope,
-checks every source region/candidate and case, and rejects viewer-only native
-evidence. It forces the coverage flags even if the config disables them.
-Legacy `--check` / `--verify` results qualify registered cases only.
+Complete **UI delivery** uses the independent [population workflow](skills/app-canvas/references/population.md):
+
+```sh
+app-canvas guide
+app-canvas plan --source-root <application> --out ui-review/ui-inventory.json
+app-canvas status --inventory ui-review/ui-inventory.json
+app-canvas populate --config ui-review/canvas.config.mjs --source-root <application>
+# Or run the final gate directly: --ui-complete --source-root <application>
+```
+
+These UI-delivery commands are available in v0.13.0;
+v0.12.0 does not include them. Pin a qualified commit and read its matching guide.
+The coding agent owns source/navigation discovery, all meaningful screens and
+states, original UI adapters, page/feature grouping and connected checked flows.
+`populate` resumes its authored tasks, reuses intact unchanged artifacts, leases
+devices and always performs a fresh final UI gate. New UI deliveries above 128
+cases open grouped by page/feature (page depth if features also exceed 128);
+“All states”, search and links still reach every case. Existing starting views
+remain compatible. An unresolved source UI anchor,
+missing state, stale source or missing original-runtime assertion fails. Syntax
+anchors assist inspection; they do not infer arbitrary app semantics by themselves.
+
+The existing `--complete` remains the unchanged stricter
+[all-source audit](skills/app-canvas/references/source-audit.md), with version 2
+`discover` / `pending` worklists and obligation-linked evidence. Internal audit
+checks are separate from missing screens. A UI pass does not make a failed
+source audit pass. Legacy `sourceCoverage` / `requireSourceInventory` checks
+remain supported. `--check` / `--verify` alone qualify registered cases only.
 
 UI and CSS edits refresh from source. **The agent owns discovering and
-registering new states.** The CLI does not infer business conditions; a complete
-integration must reconcile source-based discovery against its catalog. See the
-required [completion contract](skills/app-canvas/references/completion.md).
-
-Configure `sourceCoverage: { roots: [...], inventory: 'ui-review/inventory.json' }`
-and `coverage.requireSourceInventory: true` with a tool revision exporting
-`@tombelieber/app-canvas/inventory`. The gate rejects new/changed/deleted source
-files, missing item/case mappings and unresolved blockers. Root selection and
-semantic discovery remain the agent's responsibility. A passing self-selected
-catalog is insufficient evidence of whole-app coverage.
+registering new states.** Reconcile source discovery with real navigation and
+the catalog; never reduce the denominator to easy cases. See the
+[completion contract](skills/app-canvas/references/completion.md).
 
 For React Router JSX/object routes, add an inventory guard:
 

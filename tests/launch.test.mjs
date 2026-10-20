@@ -16,7 +16,7 @@ test("all launch locales share facts, commands, navigation and coverage boundari
   for (const locale of languages) {
     const readme = translatedReadme(locale, content);
     assert.ok(readme.includes(commands(facts).install));
-    assert.ok(readme.includes("--complete --source-root ."));
+    assert.ok(readme.includes("populate --config ui-review/canvas.config.mjs --source-root . --verify"));
     for (const page of ["product", "start", "release"]) {
       const html = renderPage(locale, page, content);
       assert.ok(html.includes(`<html lang="${locale}">`));
@@ -24,7 +24,7 @@ test("all launch locales share facts, commands, navigation and coverage boundari
       assert.equal((html.match(/rel="alternate" hreflang=/g) || []).length, 12);
       assert.ok(!/\{(?:states|flows|entries|version)\}/.test(html));
       assert.ok(html.includes(locales[locale].limits[2]));
-      if (page !== "product") assert.ok(html.includes("--complete --source-root ."));
+      if (page !== "product") assert.ok(html.includes("populate --config ui-review/canvas.config.mjs --source-root . --verify"));
     }
   }
 });
@@ -50,7 +50,7 @@ test("publishing launch pages preserves the demo and writes real screenshot byte
     assert.equal((sitemap.match(/<loc>/g) || []).length, 34);
     for (const locale of languages) {
       const url = new URL(pageUrl(locale, "start"));
-      assert.ok((await readFile(join(directory, url.pathname.replace("/app-canvas/", ""), "index.html"), "utf8")).includes("--complete --source-root ."));
+      assert.ok((await readFile(join(directory, url.pathname.replace("/app-canvas/", ""), "index.html"), "utf8")).includes("populate --config ui-review/canvas.config.mjs --source-root . --verify"));
     }
     assert.ok((await readFile(join(directory, "llms-full.txt"), "utf8")).includes("complete"));
   } finally { await rm(directory, { recursive: true, force: true }); }

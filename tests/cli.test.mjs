@@ -58,3 +58,35 @@ test("browser setup resolves Playwright's declared executable before spawning in
   const result = await promisify(execFile)(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(preload)}`, cli, "browsers"]);
   assert.match(result.stdout, /public browser setup entry reached/);
 });
+
+test('UI planning is independent, status detects stale reviews, and guide matches its package', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'app-canvas-plan-cli-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await writeFile(join(root, 'App.jsx'), 'export const App = () => <main>Original UI</main>');
+  const args = [cli, 'plan', '--out', '.artifacts/ui-inventory.json'];
+  await exec(process.execPath, args, { cwd: root });
+  const path = join(root, '.artifacts/ui-inventory.json'), work = JSON.parse(await readFile(path));
+  assert.equal(work.states.length, 0); assert.ok(work.anchors.length > 0);
+  work.fileReviews = [{ path: 'App.jsx', role: 'ui', summary: 'Inspected original root', states: ['home'] }];
+  await writeFile(path, JSON.stringify(work));
+  await assert.rejects(() => exec(process.execPath, args, { cwd: root }), error => error.code === 1);
+  await writeFile(join(root, 'App.jsx'), 'export const App = () => <main>Changed UI</main>');
+  const status = JSON.parse((await exec(process.execPath, [cli, 'status', '--inventory', path], { cwd: root })).stdout);
+  assert.equal(status.sourceChanged, true); assert.equal(status.sourceFilesToInspect, 1);
+  assert.ok(status.uiAnchorsToResolve > 0);
+  const guide = await exec(process.execPath, [cli, 'guide']);
+  assert.equal(guide.stdout.trim(), (await readFile(new URL('../skills/app-canvas/SKILL.md', import.meta.url), 'utf8')).trim());
+  await assert.rejects(() => exec(process.execPath, [cli, 'populate', '--check'], { cwd: root }), error => /cannot replace/.test(error.stderr));
+});
+
+
+test('desktop project status and source UI worklist status keep separate CLI paths', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'app-canvas-dual-status-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const project = join(root, 'desktop');
+  await exec(process.execPath, [cli, 'import', 'https://example.test/overview', '--agent', '--out', project]);
+  const status = JSON.parse((await exec(process.execPath, [cli, 'status', project])).stdout);
+  assert.equal(status.coverage, 'observed'); assert.equal(status.states, 0);
+  await assert.rejects(() => exec(process.execPath, [cli, 'status', project, '--inventory', 'ambiguous.json']), error => /Unsupported --inventory/.test(error.stderr));
+  await assert.rejects(() => exec(process.execPath, [cli, 'capture', project, '--ui-complete']), error => /observed coverage/.test(error.stderr));
+});

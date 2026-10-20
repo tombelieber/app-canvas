@@ -71,6 +71,26 @@
       "ready": "[data-state=denied]",
       "feature": "Profile",
       "pageId": "settings"
+    },
+    {
+      "id": "settings-loading",
+      "group": "settings",
+      "title": "Settings / loading",
+      "path": "/settings",
+      "source": "src/App.jsx:Settings",
+      "ready": "[data-state=profile-loading]",
+      "feature": "Profile",
+      "pageId": "settings"
+    },
+    {
+      "id": "settings-saved",
+      "group": "settings",
+      "title": "Settings / saved",
+      "path": "/settings",
+      "source": "src/App.jsx:Settings",
+      "ready": "[role=status]",
+      "feature": "Profile",
+      "pageId": "settings"
     }
   ],
   "flows": [
@@ -87,12 +107,37 @@
     {
       "from": "tasks-error",
       "to": "tasks",
-      "label": "Retry"
+      "label": "Retry",
+      "kind": "recovery"
     },
     {
       "from": "settings",
       "to": "tasks",
       "label": "Return to tasks"
+    },
+    {
+      "from": "tasks",
+      "to": "tasks-loading",
+      "kind": "condition",
+      "label": "Pending request"
+    },
+    {
+      "from": "settings",
+      "to": "settings-denied",
+      "kind": "condition",
+      "label": "Access denied"
+    },
+    {
+      "from": "settings",
+      "to": "settings-loading",
+      "kind": "condition",
+      "label": "Pending profile"
+    },
+    {
+      "from": "settings",
+      "to": "settings-saved",
+      "kind": "action",
+      "label": "Save profile"
     }
   ],
   "pages": [
@@ -105,6 +150,265 @@
       "id": "settings",
       "title": "Settings",
       "route": "/settings"
+    }
+  ],
+  "journeys": [
+    {
+      "id": "case-tasks",
+      "kind": "case",
+      "title": "Tasks / populated",
+      "entry": "tasks",
+      "steps": [
+        {
+          "screen": "tasks",
+          "title": "Tasks / populated",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=populated]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-tasks-empty",
+      "kind": "case",
+      "title": "Tasks / empty",
+      "entry": "tasks-empty",
+      "steps": [
+        {
+          "screen": "tasks-empty",
+          "title": "Tasks / empty",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=empty]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-tasks-loading",
+      "kind": "case",
+      "title": "Tasks / loading",
+      "entry": "tasks-loading",
+      "steps": [
+        {
+          "screen": "tasks-loading",
+          "title": "Tasks / loading",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=loading]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-tasks-error",
+      "kind": "case",
+      "title": "Tasks / failed then retry",
+      "entry": "tasks-error",
+      "steps": [
+        {
+          "screen": "tasks-error",
+          "title": "Tasks / failed then retry",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=error]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-settings",
+      "kind": "case",
+      "title": "Settings / editable",
+      "entry": "settings",
+      "steps": [
+        {
+          "screen": "settings",
+          "title": "Settings / editable",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=settings]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-settings-denied",
+      "kind": "case",
+      "title": "Settings / access denied",
+      "entry": "settings-denied",
+      "steps": [
+        {
+          "screen": "settings-denied",
+          "title": "Settings / access denied",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=denied]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-settings-loading",
+      "kind": "case",
+      "title": "Settings / loading",
+      "entry": "settings-loading",
+      "steps": [
+        {
+          "screen": "settings-loading",
+          "title": "Settings / loading",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[data-state=profile-loading]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "case-settings-saved",
+      "kind": "case",
+      "title": "Settings / saved",
+      "entry": "settings-saved",
+      "steps": [
+        {
+          "screen": "settings-saved",
+          "title": "Settings / saved",
+          "actions": [
+            {
+              "type": "expect",
+              "selector": "[role=status]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "profile-flow",
+      "kind": "flow",
+      "title": "Edit and save profile",
+      "entry": "tasks",
+      "steps": [
+        {
+          "screen": "settings",
+          "title": "Open settings",
+          "actions": [
+            {
+              "type": "click",
+              "selector": "a[href=\"/settings\"]"
+            },
+            {
+              "type": "expect",
+              "selector": "[data-state=settings]"
+            }
+          ]
+        },
+        {
+          "screen": "settings-saved",
+          "title": "Save edited profile",
+          "actions": [
+            {
+              "type": "fill",
+              "selector": "input[name=name]",
+              "value": "Synthetic edit"
+            },
+            {
+              "type": "click",
+              "selector": "button"
+            },
+            {
+              "type": "expect",
+              "selector": "[role=status]",
+              "text": "Saved Synthetic edit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "return-flow",
+      "kind": "flow",
+      "title": "Return to tasks",
+      "entry": "settings",
+      "steps": [
+        {
+          "screen": "tasks",
+          "title": "Return",
+          "actions": [
+            {
+              "type": "click",
+              "selector": "a[href=\"/\"]"
+            },
+            {
+              "type": "expect",
+              "selector": "[data-state=populated]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "retry-flow",
+      "kind": "flow",
+      "title": "Recover task request",
+      "entry": "tasks-error",
+      "steps": [
+        {
+          "screen": "tasks",
+          "title": "Retry",
+          "actions": [
+            {
+              "type": "click",
+              "selector": "button"
+            },
+            {
+              "type": "expect",
+              "selector": "[data-state=populated]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "add-flow",
+      "kind": "flow",
+      "title": "Add first task",
+      "entry": "tasks-empty",
+      "steps": [
+        {
+          "screen": "tasks",
+          "title": "Add a task",
+          "actions": [
+            {
+              "type": "fill",
+              "selector": "input[name=title]",
+              "value": "First task"
+            },
+            {
+              "type": "click",
+              "selector": "button"
+            },
+            {
+              "type": "expect",
+              "selector": "[data-state=populated]"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

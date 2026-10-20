@@ -41,11 +41,11 @@
   "steps": [
     [
       "Instala la herramienta compartida",
-      "Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global."
+      "Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global. Hasta publicar v0.13.0, utiliza un commit de desarrollo verificado para estos comandos UI."
     ],
     [
       "Inventaría antes de elegir casos",
-      "Ejecuta discover sobre toda la raíz de la app. El agente revisa cada región y candidato, resuelve pending y enumera estados semánticos independientemente del catalog. Los bloqueos siguen visibles."
+      "Ejecuta plan en todo el repositorio original. Revisa cada archivo, anclaje UI, dependencia que afecte a la UI y navegación real. Enumera pantallas y estados independientemente del catálogo; mantén visibles las UI pendientes."
     ],
     [
       "Renderiza la UI original con fixtures",
@@ -53,7 +53,7 @@
     ],
     [
       "Verifica estados e interacciones",
-      "Incluye estados normal, vacío, carga, error, acceso denegado, diálogos y recuperación. Comprueba cada caso y los controles reales en flujos continuos. Concilia inventory, assertions vinculadas al código y rutas; pasa --complete sobre la misma raíz."
+      "Incluye estados normal, vacío, carga, error, acceso denegado, diálogos y recuperación. Comprueba cada caso y los controles reales en flujos continuos. Concilia inventory, assertions vinculadas al código y rutas; pasa --ui-complete sobre la misma raíz. --complete sigue siendo una auditoría estricta e independiente de todo el código fuente. Sus pendientes no equivalen a pantallas ausentes."
     ],
     [
       "Revisa y mantén desde el código",

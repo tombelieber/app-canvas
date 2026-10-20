@@ -1,29 +1,23 @@
 # App Canvas
 
-## Unreleased
+## 0.13.0
 
-- Retain actionable save conflicts across capture updates and keep explicit reload
-  available while the user continues editing the retained draft.
-
-- Package an agent-owned desktop browser workflow: source-bound private projects,
-  a portable read-only DOM reader, validated snapshot/resource ingestion, observed
-  coverage reports and explicit reference links through CLI and `./import` API.
-- Add allowlisted text capture before transport for credential-adjacent overviews;
-  retain authentication pauses and keep import commands out of usage telemetry.
-- Preserve actual desktop viewport dimensions and qualify both browser paths,
-  editor Save and fresh offline reopen through a packed CLI and installed skill.
-
-- Desktop URL capture into App Canvas with observed states/flows, normalized
-  local DOM/assets, editable layers, history, atomic save and offline reopen.
-- Dedicated capture profiles, authentication pauses, partial-fidelity reports
-  and isolated imported playback. Existing source/native completion is unchanged.
-- Preserve passive overlays' pointer behavior so imported screens remain selectable.
-- Hide retained screen previews when they leave the filtered landscape.
-- Support up to 512 imported screens and 1,024 capture observations, with a 512 MiB project resource budget and
-  reject screen/observation overflow before writing capture resources.
-- Reuse validated import snapshots when capturing and saving; avoid copying the
-  entire landscape again just to report capture status.
-- Accept SVG mask references under the same local-resource validation as other SVG paint attributes.
+- Capture desktop URLs into editable App Canvas landscapes with local DOM/assets,
+  text/style/geometry editing, history, atomic Save and fresh offline reopen.
+- Support dedicated capture browsers and existing authorized agent browsers through
+  a portable DOM reader, validated snapshots and the public `./import` API. Keep
+  observed actions separate from reference links, pause authentication surfaces,
+  and allow reviewed text-only capture for credential-adjacent overviews.
+- Bound large imports to 512 screens, 1,024 observations and 512 MiB of resources;
+  preserve actual desktop viewports, shared overview frames, retained edits and
+  actionable revision-conflict recovery across capture updates.
+- Add independent UI discovery, exact-input capture planning, resumable `populate`
+  and `--ui-complete` original-runtime acceptance. Group large deliveries by
+  page/feature, inspect native accessory lifetimes and proven resource imports,
+  and retain the separate strict `--complete` source audit.
+- Ship both workflows with the canonical skill and installer. Qualify all eight
+  implemented React/Vite states, original interactions, native/GPU overview,
+  Demo/Play, retained state and both desktop URL paths from fresh packages.
 
 ## 0.12.0
 

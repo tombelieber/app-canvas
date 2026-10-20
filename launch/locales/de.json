@@ -41,11 +41,11 @@
   "steps": [
     [
       "Gemeinsames Werkzeug installieren",
-      "Nutze Node.js 22+ sowie Paketverwaltung und Lockfile des Projekts. Installiere das feste GitHub-Release und den Browser. Blockiert npm 12 diese direkte Git-Abhängigkeit, ergänze nur dann --allow-git=root; ändere keine globale Richtlinie."
+      "Nutze Node.js 22+ sowie Paketverwaltung und Lockfile des Projekts. Installiere das feste GitHub-Release und den Browser. Blockiert npm 12 diese direkte Git-Abhängigkeit, ergänze nur dann --allow-git=root; ändere keine globale Richtlinie. Bis zur Veröffentlichung von v0.13.0 benötigen diese UI-Befehle einen qualifizierten Entwicklungscommit."
     ],
     [
       "Erst inventarisieren, dann Fälle wählen",
-      "Führe discover im gesamten App-Stamm aus. Der Agent prüft jede Quellregion und jeden Kandidaten, löst pending auf und erfasst semantische Zustände unabhängig vom Catalog. Blockaden bleiben sichtbar."
+      "Führe plan im gesamten ursprünglichen App-Repository aus. Prüfe alle Dateien, UI-Anker, UI-relevanten Abhängigkeiten und die tatsächliche Navigation. Erfasse Screens und Zustände unabhängig vom Katalog; ungeklärte UI bleibt offen."
     ],
     [
       "Original-UI mit Fixtures rendern",
@@ -53,7 +53,7 @@
     ],
     [
       "Zustände und Interaktionen prüfen",
-      "Erfasse Normal-, Leer-, Lade-, Fehler-, Zugriffs-, Dialog- und Wiederherstellungszustände. Prüfe jeden Fall und echte Bedienelemente in fortlaufenden Abläufen. Gleiche Inventory, quellbezogene Assertions und Routen ab; bestehe --complete im selben Stamm."
+      "Erfasse Normal-, Leer-, Lade-, Fehler-, Zugriffs-, Dialog- und Wiederherstellungszustände. Prüfe jeden Fall und echte Bedienelemente in fortlaufenden Abläufen. Gleiche Inventory, quellbezogene Assertions und Routen ab; bestehe --ui-complete im selben Stamm. --complete bleibt ein separates strenges Audit des gesamten Quellcodes. Offene Audit-Punkte sind keine Anzahl fehlender Screens."
     ],
     [
       "Aus dem Quellcode pflegen",
