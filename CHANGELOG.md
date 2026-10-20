@@ -1,5 +1,9 @@
 # App Canvas
 
+## Unreleased
+
+- Recognize supported Objective-C data-only method branches through resolved source helpers and concrete callback bodies, preserving every source ID and all caller UI obligations. Unknown effects stay pending; inventories cannot self-assert eligibility.
+
 ## 0.12.0
 
 - Default the viewer to English and add all eleven launch languages, with persistent switching that keeps app drafts, previews, camera and playback alive.
