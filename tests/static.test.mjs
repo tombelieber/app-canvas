@@ -57,3 +57,28 @@ test("static export contains the same canvas, relative assets and no local previ
     await assert.rejects(() => exportCanvas({ output, outDir: join(root, "linked"), project, preview: { async exportStatic({ outDir }) { await symlink(output, join(outDir, "outside"), "dir"); return { home: "./outside/canvas.js" }; } }, manifest }), /symlink/);
   } finally { await rm(root, { recursive: true }); }
 });
+
+test('review export publishes only approved DOM and fails atomically on a missing case', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'canvas-review-')), output = join(root, 'cache');
+  await mkdir(output);
+  for (const file of ['canvas.js', 'canvas.css', 'canvas-LICENSES.txt', 'frame-bridge.js', 'overview.html']) await writeFile(join(output, file), 'fixture');
+  await writeFile(join(output, 'dom-home.html'), '<h1>Source rendered review</h1>');
+  await writeFile(join(output, 'dom-home.json'), JSON.stringify({ html: '<h1>Source rendered review</h1>', fonts: '', background: 'white' }));
+  const project = { title: 'Review', groups: [{ id: 'app' }], catalog: [{ id: 'home', title: 'Home', group: 'app' }], flows: [], journeys: [] };
+  const manifest = { status: 'ready', screens: { home: { width: 1200, height: 900, domUrl: 'http://localhost/dom', sharedUrl: 'http://localhost/shared', url: 'http://localhost/live' } } };
+  try {
+    await assert.rejects(exportCanvas({ output, outDir: join(root, 'denied'), project, preview: {}, manifest, reviewOnly: true }), /publication approval/);
+    const outDir = join(root, 'site');
+    await exportCanvas({ output, outDir, project, preview: { exportDom: true, exportStatic() { throw Error('Must not export app code'); } }, manifest, reviewOnly: true });
+    const metadata = JSON.parse(await readFile(join(outDir, 'project.json'))), exported = JSON.parse(await readFile(join(outDir, 'manifest.json')));
+    assert.equal(metadata.reviewOnly, true); assert.equal(metadata.static, true);
+    assert.equal(exported.screens.home.url, undefined);
+    assert.equal(exported.screens.home.domUrl, './assets/dom-home.html');
+    assert.doesNotMatch(JSON.stringify(exported), /localhost/);
+    assert.equal(await readFile(join(outDir, 'assets/dom-home.html'), 'utf8'), '<h1>Source rendered review</h1>');
+    delete manifest.screens.home.domUrl;
+    const failed = join(root, 'failed');
+    await assert.rejects(exportCanvas({ output, outDir: failed, project, preview: { exportDom: true }, manifest, reviewOnly: true }), /every case/);
+    await assert.rejects(access(failed));
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

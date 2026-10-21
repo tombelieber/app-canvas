@@ -9,6 +9,8 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
   options: {
     config: { type: "string" },
+    project: { type: "string" },
+    "review-only": { type: "boolean" },
     port: { type: "string" },
     version: { type: "boolean" },
     verify: { type: "boolean" },
@@ -43,7 +45,7 @@ if (values.version) {
 }
 if (values.help) {
   console.log(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> [--out <new-private-directory>] --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas projects\napp-canvas recover <recovery-id> [--out <new-directory>]\napp-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
+    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> [--out <new-private-directory>] --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas projects\napp-canvas recover <recovery-id> [--out <new-directory>]\napp-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] [--review-only] --out <new-directory>\napp-canvas export --project <captured-project-directory> --review-only --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
   );
   process.exit(0);
 }
@@ -122,6 +124,14 @@ try {
   }
   const exporting = positionals[0] === "export";
   if (exporting && !values.out) throw Error("export requires --out <new-directory>");
+  if (values.project) {
+    if (!exporting || !values["review-only"] || values.config || positionals.length !== 1) throw Error("Use export --project <directory> --review-only --out <new-directory>");
+    const { exportImportReview } = await import("../lib/import/export.mjs");
+    const result = await exportImportReview({ directory: values.project, outDir: values.out });
+    console.log(`Exported ${result.total} captured review screens to ${result.directory}`);
+    process.exit(0);
+  }
+  if (values["review-only"] && !exporting) throw Error("--review-only requires export");
   if (values.check) {
     const { loadProject } = await import("../lib/config.mjs");
     const project = await loadProject(
@@ -181,8 +191,8 @@ try {
       process.exit(0);
     });
   if (exporting) {
-    const result = await app.exportStatic({ outDir: values.out });
-    console.log(`Exported ${result.total} screens and interactive previews to ${result.directory}`);
+    const result = await app.exportStatic({ outDir: values.out, reviewOnly: !!values["review-only"] });
+    console.log(`Exported ${result.total} ${values["review-only"] ? "review snapshots" : "screens and interactive previews"} to ${result.directory}`);
     await app.close();
   } else if (values.verify || values.complete || uiComplete) {
     const proof = uiProof || await app.verify({ complete: values.complete, uiComplete });

@@ -61,6 +61,7 @@ function Canvas() {
   const selected = catalog.find(s => s.id === selectedId);
   const visible = useMemo(() => scopedScreens(catalog, { page: journeyId ? "all" : page, query, depth: journeyId ? "all" : depth, selected: selectedId, journey: journeyScreens }), [page, query, depth, selectedId, journeyId, journeyScreens]);
   const navigate = useCallback((id, interact = false) => {
+    if (project.reviewOnly) interact = false;
     const target = catalog.find(s => s.id === id); if (!target) return;
     if (interact && !retained.includes(id)) {
       if (retained.length >= limit - 1) { setNotice(t("Preview capacity reached. Release a retained preview in Panels before opening another.")); setMenu(true); interact = false; }
@@ -97,7 +98,7 @@ function Canvas() {
     const ids = new Set(visible.map(s => s.id));
     const placed = layout.map(node => {
       if (node.type !== "screen") return node;
-      const native = node.id === selectedId || node.id === active || node.id === player.state?.screen || journeyScreens?.includes(node.id);
+      const native = !project.reviewOnly && (node.id === selectedId || node.id === active || node.id === player.state?.screen || journeyScreens?.includes(node.id));
       if (journeyScreens?.includes(node.id)) node = { ...node, position: { x: journeyScreens.indexOf(node.id) * 670, y: 90 } };
       if (native) {
         const height = node.data.screen.viewport?.height || 844, width = node.data.viewport.width;
@@ -117,6 +118,7 @@ function Canvas() {
   }, [visible, manifest, view, selectedId, active, player.state?.screen, journeyScreens, depth, area, nativePreview, nativePending, nativeIds, nativeDetail]);
   const previews = useMemo(() => visiblePreviews(nodes, viewport, area), [nodes, viewport, area]);
   const mounted = useMemo(() => {
+    if (project.reviewOnly) return new Set();
     const ids = previewPool({ nodes, viewport, area, selected: selectedId, active, retained, limit, playing: !!player.state });
     // Legacy manifests and drawing surfaces that cannot be represented by
     // HTML/CSS retain their actual app, never a blank or fabricated thumbnail.
@@ -189,8 +191,8 @@ function Canvas() {
   return <PreviewContext.Provider value={context}>
     <div className={`review-workspace ${presenting ? "is-presenting" : ""} ${inspector ? "has-inspector" : ""} ${preferences.panels.left ? "has-navigation" : ""} ${preferences.panels.top ? "has-top" : ""} ${drawer ? "drawer-open" : ""}`} data-view={view} data-mode={active ? "interact" : "browse"} data-preview-limit={limit} data-live-count={mounted.size + (player.state ? 1 : 0)} data-camera-ready={!moving && !request} data-live-ready={manifest.status === "ready" && [...mounted].every(id => bridge.states[id]?.ready && !bridge.states[id]?.error)}>
       <header className={preferences.panels.top ? "workspace-bar" : "workspace-floating"}>
-        <WorkspaceDock preferences={preferences} menu={menu} setMenu={setMenu} drawer={drawer} setDrawer={setDrawer} active={active} browse={browse} interact={() => interact()} retained={retained} release={release} catalog={catalog} notice={notice} limit={limit} view={view} setView={changeView} fit={fit} rightOpen={inspector} toggleRight={toggleRight} startDemo={startDemo} demoReady={manifest.status === "ready" && !!project.journeys.length} hasJourneys={!!project.journeys.length}
-          analytics={analytics} brand={<div className="workspace-identity"><a className="workspace-brand" href="./">{project.title}</a><span className={`sync-status ${manifest.status === "ready" ? "ready" : ""}`}><i />{manifest.status === "ready" ? t("{0} screens · {1}", rendered, project.static ? t("Demo build") : t("Synced")) : manifest.status === "error" ? t("Load failed") : t("Loading {0} / {1}", rendered, catalog.length)}</span></div>} />
+        <WorkspaceDock reviewOnly={project.reviewOnly} preferences={preferences} menu={menu} setMenu={setMenu} drawer={drawer} setDrawer={setDrawer} active={active} browse={browse} interact={() => interact()} retained={retained} release={release} catalog={catalog} notice={notice} limit={limit} view={view} setView={changeView} fit={fit} rightOpen={inspector} toggleRight={toggleRight} startDemo={startDemo} demoReady={manifest.status === "ready" && !!project.journeys.length} hasJourneys={!!project.journeys.length}
+          analytics={analytics} brand={<div className="workspace-identity"><a className="workspace-brand" href="./">{project.title}</a><span className={`sync-status ${manifest.status === "ready" ? "ready" : ""}`}><i />{manifest.status === "ready" ? t("{0} screens · {1}", rendered, project.reviewOnly ? t("Review snapshot") : project.static ? t("Demo build") : t("Synced")) : manifest.status === "error" ? t("Load failed") : t("Loading {0} / {1}", rendered, catalog.length)}</span></div>} />
       </header>
       {preferences.panels.left && <><button className="drawer-backdrop" aria-label={t("Close navigation")} onClick={() => setDrawer(false)} /><PageNavigator pages={pages} catalog={catalog} page={page} query={query} selectPage={selectPage} selectedId={selectedId} goTo={goTo} lines={lines} setLines={setLines} links={project.links} close={() => { setDrawer(false); preferences.toggle("left"); }}>
         <ScopeToolbar pages={pages} page={page} setPage={selectPage} query={query} search={search} depth={depth} setDepth={setDepth} />
@@ -211,14 +213,14 @@ function Canvas() {
               <LiveFrame key={player.state.key} id="journey" title={t("Flow playback · real UI")} url={entryUrl} viewport={journeyNode.data.viewport} epoch={player.state.key} runId={runId} interactive bridge={bridge} presentation={presenting} />
             </div></ViewportPortal>}
           </ReactFlow>
-          <div className="canvas-hint">{player.state ? t("Playing · camera follows flow") : active ? t("Interact · choose Browse to lock controls") : t("Browse · pan and pinch to zoom; select a screen, then Interact")}</div><div className="zoom-label">{Math.round(viewport.zoom * 100)}%</div>
+          <div className="canvas-hint">{player.state ? t("Playing · camera follows flow") : active ? t("Interact · choose Browse to lock controls") : project.reviewOnly ? t("Browse") : t("Browse · pan and pinch to zoom; select a screen, then Interact")}</div><div className="zoom-label">{Math.round(viewport.zoom * 100)}%</div>
           {presenting && <div className="demo-shield" aria-hidden="true" />}
         </div>
         {presenting && <DemoPlayer player={player} definitions={plan} title={project.title} catalog={catalog} pages={pages} journeys={project.journeys} selected={journeyId} onSelect={id => chooseJourney(id, true, true)} onReplay={() => player.start(false, { presentation: true })} onExit={exitDemo} />}
       </main>
       {inspector && <aside className="details-panel" aria-label={t("Flows and details")}><div className="details-heading">{t("Flows and details")}<button className="close" aria-label={t("Collapse details")} onClick={toggleRight}>›</button></div>
-        <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />
-        {selected ? <Inspector selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} /> : <p className="selection-hint">{t("Select a screen to zoom, or choose a flow to play.")}<br />{t("Browse pans the canvas; Interact uses the screen.")}</p>}
+        {!project.reviewOnly && <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />}
+        {selected ? <Inspector reviewOnly={project.reviewOnly} selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} /> : <p className="selection-hint">{project.reviewOnly ? t("Zoom or select to see the full screen") : t("Select a screen to zoom, or choose a flow to play.")}{!project.reviewOnly && <><br />{t("Browse pans the canvas; Interact uses the screen.")}</>}</p>}
       </aside>}
     </div>
   </PreviewContext.Provider>;

@@ -175,5 +175,6 @@
   "Preference could not be saved. Analytics remains disabled.": "설정을 저장하지 못했습니다. 분석은 꺼진 상태로 유지됩니다.",
   "Native acceleration unavailable; using original previews.": "네이티브 가속을 사용할 수 없어 기존 미리 보기를 사용합니다.",
   "Preview unavailable; select the screen to open the original app.": "미리 보기를 사용할 수 없습니다. 화면을 선택하여 원래 앱을 여세요.",
-  "Full UI · shared isolated rendering": "전체 UI · 공유 격리 렌더링"
+  "Full UI · shared isolated rendering": "전체 UI · 공유 격리 렌더링",
+  "Review snapshot": "검토 스냅샷"
 }

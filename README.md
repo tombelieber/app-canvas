@@ -325,6 +325,25 @@ The included StoolSense adapter is already synthetic and exportable. Its
 specific to that frozen frontend. This repo's GitHub Pages workflow builds and
 tests that example on main; it never reads the private StoolSense repository.
 
+## Private review snapshots
+
+To share the current registered cases for browsing without running app code:
+
+```sh
+app-canvas export --config canvas.config.mjs --review-only --out <new-directory>
+app-canvas export --project <captured-project-directory> --review-only --out <new-directory>
+```
+
+For source previews the adapter must explicitly set `exportDom: true`, approving
+publication of measured synthetic DOM/CSS. Every registered case must have a
+successful DOM snapshot; unsupported surfaces fail rather than disappear.
+Captured projects export the saved revision, including studies, without modifying
+the originals or publishing undo history. Captured quality and issue labels stay
+visible. These exports use the shared viewer with search, page filters, zoom and
+reference links. They contain no app interaction, editing, Save, live event feed
+or write API. Rebuild to publish a new snapshot. Existing interactive exports are
+unchanged. See [self-hosted review](docs/self-hosted-review.md).
+
 ## Safari performance measurements
 
 The [physical iPhone Safari benchmark](docs/safari-benchmark-2026-10-18.md)

@@ -175,5 +175,6 @@
   "Preference could not be saved. Analytics remains disabled.": "No se pudo guardar la preferencia. El análisis sigue desactivado.",
   "Native acceleration unavailable; using original previews.": "Aceleración nativa no disponible; se usan las vistas originales.",
   "Preview unavailable; select the screen to open the original app.": "Vista previa no disponible; selecciona la pantalla para abrir la app original.",
-  "Full UI · shared isolated rendering": "UI completa · renderizado aislado compartido"
+  "Full UI · shared isolated rendering": "UI completa · renderizado aislado compartido",
+  "Review snapshot": "Instantánea de revisión"
 }

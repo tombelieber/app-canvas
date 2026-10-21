@@ -175,5 +175,6 @@
   "Preference could not be saved. Analytics remains disabled.": "未能儲存設定，使用分析維持關閉。",
   "Native acceleration unavailable; using original previews.": "原生總覽未能加速；已使用原有預覽。",
   "Preview unavailable; select the screen to open the original app.": "預覽未能載入；點選畫面可開啟原 App。",
-  "Full UI · shared isolated rendering": "所有完整 UI · 共用隔離渲染"
+  "Full UI · shared isolated rendering": "所有完整 UI · 共用隔離渲染",
+  "Review snapshot": "檢閱快照"
 }

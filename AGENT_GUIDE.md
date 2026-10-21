@@ -311,3 +311,12 @@ run `app-canvas telemetry off` or set `APP_CANVAS_TELEMETRY=0`. CI, DNT/GPC and
 self-hosted exports can disable transmission. No application data, source or
 paths are sent. See [telemetry](docs/telemetry.md). Do not send fixture or
 repository content to analytics when extending an adapter.
+
+## Share existing canvases for review
+
+Use the [self-hosted review guide](docs/self-hosted-review.md). Export approved
+source DOM with `export --config <config> --review-only --out <new-directory>`
+or saved URL captures with `export --project <directory> --review-only --out
+<new-directory>`. Keep the build and normal provider hosting configuration in
+the consumer repo. Verify allowed/denied reviewers and all enabled hostnames;
+export does not authorize publication or certify complete UI coverage.

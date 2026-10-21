@@ -2,19 +2,19 @@ import { useI18n, LanguagePicker } from "./i18n.jsx";
 import React from "react";
 import { outcomes } from "../lib/coverage.mjs";
 
-export function WorkspaceDock({ analytics, preferences, menu, setMenu, drawer, setDrawer, active, browse, interact, retained, release, catalog, notice, limit, brand, view, setView, fit, rightOpen, toggleRight, startDemo, demoReady, hasJourneys }) {
+export function WorkspaceDock({ reviewOnly = false, analytics, preferences, menu, setMenu, drawer, setDrawer, active, browse, interact, retained, release, catalog, notice, limit, brand, view, setView, fit, rightOpen, toggleRight, startDemo, demoReady, hasJourneys }) {
   const { t } = useI18n();
   const { panels } = preferences;
   return <div className="workspace-dock">
     <button aria-label={t("Panels")} aria-expanded={menu} onClick={() => setMenu(!menu)}>{t("☷ Panels")}</button>
     {panels.top && <><button className="navigation-toggle" aria-label={t("Toggle navigation")} title={t("Show/hide navigation")} aria-pressed={panels.left} onClick={() => preferences.toggle("left")}>◧</button>{brand}<div className="canvas-view-controls" role="group" aria-label={t("Canvas view")}>{[["overview", t("Overview")], ["machine", t("State graph")]].map(([id, title]) => <button key={id} aria-pressed={view === id} onClick={() => setView(id)}>{title}</button>)}</div><button className="fit-button" aria-label={t("Fit all")} onClick={fit}>{t("Fit all")}</button></>}
-    <button className="present demo-start" aria-label={t("Start Demo")} title={hasJourneys ? t("Present the selected flow, page or all demos") : t("No playable flows yet")} disabled={!demoReady} onClick={startDemo}>▶ Demo</button>
+    {!reviewOnly && <button className="present demo-start" aria-label={t("Start Demo")} title={hasJourneys ? t("Present the selected flow, page or all demos") : t("No playable flows yet")} disabled={!demoReady} onClick={startDemo}>▶ Demo</button>}
     <button className="playback-toggle" aria-label={t("Open flow controls")} title={t("Play flow")} aria-expanded={rightOpen} onClick={toggleRight}>▷ <span>{t("Flows")}</span></button>
     {panels.left && <button aria-label={t("Navigation")} aria-expanded={drawer} className="drawer-toggle" onClick={() => setDrawer(!drawer)}>{t("Pages")}</button>}
-    <LanguagePicker /><div className="mode-switch" role="group" aria-label={t("Interaction mode")}>
+    <LanguagePicker />{!reviewOnly && <div className="mode-switch" role="group" aria-label={t("Interaction mode")}>
       <button aria-pressed={!active} onClick={browse}>{t("Browse")}</button><button aria-pressed={!!active} onClick={interact}>{t("Interact")}</button>
-    </div>
-    {panels.top && <button className="present operate-app" onClick={interact}>{t("▶ Use app")}</button>}
+    </div>}
+    {!reviewOnly && panels.top && <button className="present operate-app" onClick={interact}>{t("▶ Use app")}</button>}
     {menu && <div className="panel-menu" role="region" aria-label={t("Workspace settings")}>
       <strong>{t("Show panels")}</strong>
       <label><input type="checkbox" checked={analytics.config?.enabled || false} disabled={!analytics.config?.configurable || analytics.config?.pending} onChange={e => analytics.toggle(e.target.checked)} />{t("Anonymous usage analytics")}</label>
@@ -57,14 +57,16 @@ export function PageNavigator({ pages, catalog, page, query, selectPage, selecte
   </aside>;
 }
 
-export function Inspector({ selected, page, player, active, journeys, chooseJourney, interact, browse, navigate, reset, linked, catalog, goTo, close, retained, release }) {
+export function Inspector({ reviewOnly = false, selected, page, player, active, journeys, chooseJourney, interact, browse, navigate, reset, linked, catalog, goTo, close, retained, release }) {
   const { t } = useI18n();
   return <section className="inspector" aria-label={t("Screen details")}>
     <button className="close" aria-label={t("Close details")} onClick={close}>×</button>
     <span className="inspector-kicker">{page?.title} / {selected.feature}</span><h2>{selected.title}</h2><code>{selected.id}</code>
+    {selected.quality && <p>{selected.quality}</p>}
+    {!!selected.issues?.length && <ul>{selected.issues.map((issue, i) => <li key={i}>{typeof issue === "string" ? issue : JSON.stringify(issue)}</li>)}</ul>}
     {selected.outcome && <span className="state-badge" data-outcome={selected.outcome}>{t(outcomes[selected.outcome])}</span>}
     {selected.condition && <p className="entry-condition">{t("Condition:")} {selected.condition}</p>}
-    <div className="inspector-actions"><button className="present" onClick={() => active ? browse() : interact(selected.id)}>{active ? t("Stop interacting · keep screen") : t("▶ Interact with screen")}</button>
+    <div className="inspector-actions">{!reviewOnly && <button className="present" onClick={() => active ? browse() : interact(selected.id)}>{active ? t("Stop interacting · keep screen") : t("▶ Interact with screen")}</button>}
       <button onClick={() => navigate(selected.id, !!active)}>{t("Zoom to screen")}<kbd>2</kbd></button></div>
     {journeys.find(j => j.kind === "case" && j.entry === selected.id) && <button onClick={() => chooseJourney(journeys.find(j => j.kind === "case" && j.entry === selected.id).id, true)}>{t("▶ Play this case")}</button>}
     <h3>{t("Flow links")}</h3>{linked.length ? linked.map((f, i) => {
@@ -73,8 +75,8 @@ export function Inspector({ selected, page, player, active, journeys, chooseJour
     }) : <p>{t("No other flow links for this screen.")}</p>}
     <details className="inspector-details"><summary>{t("Source and preview settings")}</summary><p className="source-file">{selected.source || t("Application source")}</p>
       {selected.experimental && <p className="experimental">{t("Simulated qualified UI; production AI is not enabled.")}</p>}
-      <button onClick={reset}>{t("Reset")}</button>{retained && <button onClick={() => release(selected.id)}>{t("Release preview")}</button>}
-      <p className="prototype-note">{t("Interactions affect disposable synthetic previews only. Interacted screens stay open; release or reset clears that preview's edits.")}</p>
+      {!reviewOnly && <button onClick={reset}>{t("Reset")}</button>}{retained && <button onClick={() => release(selected.id)}>{t("Release preview")}</button>}
+      {!reviewOnly && <p className="prototype-note">{t("Interactions affect disposable synthetic previews only. Interacted screens stay open; release or reset clears that preview's edits.")}</p>}
     </details>
   </section>;
 }

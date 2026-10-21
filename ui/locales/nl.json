@@ -175,5 +175,6 @@
   "Preference could not be saved. Analytics remains disabled.": "Voorkeur kon niet worden opgeslagen. Analyse blijft uitgeschakeld.",
   "Native acceleration unavailable; using original previews.": "Native versnelling niet beschikbaar; oorspronkelijke voorbeelden worden gebruikt.",
   "Preview unavailable; select the screen to open the original app.": "Voorbeeld niet beschikbaar; selecteer het scherm om de oorspronkelijke app te openen.",
-  "Full UI · shared isolated rendering": "Volledige UI · gedeelde geïsoleerde weergave"
+  "Full UI · shared isolated rendering": "Volledige UI · gedeelde geïsoleerde weergave",
+  "Review snapshot": "Beoordelingssnapshot"
 }

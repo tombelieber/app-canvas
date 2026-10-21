@@ -57,3 +57,13 @@ For first-time integration, read the [agent guide](https://github.com/tombeliebe
 - A web viewer's checks qualify the viewer. Native render evidence and native interaction evidence must come from the original simulator/device runtime, as detailed in the native reference.
 - Public hosting requires an explicitly publishable synthetic adapter, publication authority and artifact review. `app-canvas export --config <config> --out <new-directory>` shares the same canvas runtime; `preview.exportStatic` supplies the reviewed frontend. It does not automatically remove private data or make any backend static.
 - Report the working canvas URL, registered coverage, exercised interactions and exact limitations. Application release and public demonstration require their own authorization and qualification.
+
+## Share existing canvases for review
+
+For an explicitly scoped review-only deployment, use `export --review-only` with
+a source config whose preview sets `exportDom: true`, or `export --project
+<directory> --review-only` for saved URL captures. This shares existing cases;
+it does not qualify source completeness or provider interactions. Keep app
+fixtures, build/deploy commands, domain and Access configuration in the consumer
+repo. Read [references/sharing.md](references/sharing.md) and the matching package
+hosting guide.
