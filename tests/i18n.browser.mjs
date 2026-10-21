@@ -21,6 +21,7 @@ try{
    for(const locale of languages){
     await page.locator('.language-picker:visible').selectOption(locale);
     const copy=JSON.parse(await readFile(new URL(`../ui/locales/${locale}.json`,import.meta.url)));
+    await page.locator(`html[lang="${locale}"]`).waitFor();
     assert.equal(await page.locator('html').getAttribute('lang'),locale);
     assert.equal(await page.locator('.language-picker:visible').getAttribute('aria-label'),copy.Language);
     await page.getByRole('button',{name:copy.Panels,exact:true}).waitFor();
@@ -30,7 +31,13 @@ try{
     assert.ok((await page.locator('.workspace-brand').innerText()).includes('Locale qualification'));
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${name} ${locale} landscape overflow`);
    }
-   await page.reload();await page.locator('.language-picker:visible').waitFor();assert.equal(await page.locator('html').getAttribute('lang'),'nl');
+   assert.equal(await page.evaluate(()=>localStorage.getItem('app-canvas:locale')),'nl');
+   await page.reload();await page.locator('.language-picker:visible').waitFor();
+   // A visible picker can precede React's document-language effect in WebKit.
+   // Wait for the actual restored state, retaining the same persistence contract.
+   await page.locator('html[lang="nl"]').waitFor();
+   assert.equal(await page.locator('.language-picker:visible').inputValue(),'nl');
+   assert.equal(await page.locator('html').getAttribute('lang'),'nl');
    await page.locator('.language-picker:visible').selectOption('en');
    await page.getByRole('button',{name:'Start Demo',exact:true}).click();
    await page.locator('.demo-player').waitFor();
