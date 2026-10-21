@@ -91,3 +91,10 @@ test('desktop project status and source UI worklist status keep separate CLI pat
   await assert.rejects(() => exec(process.execPath, [cli, 'status', project, '--inventory', 'ambiguous.json']), error => /Unsupported --inventory/.test(error.stderr));
   await assert.rejects(() => exec(process.execPath, [cli, 'capture', project, '--ui-complete']), error => /observed coverage/.test(error.stderr));
 });
+
+test('piped CLI help includes the complete review-export contract', async () => {
+  const { stdout } = await exec(process.execPath, [cli, '--help']);
+  assert.match(stdout, /export \[--config <config>\] \[--review-only\]/);
+  assert.match(stdout, /export --project <captured-project-directory> --review-only/);
+  assert.ok(stdout.endsWith('app-canvas telemetry on|off|status|dogfood|unknown'));
+});

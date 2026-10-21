@@ -44,9 +44,10 @@ if (values.version) {
   process.exit(0);
 }
 if (values.help) {
-  console.log(
+  await new Promise(done => process.stdout.write(
     "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> [--out <new-private-directory>] --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas projects\napp-canvas recover <recovery-id> [--out <new-directory>]\napp-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] [--review-only] --out <new-directory>\napp-canvas export --project <captured-project-directory> --review-only --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
-  );
+    done,
+  ));
   process.exit(0);
 }
 const telemetryCommand = positionals[0] === "telemetry";
