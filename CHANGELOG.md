@@ -1,5 +1,15 @@
 # App Canvas
 
+## 0.15.0
+
+- Export approved source-rendered DOM and saved URL captures as portable,
+  review-only static sites with the shared viewer, search, zoom and reference
+  navigation. Preserve saved studies and capture limitations without shipping
+  editing, Save, application code, local APIs or event feeds.
+- Document provider-neutral self-hosting and an agent workflow that keeps
+  application fixtures and private deployment configuration in consumer repos.
+- Keep CLI help complete when piped so agents can detect supported commands.
+
 ## 0.14.1
 
 - Keep URL projects in an independent private library by default, checkpoint

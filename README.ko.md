@@ -44,7 +44,7 @@ Browse는 이동 중 컨트롤을 잠급니다. 화면을 선택하고 Interact�
 ### 코딩 에이전트에 붙여 넣기
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.14.1/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 공유 도구 설치
@@ -52,7 +52,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.14.1/AGENT_GUIDE.md and a
 Node.js 22+와 프로젝트의 패키지 관리자 및 lockfile을 사용합니다. 고정한 GitHub 릴리스와 브라우저를 설치하세요. npm 12가 이 직접 Git 의존성을 차단할 때만 --allow-git=root를 추가하고 전역 정책은 바꾸지 마세요. v0.13.0 출시 전에는 이 UI 제공 명령에 검증된 개발 커밋을 사용하세요.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.14.1
+npm install --save-dev github:tombelieber/app-canvas#v0.15.0
 npx app-canvas browsers
 ```
 
@@ -90,7 +90,7 @@ npm run ui:review
 
 공유 패키지는 viewer, CLI, skill을 관리합니다. 각 저장소는 adapter, fixtures, 독립 inventory, catalog, 상호작용 검증을 관리합니다. 실행 가능한 React/Vite 예제로 시작하고 다른 스택에는 전용 adapter를 사용하세요.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.14.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.14.1/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.15.0/examples/react-vite)
 
 ### 선택 사항인 Agent Skill
 

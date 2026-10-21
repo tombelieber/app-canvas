@@ -36,6 +36,8 @@ for (const required of [
   "lib/import/agent.mjs", "lib/import/agent-cli.mjs", "lib/import/reader.mjs",
   "skills/app-canvas/references/url-import.md", "docs/url-import.md",
   "AGENT_GUIDE.md", "CHANGELOG.md",
+  "lib/import/export.mjs", "docs/self-hosted-review.md",
+  "skills/app-canvas/references/sharing.md",
 ]) if (!files.has(required)) throw Error(`Release package missing ${required}`);
 const sha256 = createHash("sha256").update(await readFile(join(output, pack.filename))).digest("hex");
 await writeFile(join(output, "SHA256SUMS"), `${sha256}  ${pack.filename}\n`);
