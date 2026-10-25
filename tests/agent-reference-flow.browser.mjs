@@ -29,6 +29,7 @@ try {
   await page.locator('.journey-panel[data-status="error"]').waitFor();
   await failure;
   const failed = sent.filter(event => event.event === "flow_failed");
+  assert.equal(sent.filter(event => event.event === "flow_started").length, 1, "manual failed playback must record its actual start");
   assert.equal(failed.length, 1);
   assert.equal(failed[0].properties.error_code, "journey_failed");
   assert.equal(failed[0].properties.environment, "qualification");
@@ -40,5 +41,34 @@ try {
   await page.locator('.journey-panel[data-status="complete"]').waitFor();
   assert.equal(sent.filter(event => event.event === "flow_failed").length, 1);
   assert.equal(sent.filter(event => event.event === "flow_completed").length, 1);
-  console.log("PASS flow outcome telemetry: real failed and completed playback each emit once; fixed safe code only, no raw error/source/screen contents.");
+  assert.equal(sent.filter(event => event.event === "flow_started").length, 2, "manual success and failure each record one start");
+  const demoComplete = page.waitForResponse(response => new URL(response.url()).pathname === "/telemetry" && response.request().postDataJSON()?.event === "flow_completed");
+  await page.getByRole("button", { name: "Start Demo", exact: true }).click();
+  await demoComplete;
+  await page.locator('.demo-player[data-status="complete"]').waitFor();
+  assert.equal(sent.filter(event => event.event === "flow_started").length, 3, "Demo records exactly one real start without a second click beacon");
+  assert.equal(sent.filter(event => event.event === "flow_completed").length, 2);
+  await page.getByRole("button", { name: "Exit demo", exact: true }).click();
+
+  // The app can finish a fast flow before its asynchronous analytics config
+  // arrives. Starting and terminal effects must replay once readiness changes.
+  const delayed = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+  let releaseConfig;
+  const configGate = new Promise(resolve => { releaseConfig = resolve; });
+  await delayed.route("**/telemetry.json", async route => { await configGate; await route.continue(); });
+  await delayed.goto(`${app.address}?lang=en`);
+  await delayed.locator('.review-workspace[data-live-ready="true"]').waitFor();
+  await delayed.getByLabel("Play flow", { exact: true }).selectOption("success");
+  await delayed.getByRole("button", { name: "▶ Play", exact: true }).click();
+  await delayed.locator('.journey-panel[data-status="complete"]').waitFor();
+  assert.equal(sent.filter(event => event.event === "flow_started").length, 3, "unavailable config does not prematurely consume start dedup");
+  const delayedStarted = delayed.waitForResponse(response => new URL(response.url()).pathname === "/telemetry" && response.request().postDataJSON()?.event === "flow_started");
+  const delayedComplete = delayed.waitForResponse(response => new URL(response.url()).pathname === "/telemetry" && response.request().postDataJSON()?.event === "flow_completed");
+  releaseConfig();
+  await Promise.all([delayedStarted, delayedComplete]);
+  assert.equal(sent.filter(event => event.event === "flow_started").length, 4);
+  assert.equal(sent.filter(event => event.event === "flow_completed").length, 3);
+  assert.equal(sent.filter(event => event.event === "flow_failed").length, 1);
+  assert.doesNotMatch(JSON.stringify(sent.filter(event => event.event.startsWith("flow_"))), /Private|private-fixture|Does not exist|h1/);
+  console.log("PASS flow lifecycle telemetry: manual failure+success, Demo and pre-config completion each emit one real start/outcome; fixed safe failure code, no raw UI/error/source data.");
 } finally { await browser?.close(); await app.close(); await rm(home, { recursive: true, force: true }); }

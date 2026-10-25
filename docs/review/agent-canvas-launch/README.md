@@ -18,3 +18,10 @@ by the visible control context to expose the new handoff on the small viewport.
 
 These public fixtures contain no production accounts, private paths, credentials
 or real user data. Original screenshot bytes are retained without image editing.
+
+Imported phone comparisons retain the same horizontal scroll (710px) within
+the existing 1100px desktop editor. This documents the added reference controls;
+it does not claim mobile support for URL-import editing. The initial source
+phone selected-screen pair is intentionally pixel-identical because the
+Inspector starts below the fold; supplemental after-reference-phone shows the
+new controls after scrolling the details into view.

@@ -185,7 +185,7 @@ try {
     port: values.port ? Number(values.port) : exporting ? 0 : undefined,
     watchFiles: !values.verify && !values.complete && !values['ui-complete'] && !exporting,
   });
-  console.log(`App canvas: ${app.address}`);
+  console.log(`Agent Canvas: ${app.address}`);
   for (const signal of ["SIGINT", "SIGTERM"])
     process.once(signal, async () => {
       await app.close();

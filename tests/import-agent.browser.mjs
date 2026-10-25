@@ -15,9 +15,9 @@ let child, browser, source, siteClosed = false;
 const start = directory => new Promise((resolve, reject) => {
   child = spawn(process.execPath, [cli, "open", directory, "--port", "0"], { stdio: ["ignore", "pipe", "pipe"] });
   let output = "", errors = ""; const timer = setTimeout(() => reject(Error(`CLI open timed out: ${errors}`)), 20000);
-  child.stdout.on("data", data => { output += data; const url = output.match(/App Canvas import: (http:\/\/127\.0\.0\.1:\d+)/)?.[1]; if (url) { clearTimeout(timer); resolve(url); } });
+  child.stdout.on("data", data => { output += data; const url = output.match(/(?:Agent|App) Canvas import: (http:\/\/127\.0\.0\.1:\d+)/)?.[1]; if (url) { clearTimeout(timer); resolve(url); } });
   child.stderr.on("data", data => errors += data);
-  child.once("exit", code => { clearTimeout(timer); if (!output.includes("App Canvas import:")) reject(Error(`CLI failed (${code}): ${errors}`)); });
+  child.once("exit", code => { clearTimeout(timer); if (!output.includes(" Canvas import:")) reject(Error(`CLI failed (${code}): ${errors}`)); });
 });
 const stop = () => new Promise(resolve => { if (!child || child.exitCode !== null) return resolve(); child.once("exit", resolve); child.kill("SIGTERM"); });
 try {

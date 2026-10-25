@@ -90,7 +90,6 @@ function Canvas() {
   useEffect(() => { if (autoStart && plan.length) { player.start(false, { presentation: autoStart === "demo" }); setAutoStart(false); } }, [autoStart, plan]);
   const chooseJourney = (id, autoplay = false, demo = false) => { player.stop(); select(null); setActive(null); setPage("all"); setQuery(""); setJourneyId(id); setBranches(id.startsWith("__")); setAutoStart(autoplay ? demo ? "demo" : "journey" : false); };
   const startDemo = () => {
-    analytics.track("flow_started");
     demoSnapshot.current = { page, query, selectedId, active, journeyId, branches, viewport: camera.getViewport() };
     setPresenting(true); setMenu(false); setDrawer(false);
     const pageScope = `__page__:${page}`;
@@ -182,15 +181,21 @@ function Canvas() {
     };
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
   }, [fit, navigate, selectedId, active, presenting]);
-  const trackedPlayback = useRef(null);
+  const trackedStart = useRef(null), trackedPlayback = useRef(null);
+  useEffect(() => {
+    const playbackId = player.state?.playbackId;
+    if (!analytics.config?.enabled || analytics.config.pending || !playbackId || trackedStart.current === playbackId) return;
+    trackedStart.current = playbackId;
+    analytics.track("flow_started");
+  }, [player.state?.playbackId, analytics.config?.enabled, analytics.config?.pending]);
   useEffect(() => {
     const status = player.state?.status;
-    if (!["complete", "error"].includes(status)) return;
+    if (!analytics.config?.enabled || analytics.config.pending || !["complete", "error"].includes(status)) return;
     const outcome = `${player.state.playbackId}:${status}`;
     if (trackedPlayback.current === outcome) return;
     trackedPlayback.current = outcome;
     analytics.track(status === "complete" ? "flow_completed" : "flow_failed", status === "error" ? { error_code: "journey_failed" } : {});
-  }, [player.state?.status, player.state?.playbackId]);
+  }, [player.state?.status, player.state?.playbackId, analytics.config?.enabled, analytics.config?.pending]);
   const shown = new Set(visible.map(s => s.id));
   const journeyFlows = !branches && definition?.steps.map((step, i) => ({ from: i ? definition.steps[i - 1].screen : definition.entry, to: step.screen, label: step.title })).filter(edge => edge.from !== edge.to);
   const displayedFlows = journeyFlows || flows;
