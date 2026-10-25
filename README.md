@@ -1,17 +1,19 @@
-# App Canvas
+# Agent Canvas
 
 <!-- launch:begin -->
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt.md) · [Italiano](README.it.md) · [한국어](README.ko.md) · [Nederlands](README.nl.md)
 
-**[Product & multilingual guides](https://tombelieber.github.io/app-canvas/about/) · [Agent walkthrough](https://tombelieber.github.io/app-canvas/about/start/) · [Release story](https://tombelieber.github.io/app-canvas/about/release/)**
+**[Product & multilingual guides](https://agent-canvas-app.pages.dev/) · [Agent walkthrough](https://agent-canvas-app.pages.dev/about/start/) · [Release story](https://agent-canvas-app.pages.dev/about/release/)**
 
-CLI **v0.15.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
+CLI **v0.16.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
 <!-- launch:end -->
 
-A zoomable overview of your real application pages, named states and flows. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
+**Build with agents. Shape it live.**
+
+See your real app on one canvas. Try screens and flows, point to an element, and copy a precise change request to Claude Code or Codex. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
 
 **[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
-No install, login or API key. Explore **77 named states**, labeled flows and
+No install, login or API key. [Product site](https://agent-canvas-app.pages.dev/). Explore **77 named states**, labeled flows and
 working recording/editing/import/export interactions using synthetic data.
 Play **44 interaction flows and all 77 individual cases**, separately or as
 one queue. The branching state graph labels success, failure, waiting and
@@ -19,11 +21,15 @@ conditional variants using complete real UI screens.
 
 ![A failed save, retained draft and successful retry on the real UI canvas](docs/stoolsense-playback.jpg)
 
+[How to point at UI and ask for a change](docs/agent-reference.md) · [Contributing](CONTRIBUTING.md) · [Support](docs/support.md)
+
 One runtime serves multiple projects. Each project keeps its **screen catalog, preview adapter, synthetic fixtures and interaction checks**. Components, layouts and CSS come from the application. There is no second design file to synchronize.
+
+The `app-canvas` command remains available for existing scripts. Existing project libraries, preferences and local storage retain their compatibility paths. The installer upgrades unchanged managed skills to `agent-canvas` and preserves user edits.
 
 ## Import a website (desktop v1)
 
-**App Canvas + an agent** can turn a URL into an editable desktop landscape,
+**Agent Canvas + an agent** can turn a URL into an editable desktop landscape,
 record observed screens/states/flows, and save/reopen local design edits. Use an
 existing authorized browser through the packaged DOM reader, or the dedicated
 capture browser. No Figma account or model API key is required by the package.
@@ -40,7 +46,7 @@ Open your application repository in your agent and paste:
 
 ```text
 Read https://github.com/tombelieber/app-canvas/blob/main/AGENT_GUIDE.md
-and add a completely populated App Canvas to this repository. Discover all
+and add a completely populated Agent Canvas to this repository. Discover all
 screens, components, variants, states and navigation from source. Create the
 missing fixtures and web/native render harnesses yourself. Use original UI
 code. Reconcile an independent source inventory against rendered cases and
@@ -58,7 +64,7 @@ The coding agent owns discovery and population; existing stories, previews or
 component isolation are not required inputs from the user. Web adapters render
 original HTML/CSS/JS. Native UIKit, SwiftUI and Android apps use agent-authored
 harnesses to render/capture original UI and populate the same canvas. See the
-[native workflow](skills/app-canvas/references/native.md). The package does not
+[native workflow](skills/agent-canvas/references/native.md). The package does not
 bundle a universal device renderer; viewer checks and native checks are separate.
 
 ## Try the included application
@@ -66,9 +72,9 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.15.0
-app-canvas browsers
-app-canvas demo
+npm install -g github:tombelieber/app-canvas#v0.16.0
+agent-canvas browsers
+agent-canvas demo
 ```
 
 On npm 12, if Git admission blocks the install, add `--allow-git=root` to that
@@ -114,15 +120,15 @@ serves the static files under GitHub's own hosting policies.
 
 ## Connect a project
 
-Install the agent skill once, then invoke `$app-canvas` in the target repository:
+Install the agent skill once, then invoke `$agent-canvas` in the target repository:
 
 ```sh
-app-canvas install --target both
+agent-canvas install --target both
 ```
 
 Targets: `codex`, `claude`, or `both` (default). The installer copies the canonical
-[skill](skills/app-canvas/SKILL.md), metadata and references into
-`~/.codex/skills/app-canvas` and `~/.claude/skills/app-canvas`. Existing unmanaged
+[skill](skills/agent-canvas/SKILL.md), metadata and references into
+`~/.codex/skills/agent-canvas` and `~/.claude/skills/agent-canvas`. Existing unmanaged
 or edited skills are preserved.
 
 This repository owns the canvas, CLI, canonical skill and releases together.
@@ -130,15 +136,15 @@ No other skill collection or marketplace is required.
 
 ### Standalone Claude plugin
 
-Claude Code users can install the same skill through App Canvas's own marketplace:
+Claude Code users can install the same skill through Agent Canvas's own marketplace:
 
 ```sh
 claude plugin marketplace add tombelieber/app-canvas
-claude plugin install app-canvas@app-canvas
+claude plugin install agent-canvas@agent-canvas
 ```
 
 The plugin supplies the skill; install the CLI with npm as shown above. Choose
-either the Claude plugin or `app-canvas install --target claude` to avoid duplicate
+either the Claude plugin or `agent-canvas install --target claude` to avoid duplicate
 Claude skills. The Codex CLI installer works independently of the Claude plugin.
 
 ### Existing Tomstack installations
@@ -150,7 +156,7 @@ Install the standalone skill before updating the Tomstack bundle:
 - For a skill installed with `skills`, change its source with
   `npx skills@latest add tombelieber/app-canvas --skill app-canvas` and select the
   same target agents.
-- CLI-managed copies upgrade with `app-canvas install --target both` after the
+- CLI-managed copies upgrade with `agent-canvas install --target both` after the
   CLI update. For a manually copied or locally linked skill, preserve the old
   directory or link before installing; the CLI deliberately refuses to overwrite it.
 
@@ -222,7 +228,7 @@ case coverage. The demo enforces both checks.
 
 ## Keep coverage honest
 
-Complete **UI delivery** uses the independent [population workflow](skills/app-canvas/references/population.md):
+Complete **UI delivery** uses the independent [population workflow](skills/agent-canvas/references/population.md):
 
 ```sh
 app-canvas guide
@@ -245,7 +251,7 @@ missing state, stale source or missing original-runtime assertion fails. Syntax
 anchors assist inspection; they do not infer arbitrary app semantics by themselves.
 
 The existing `--complete` remains the unchanged stricter
-[all-source audit](skills/app-canvas/references/source-audit.md), with version 2
+[all-source audit](skills/agent-canvas/references/source-audit.md), with version 2
 `discover` / `pending` worklists and obligation-linked evidence. Internal audit
 checks are separate from missing screens. A UI pass does not make a failed
 source audit pass. Legacy `sourceCoverage` / `requireSourceInventory` checks
@@ -254,7 +260,7 @@ remain supported. `--check` / `--verify` alone qualify registered cases only.
 UI and CSS edits refresh from source. **The agent owns discovering and
 registering new states.** Reconcile source discovery with real navigation and
 the catalog; never reduce the denominator to easy cases. See the
-[completion contract](skills/app-canvas/references/completion.md).
+[completion contract](skills/agent-canvas/references/completion.md).
 
 For React Router JSX/object routes, add an inventory guard:
 
@@ -267,7 +273,7 @@ routeCoverage: [{
 }],
 ```
 
-Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/app-canvas/routes`; store the original route pattern on each base case as `pattern`. A new/changed route, unresolved path expression or page omitted from the catalog fails the check. Redirects are counted separately. This inventory supports the route forms in the repository tests, not every router/framework.
+Create the reviewed snapshot with `inventoryRoutes` from `@tombelieber/agent-canvas/routes`; store the original route pattern on each base case as `pattern`. A new/changed route, unresolved path expression or page omitted from the catalog fails the check. Redirects are counted separately. This inventory supports the route forms in the repository tests, not every router/framework.
 
 `preview(ctx)` can return `url(screen)`, `build()`, `handle(req,res,url)`, and `close()`. URLs must use loopback HTTP(S). Configs and preview code are trusted local code. The Vite helper and HTML served through `handle` get the shared preview bridge automatically. A custom server on a separate origin must apply `ctx.bridgeHtml(html)` before its application scripts.
 
@@ -361,7 +367,7 @@ This is an existing problem with useful existing solutions, not an empty market:
 | [html-flow-board](https://github.com/snowpact/html-flow-board)                    | Interactive HTML flow boards and FlowML authoring.                                                                                                                                               |
 | [Playroom](https://github.com/seek-oss/playroom)                                  | Composing real components across viewports.                                                                                                                                                      |
 | [React Cosmos](https://github.com/react-cosmos/react-cosmos)                      | Component fixtures and isolated development.                                                                                                                                                     |
-| **App Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with bounded actual-code previews, camera-following flows and checked journey playback.                                            |
+| **Agent Canvas**                                                                    | Standalone CLI and project adapters, including non-React renderers, with bounded actual-code previews, camera-following flows and checked journey playback.                                            |
 
 The core canvas uses [React Flow](https://github.com/xyflow/xyflow). App previews
 do not require adopting React Flow or Storybook. Native Swift/Kotlin/React Native

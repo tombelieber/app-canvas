@@ -1,4 +1,4 @@
-# Release App Canvas
+# Release Agent Canvas
 
 The canonical runtime, CLI, skill, references, marketplace and release workflow
 all live in this repository. Skill changes ship with the same version as the
@@ -8,7 +8,7 @@ CLI. No Tomstack checkout, copied skill or paired release is required.
 
 1. Update `package.json`, `package-lock.json`, `.claude-plugin/plugin.json`,
    the install pins in `README.md`, `AGENT_GUIDE.md` and
-   `skills/app-canvas/SKILL.md`, and the current `CHANGELOG.md` entry together.
+   `skills/agent-canvas/SKILL.md`, and the current `CHANGELOG.md` entry together.
    Run `npm run docs:generate` to refresh all localized install pins. See
    [product localization](localization.md) for the shared launch content contract.
 2. Run `npm run check`, `npm test`, `npm run test:onboarding`,
@@ -45,3 +45,26 @@ On npm 12, a GitHub-source install may require `--allow-git=root` for the direct
 requested repository. Scope that option to the install command; do not change
 global policy or allow transitive Git dependencies. The checksummed `.tgz`
 installation does not need Git admission.
+
+## Free Cloudflare product site
+
+The canonical product site is https://agent-canvas-app.pages.dev/. GitHub Pages
+continues to host the synthetic canvas and run its full viewer regression gates;
+its marketing documents canonicalize to the product site.
+
+Run `npm run build:product` in a fresh candidate checkout. The output has the
+landing at `/`, the complete synthetic demo at `/demo/`, localized guides under
+`/about/`, search files, a real 404 page and `build.json` identifying the commit.
+The export requires a new output directory; choose another with
+`AGENT_CANVAS_PRODUCT_DIR` when retaining an older build for comparison.
+
+Deploy the qualified output with `wrangler pages deploy .artifacts/product
+--project-name agent-canvas-app --branch main --commit-hash <qualified-commit>`.
+Use the existing authenticated Cloudflare account; do not buy a domain. Read
+back the actual deployment, then verify the production alias, commit/version,
+404 status, canonical/redirect behavior, assets and the full demo/reference task.
+
+When the event contract changes, qualify and deploy the compatible collector
+first, then publish browser assets. Verify an explicitly marked internal canary
+from its source event UUID through collector ingestion to PostHog; do not count
+that canary as external activation. Never publish collector secrets in assets.

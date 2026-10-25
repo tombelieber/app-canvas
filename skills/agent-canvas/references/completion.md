@@ -8,7 +8,7 @@ A few representative screens are an intermediate result.
 
 ## Discover before capturing
 
-Run `app-canvas guide` from the installed package to use matching instructions,
+Run `agent-canvas guide` from the installed package to use matching instructions,
 then `plan --source-root <original-repository> --out <new-ui-inventory.json>`.
 Inspect the whole first-party repository: entry points, imports, navigation,
 controllers, resources, state inputs, permissions, feature flags and content.

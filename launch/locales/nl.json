@@ -1,14 +1,14 @@
 {
   "name": "Nederlands",
-  "title": "Je hele UI. Eén canvas. Echte code.",
-  "description": "Verken echte schermen, toestanden en interactieve flows op een zoombaar canvas, gebouwd en onderhouden met je coding agent.",
+  "title": "Je agent bouwt.\nJij bepaalt de volgende stap.",
+  "description": "Een lichte werkruimte om de app van je coding-agent te bekijken, testen en verbeteren. Bekijk echte schermen, wijs wijzigingen aan en bouw verder vanuit de broncode.",
   "demo": "Open de demo",
   "source": "Broncode op GitHub",
-  "start": "Voeg toe aan je repo",
+  "start": "Gratis beginnen",
   "release": "Releaseverhaal",
   "languages": "Kies je taal",
-  "eyebrow": "App Canvas · Open source · Voor coding agents",
-  "summary": "TL;DR",
+  "eyebrow": "Gratis en open source",
+  "summary": "Voor bouwen, bekijken en verbeteren",
   "tldr": [
     "Bekijk volledige geïmplementeerde schermen, benoemde toestanden en verbonden flows samen.",
     "Onderhoud één UI-implementatie. Je agent maakt fixtures, adapter en dekkingscontroles.",
@@ -25,13 +25,13 @@
       "Browse vergrendelt bediening tijdens het schuiven. Kies een scherm en Interact om de oorspronkelijke code met tijdelijke data te bedienen."
     ],
     [
-      "Druk op Demo om een flow uit te leggen",
-      "Speel succes, fouten en herstel af in één doorlopende appsessie, met actieaanwijzingen, bijschriften, pauze, snelheid en tijdlijn."
+      "Wijs precies aan wat moet veranderen",
+      "Selecteer een scherm of UI-element, voeg je wijzigingsverzoek toe en kopieer een referentie voor je agent. Vraag de agent de broncode aan te passen; gekoppelde previews worden opnieuw gebouwd."
     ]
   ],
-  "overviewAlt": "Echte StoolSense-toestanden op het App Canvas-overzicht",
+  "overviewAlt": "Echte StoolSense-toestanden op het Agent Canvas-overzicht",
   "playbackAlt": "Echte weergave na mislukte offline opslag met behoud van het concept",
-  "phoneAlt": "App Canvas in Safari op een fysieke iPhone",
+  "phoneAlt": "Agent Canvas in Safari op een fysieke iPhone",
   "overviewCaption": "Echte demo: {states} toestanden, {flows} flows en {entries} afspeelbare items. Daaronder losse cases, geen {entries} E2E-flows.",
   "playbackCaption": "Echte fout- en herstel-UI. Afspelen voert vastgelegde acties en controles uit; een getekende verbinding is geen test.",
   "phoneCaption": "Safari-opname op een fysieke iPhone. Het technische artikel beschrijft de weg van crash naar werkende app en de meetgrenzen.",
@@ -41,7 +41,7 @@
   "steps": [
     [
       "Installeer het gedeelde gereedschap",
-      "Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid. Gebruik tot de release van v0.13.0 een gekwalificeerde ontwikkelcommit voor deze UI-opdrachten."
+      "Gebruik Node.js 22+ en de pakketbeheerder en lockfile van je project. Installeer de vastgezette GitHub-release en de browser. Voeg bij npm 12 alleen --allow-git=root toe als deze directe Git-afhankelijkheid wordt geblokkeerd; wijzig geen globaal beleid."
     ],
     [
       "Inventariseer vóór je cases kiest",
@@ -70,10 +70,10 @@
     "Dekking verbindt beoordeelde broncode met cases en ontdekt niet automatisch elke bedrijfsconditie. UI-controles kwalificeren geen productiebackend, klinische juistheid of modelprecisie.",
     "Viewer: standaard Engels, met 11 talen. De openbare demo is een vast synthetisch frontend; lokale integraties volgen je broncode. Prestaties op een fysieke iPad zijn niet gemeten."
   ],
-  "storyTitle": "Waarom ik App Canvas bouwde",
+  "storyTitle": "Waarom ik Agent Canvas bouwde",
   "story": [
     "AI maakte een nieuwe pagina bouwen eenvoudig, maar een groeiende app niet begrijpelijker. Ik wilde geïmplementeerde schermen en fouten samen zien, zonder alles door te klikken of een tweede ontwerpbestand te onderhouden.",
-    "App Canvas maakt de beoordeling een navigeerbaar landschap. De agent integreert de repo; het gedeelde gereedschap biedt canvas, previews van echte code, cameravolging en geverifieerd afspelen.",
+    "Agent Canvas maakt de beoordeling een navigeerbaar landschap. De agent integreert de repo; het gedeelde gereedschap biedt canvas, previews van echte code, cameravolging en geverifieerd afspelen.",
     "StoolSense is het synthetische openbare voorbeeld. Geen productiesessie, echte gezondheidsgegevens of AI-verzoeken. Optionele gebruiksgebeurtenissen staan los van app-data."
   ],
   "versionLabel": "CLI-release",
@@ -84,5 +84,37 @@
   "readmeGuide": "Integratiegids",
   "skip": "Naar inhoud",
   "flowAlt": "Echte toestandsgraaf van opslagfout, bewaard concept en geslaagde herhaling",
-  "flowCaption": "Kies een flow voor volledige schermen en benoemde overgangen. Een link verplaatst de camera naar de bestemming."
+  "flowCaption": "Kies een flow voor volledige schermen en benoemde overgangen. Een link verplaatst de camera naar de bestemming.",
+  "freeLabel": "Gratis · MIT-licentie · Je eigen agent",
+  "installTitle": "Maak het deel van je bouwproces.",
+  "installNote": "Probeer de meegeleverde app lokaal en koppel daarna je repository met je agent. Vereist Node.js 22+.",
+  "demoProofTitle": "De app is het canvas.",
+  "demoProofIntro": "Echte schermen met de oorspronkelijke UI-code. Probeer het openbare voorbeeld voordat je installeert.",
+  "faqTitle": "Voor je begint",
+  "faq": [
+    [
+      "Is het gratis?",
+      "CLI, canvas en skills zijn gratis en open source onder MIT. Je coding-agent kan eigen abonnements- of API-kosten hebben."
+    ],
+    [
+      "Werkt het met Claude Code en Codex?",
+      "Ja. Installeer de skills voor één of beide. Andere agents kunnen de openbare handleiding en het CLI gebruiken. Het canvas roept geen modellen aan."
+    ],
+    [
+      "Heb ik een ontwerpbestand nodig?",
+      "Begin met je app-broncode of importeer een website. De agent koppelt de bestaande UI en synthetische fixtures om schermen en toestanden samen te bekijken."
+    ],
+    [
+      "Verandert de demo mijn app?",
+      "Nee. De demo voert een vast synthetisch voorbeeld uit in de browser. Je eigen app en code pas je aan in je lokale project met je agent."
+    ],
+    [
+      "En native apps?",
+      "UIKit, SwiftUI en Android gebruiken projectspecifieke harnesses en opnamen van de oorspronkelijke runtime. Een opname is geen interactieve native app in de browser."
+    ]
+  ],
+  "playbackTitle": "Druk op Demo om een flow uit te leggen",
+  "playbackIntro": "Speel succes, fouten en herstel af in één doorlopende appsessie, met actieaanwijzingen, bijschriften, pauze, snelheid en tijdlijn.",
+  "referenceAlt": "Selecteer een echt app-element, beschrijf de wijziging en kopieer de broncodecontext voor je agent.",
+  "referenceCaption": "Echt lokaal voorbeeld: selecteer een UI-element en kopieer bewust het wijzigingsverzoek. Het canvas stuurt dit niet naar een AI-dienst."
 }

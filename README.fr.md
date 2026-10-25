@@ -1,21 +1,22 @@
 <!-- Generated from launch/locales/fr.json; run npm run docs:generate. -->
-# App Canvas
+# Agent Canvas
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt.md) · [Italiano](README.it.md) · [한국어](README.ko.md) · [Nederlands](README.nl.md)
 
-## Toute votre UI. Un canevas. Le vrai code.
+## Votre agent construit.
+Vous façonnez la suite.
 
-Explorez les écrans, états et parcours interactifs réels dans un canevas zoomable, créé et maintenu avec votre agent de programmation.
+Un espace léger pour voir, essayer et améliorer l’application de votre agent. Explorez les vrais écrans, indiquez ce qui doit changer et continuez depuis le code source.
 
-**[Ouvrir la démo](https://tombelieber.github.io/app-canvas/) · [Ajouter à votre dépôt](https://tombelieber.github.io/app-canvas/about/fr/start/) · [Article de lancement](https://tombelieber.github.io/app-canvas/about/fr/release/)**
+**[Ouvrir la démo](https://agent-canvas-app.pages.dev/demo/) · [Commencer gratuitement](https://agent-canvas-app.pages.dev/about/fr/start/) · [Article de lancement](https://agent-canvas-app.pages.dev/about/fr/release/)**
 
-## TL;DR
+## Pour construire, vérifier et améliorer
 
 - Voyez ensemble les écrans complets, leurs états nommés et les parcours implémentés.
 - Une seule implémentation UI. Votre agent crée fixtures, adapter et contrôles de couverture.
 - Essayez 77 états et 44 parcours avec des données synthétiques, sans compte ni clé API.
 
-![États réels de StoolSense sur le canevas App Canvas](docs/stoolsense-overview.jpg)
+![États réels de StoolSense sur le canevas Agent Canvas](docs/stoolsense-overview.jpg)
 
 Démo réelle : 77 états, 44 parcours et 121 entrées lisibles. La file inclut des cas isolés, pas 121 parcours E2E.
 
@@ -29,9 +30,9 @@ Démo réelle : 77 états, 44 parcours et 121 entrées lisibles. La file inclut 
 
 Browse verrouille les contrôles pendant le déplacement. Sélectionnez un écran puis Interact pour utiliser son code original avec des données jetables.
 
-### Lancez Demo pour expliquer un parcours
+### Indiquez précisément quoi changer
 
-Rejouez succès, échec et récupération dans une session continue : repères d’action, légendes, pause, vitesse et chronologie des étapes.
+Sélectionnez un écran ou un élément UI, ajoutez votre demande et copiez une référence pour votre agent. Demandez-lui de modifier le code ; les aperçus liés au source se reconstruisent.
 
 ![Relecture réelle après un échec de sauvegarde hors ligne, avec brouillon conservé](docs/stoolsense-playback.jpg)
 
@@ -44,16 +45,16 @@ Confiez l’intégration à un agent capable de lire, modifier et exécuter des 
 ### À coller dans votre agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Installer l’outil partagé
 
-Utilisez Node.js 22+ et le gestionnaire et lockfile du projet. Installez la version GitHub épinglée, puis le navigateur. Avec npm 12, ajoutez --allow-git=root seulement si cette dépendance Git directe est bloquée ; ne changez pas la politique globale. Avant la publication de v0.13.0, utilisez un commit de développement qualifié pour ces commandes UI.
+Utilisez Node.js 22+ et le gestionnaire et lockfile du projet. Installez la version GitHub épinglée, puis le navigateur. Avec npm 12, ajoutez --allow-git=root seulement si cette dépendance Git directe est bloquée ; ne changez pas la politique globale.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.15.0
-npx app-canvas browsers
+npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npx agent-canvas browsers
 ```
 
 ### 2. Inventorier avant de choisir les cas
@@ -61,8 +62,8 @@ npx app-canvas browsers
 Exécutez plan sur tout le dépôt original. Examinez chaque fichier, ancrage UI, dépendance influençant l’UI et navigation réelle. Recensez les écrans et états indépendamment du catalogue ; gardez les UI non résolues visibles.
 
 ```sh
-npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
-npx app-canvas status --inventory ui-review/ui-inventory.json
+npx agent-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx agent-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. Afficher la vraie UI avec des fixtures
@@ -74,7 +75,7 @@ Créez config, catalog, fixtures synthétiques, preview entry et journeys dans u
 Couvrez normal, vide, chargement, erreur, accès refusé, dialogues et récupération. Vérifiez chaque cas et les vrais contrôles dans des parcours continus. Réconciliez inventory, assertions liées au code et routes ; passez --ui-complete sur la même racine. --complete reste un audit strict et distinct de tout le code source. Ses éléments ouverts ne comptent pas les écrans manquants.
 
 ```sh
-npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
+npx agent-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. Réviser et maintenir depuis le code
@@ -90,14 +91,14 @@ npm run ui:review
 
 Le paquet partagé possède viewer, CLI et skill. Votre dépôt conserve adapter, fixtures, inventory indépendant, catalog et tests d’interaction. Partez de l’exemple React/Vite exécutable ; les autres stacks ont leur adapter.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.15.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
 
 ### Skill facultative
 
 Codex et Claude Code peuvent installer la skill fournie. Tout autre agent peut lire AGENT_GUIDE.md. Le runtime n’appelle aucun modèle et ne demande aucune clé API ; votre agent garde ses propres coûts et permissions.
 
 ```sh
-npx app-canvas install --target both
+npx agent-canvas install --target both
 ```
 
 ## Portée et limites

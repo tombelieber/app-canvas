@@ -1,7 +1,7 @@
 # Resumable population and UI evidence
 
 These commands are provided by the tool revision containing this reference.
-Use the matching `app-canvas guide`; update an older CLI instead of silently
+Use the matching `agent-canvas guide`; update an older CLI instead of silently
 skipping a gate. The coding agent still supplies semantic discovery and the
 app-specific adapter. `populate` executes that adapter; it does not infer an
 arbitrary application's states or call a model by itself.
@@ -9,8 +9,8 @@ arbitrary application's states or call a model by itself.
 ## Independent worklist
 
 ```sh
-app-canvas plan --source-root /path/to/app --out ui-review/ui-inventory.json
-app-canvas status --inventory ui-review/ui-inventory.json
+agent-canvas plan --source-root /path/to/app --out ui-review/ui-inventory.json
+agent-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 `plan` refuses to overwrite work. It fingerprints the whole original repository
@@ -71,7 +71,7 @@ inventory. `verify` is a fallback if it supplies the same proof; a combined
 hook may return `{ui: <proof>}`.
 
 ```sh
-app-canvas --config ui-review/canvas.config.mjs --ui-complete --source-root /path/to/app
+agent-canvas --config ui-review/canvas.config.mjs --ui-complete --source-root /path/to/app
 ```
 
 New UI deliveries above 128 cases start at feature depth, or page depth when
@@ -87,7 +87,7 @@ unchanged and separate; its pending count never means that many missing screens.
 ## Plan captures before actors
 
 Import `planCaptures` and `populationFingerprint` from
-`@tombelieber/app-canvas/population`. A capture request contains:
+`@tombelieber/agent-canvas/population`. A capture request contains:
 
 ```js
 {caseId, stateId, pageId, feature, entry, platform, layout, locale,
@@ -135,7 +135,7 @@ and bounded independent platform preparation. Do not run a second writer or
 actor in another chat.
 
 ```sh
-app-canvas populate --config ui-review/canvas.config.mjs --source-root /path/to/app
+agent-canvas populate --config ui-review/canvas.config.mjs --source-root /path/to/app
 # Same command resumes. --verify verifies then exits for CI.
 ```
 

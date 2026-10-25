@@ -12,11 +12,11 @@ let app;
 let browser;
 try {
   const packs = JSON.parse((await exec("npm", ["pack", "--json", "--pack-destination", root])).stdout);
-  const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/app-canvas"];
+  const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/agent-canvas"];
   const project = join(root, "project");
   await cp("examples/react-vite", project, { recursive: true });
   await exec("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", "--save-dev", join(root, pack.filename)], { cwd: project, maxBuffer: 1024 * 1024 });
-  const installed = join(project, "node_modules/@tombelieber/app-canvas");
+  const installed = join(project, "node_modules/@tombelieber/agent-canvas");
   const { startCanvas } = await import(pathToFileURL(join(installed, "lib/server.mjs")));
   const { loadProject } = await import(pathToFileURL(join(installed, "lib/config.mjs")));
   const { checkRouteCoverage } = await import(pathToFileURL(join(installed, "lib/routes.mjs")));
@@ -24,25 +24,25 @@ try {
   const config = await loadProject(configPath, project);
   // Exercise the shipped export and guard through the installed CLI, not an
   // import into the tool checkout. This stays separate from the legacy example.
-  const fingerprintScript = "import { inventorySources } from '@tombelieber/app-canvas/inventory'; console.log(JSON.stringify(await inventorySources(process.cwd(), ['src'])));";
+  const fingerprintScript = "import { inventorySources } from '@tombelieber/agent-canvas/inventory'; console.log(JSON.stringify(await inventorySources(process.cwd(), ['src'])));";
   const files = JSON.parse((await exec(process.execPath, ["--input-type=module", "-e", fingerprintScript], { cwd: project })).stdout);
   const inventory = { version: 1, files, items: config.catalog.map(row => row.id).map(id => ({ id, kind: "state", sources: files.map(f => f.path), cases: [id] })) };
   await writeFile(join(project, "ui-review/inventory.json"), JSON.stringify(inventory));
   await writeFile(join(project, "ui-review/strict.config.mjs"), `import base from './canvas.config.mjs'; export default { ...base, coverage: { requireSourceInventory: true }, sourceCoverage: { roots: ['src'], inventory: 'ui-review/inventory.json' } };`);
-  const cli = join(installed, "bin/app-canvas.mjs");
+  const cli = join(installed, "bin/agent-canvas.mjs");
   const home = join(root, "agent-home");
   await exec(process.execPath, [cli, "install"], { env: { ...process.env, HOME: home } });
   for (const harness of ["codex", "claude"])
-    for (const file of ["SKILL.md", "agents/openai.yaml", "references/completion.md", "references/native.md", "references/source-audit.md", "references/url-import.md", "references/population.md"])
+    for (const file of ["SKILL.md", "agents/openai.yaml", "references/completion.md", "references/native.md", "references/source-audit.md", "references/url-import.md", "references/population.md", "references/sharing.md"])
       assert.deepEqual(
-        await readFile(join(home, `.${harness}/skills/app-canvas`, file)),
-        await readFile(join(installed, "skills/app-canvas", file)),
+        await readFile(join(home, `.${harness}/skills/agent-canvas`, file)),
+        await readFile(join(installed, "skills/agent-canvas", file)),
         `the public installer must ship the canonical ${file} to ${harness}`,
       );
   await exec(process.execPath, [fileURLToPath(new URL("./population.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   await exec(process.execPath, [fileURLToPath(new URL("./import.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
   await exec(process.execPath, [fileURLToPath(new URL("./import-agent.browser.mjs", import.meta.url))], { env: { ...process.env, APP_CANVAS_TEST_CLI: cli }, maxBuffer: 1024 * 1024 });
-  const agentExports = "import {captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject} from '@tombelieber/app-canvas/import'; console.log([captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject].every(x=>typeof x==='function'));";
+  const agentExports = "import {captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject} from '@tombelieber/agent-canvas/import'; console.log([captureScript,createAgentProject,ingestSnapshot,importStatus,linkStates,listProjects,recoverProject,backupProject].every(x=>typeof x==='function'));";
   assert.equal((await exec(process.execPath, ["--input-type=module", "-e", agentExports], { cwd: project })).stdout.trim(), "true");
   const strictArgs = [cli, "--config", "ui-review/strict.config.mjs", "--check"];
   assert.match((await exec(process.execPath, strictArgs, { cwd: project })).stdout, /8 source inventory items mapped/);

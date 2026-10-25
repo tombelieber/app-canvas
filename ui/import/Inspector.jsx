@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { layerName } from "./draft.js";
 import { svgTags } from "../../lib/import/schema.mjs";
-export function ImportInspector({ node, screen, operation, duplicateScreen, upload, links, navigate, busy = false }) {
+import { AgentReference } from "../AgentReference.jsx";
+export function ImportInspector({ node, screen, operation, duplicateScreen, upload, links, navigate, busy = false, project, analytics }) {
   const [value, setValue] = useState(""), [name, setName] = useState("");
   useEffect(() => { setValue(node?.text || ""); setName(node ? layerName(node) : ""); }, [node]);
   const style = node?.style || {}, disabled = !node || node.uneditable;
@@ -25,6 +26,7 @@ export function ImportInspector({ node, screen, operation, duplicateScreen, uplo
           <button onClick={() => operation({ type: "reorder", direction: "forward" })}>Move later</button><button onClick={() => operation({ type: "reorder", direction: "backward" })}>Move earlier</button>
           <button onClick={() => operation({ type: "resetLayer" })}>Reset layer</button><button onClick={() => operation({ type: "delete" })}>Delete layer</button></div>
       </fieldset></> : <p>Select a layer in Edit mode or in the layer tree.</p>}
+    {screen && <AgentReference key={`${screen.id}:${node?.id || "screen"}`} project={project} screen={screen} imported layer={node ? { ...node, name: layerName(node) } : null} analytics={analytics} />}
     <h3>Recorded flows</h3>{links.length ? links.map(link => <button className="flow-link" key={link.id} onClick={() => navigate(link.to)}><small>{link.kind === "reference" ? "Reference" : "Observed action"}</small><span>{link.label} →</span></button>) : <p>No observed transition from this state.</p>}
   </div>;
 }

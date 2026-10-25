@@ -8,8 +8,8 @@ a UI gate pass as an all-source audit pass. When requested, finish this work too
 Start before choosing convenient canvas cases:
 
 ```sh
-app-canvas discover --source-root /path/to/application --out .artifacts/app-canvas/inventory.json
-app-canvas pending --inventory .artifacts/app-canvas/inventory.json
+agent-canvas discover --source-root /path/to/application --out .artifacts/app-canvas/inventory.json
+agent-canvas pending --inventory .artifacts/app-canvas/inventory.json
 ```
 
 `discover` writes a new version 2 worklist and refuses to overwrite existing
@@ -121,7 +121,7 @@ Keep the incomplete worklist while building; activate `sourceCoverage` when its
 reviews and mappings are ready. Final handover runs:
 
 ```sh
-app-canvas --config ui-review/canvas.config.mjs --complete --source-root /path/to/application
+agent-canvas --config ui-review/canvas.config.mjs --complete --source-root /path/to/application
 ```
 
 Use the same original source root; acceptance rejects a snapshot of a different

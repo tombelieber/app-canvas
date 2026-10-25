@@ -12,7 +12,7 @@ try{for(const[engine,type,locale]of[['chromium',chromium,'en'],['webkit',webkit,
    const response=await page.request.fetch((process.env.CLOUD_TEST_URL||'http://127.0.0.1:6167')+path,{method:req.method(),headers:{'Content-Type':'application/json',Origin:origin},data:req.postData()});
    await route.fulfill({response});
   });
-  await page.goto(origin+pagePath(locale));const copy=copies[locale],email=`browser-qualification-${crypto.randomUUID()}@example.com`;
+  await page.goto(origin+pagePath(locale,"release"));const copy=copies[locale],email=`browser-qualification-${crypto.randomUUID()}@example.com`;
   const form=page.locator('#waitlist-form');await form.locator('[name=email]').fill(email);await form.getByRole('button',{name:copy.join,exact:true}).click();assert.equal(requests,0,'no submission without explicit consent');
   await form.locator('[name=consent]').check();await form.getByRole('button',{name:copy.join,exact:true}).click();await form.getByRole('status').filter({hasText:copy.failure}).waitFor();assert.equal(await form.getByRole('button').isEnabled(),true);
   await form.getByRole('button',{name:copy.join,exact:true}).click();await form.getByRole('status').filter({hasText:copy.success}).waitFor();const token=await form.locator('.removal-code code').innerText();assert.match(token,/^[a-f0-9]{64}$/);

@@ -1,4 +1,4 @@
-# App Canvas Cloud interest service
+# Agent Canvas usage and Cloud interest service
 
 Cloudflare Workers + D1 only. No Supabase dependency.
 
@@ -39,7 +39,7 @@ returned code after verification. Never report canaries as market demand.
 
 Capture requires POSTHOG_TOKEN (public ingest class, stored as a Worker secret).
 The publisher's destination is the shared **Product** PostHog project.
-This collector only accepts App Canvas events, fixes `product=app_canvas` and
+This collector only accepts Agent Canvas events, fixes the legacy `product=app_canvas` and
 `schema_version=1`, and prefixes distinct IDs with `app_canvas:`. Future OSS
 tools may share the destination but must use their own fixed product value,
 event contract and scoped identities. Product filters are not access control;
@@ -55,3 +55,13 @@ Missing environment remains accepted as `unknown`, while qualification traffic
 is forced to `qualification`. Deployment and audience remain independent.
 The ingestion-side verified audience mapping may then override the audience value.
 Do not roll the collector back to a contract that rejects a supported client.
+
+The canonical Cloudflare landing origin is explicitly allowed as
+`https://agent-canvas-app.pages.dev`; sibling projects and preview hosts are not.
+Deploy the collector before new launch clients that send random action/session
+IDs, bounded acquisition enums or reference-copy outcomes. Old payloads remain
+valid. Event UUID and source timestamp are forwarded to PostHog for correlation;
+no user-selected reference contents or errors are forwarded. See the event and
+attribution dictionary in docs/telemetry.md. The unchanged Worker hostname,
+database binding and PostHog product slug preserve existing installations and
+opt-outs; they are compatibility identifiers, not unrebranded product copy.

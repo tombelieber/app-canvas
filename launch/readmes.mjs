@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { languages, pageUrl, readmePath, repository, technicalArticle, commands, text } from "./content.mjs";
+import { languages, publicPageUrl as pageUrl, readmePath, repository, technicalArticle, commands, text, publicDemoUrl as demoUrl } from "./content.mjs";
 const root = new URL("../", import.meta.url);
 const start = "<!-- launch:begin -->", end = "<!-- launch:end -->";
 export const languageBar = locales => languages.map(locale => `[${locales[locale].name}](${readmePath(locale)})`).join(" · ");
@@ -9,7 +9,7 @@ export function translatedReadme(locale, { locales, facts }) {
   const code = value => `\n\`\`\`sh\n${value}\n\`\`\`\n`;
   const sections = c.steps.map(([title, body], i) => `### ${i + 1}. ${title}\n\n${body}\n${[code(cmd.install), code(cmd.discover), "", code(cmd.verify), code(cmd.review)][i]}`).join("\n");
   return `<!-- Generated from launch/locales/${locale}.json; run npm run docs:generate. -->
-# App Canvas
+# Agent Canvas
 
 ${languageBar(locales)}
 
@@ -17,7 +17,7 @@ ${languageBar(locales)}
 
 ${c.description}
 
-**[${c.demo}](${new URL("../", pageUrl("en")).href}) · [${c.start}](${pageUrl(locale, "start")}) · [${c.release}](${pageUrl(locale, "release")})**
+**[${c.demo}](${demoUrl}) · [${c.start}](${pageUrl(locale, "start")}) · [${c.release}](${pageUrl(locale, "release")})**
 
 ## ${c.summary}
 
@@ -74,7 +74,7 @@ export async function generatedReadmes(content) {
   const section = `${start}\n${languageBar(content.locales)}\n\n**[Product & multilingual guides](${pageUrl("en")}) · [Agent walkthrough](${pageUrl("en", "start")}) · [Release story](${pageUrl("en", "release")})**\n\nCLI **v${content.facts.version}** · Demo **${content.facts.states} states · ${content.facts.flows} flows · ${content.facts.entries} playable entries**, including standalone cases. Viewer: English by default + 10 languages.\n${end}`;
   const english = original.includes(start)
     ? original.replace(/<!-- launch:begin -->[\s\S]*?<!-- launch:end -->/, section)
-    : original.replace("# App Canvas\n", `# App Canvas\n\n${section}\n`);
+    : original.replace("# Agent Canvas\n", `# Agent Canvas\n\n${section}\n`);
   return { "README.md": english, ...Object.fromEntries(languages.filter(locale => locale !== "en").map(locale => [readmePath(locale), translatedReadme(locale, content)])) };
 }
 

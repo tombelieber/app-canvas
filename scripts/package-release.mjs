@@ -28,16 +28,16 @@ const pack = Array.isArray(packs) ? packs[0] : packs[pkg.name];
 if (pack?.version !== pkg.version) throw Error("Packed version does not match the release");
 const files = new Set(pack.files.map(file => file.path));
 for (const required of [
-  "bin/app-canvas.mjs", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json",
-  "skills/app-canvas/SKILL.md", "skills/app-canvas/agents/openai.yaml",
-  "skills/app-canvas/references/completion.md", "skills/app-canvas/references/native.md",
-  "skills/app-canvas/references/source-audit.md", "skills/app-canvas/references/population.md",
+  "bin/agent-canvas.mjs", "bin/app-canvas.mjs", "skills/app-canvas/SKILL.md", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json",
+  "skills/agent-canvas/SKILL.md", "skills/agent-canvas/agents/openai.yaml",
+  "skills/agent-canvas/references/completion.md", "skills/agent-canvas/references/native.md",
+  "skills/agent-canvas/references/source-audit.md", "skills/agent-canvas/references/population.md",
   "lib/populate.mjs", "lib/ui-coverage.mjs",
   "lib/import/agent.mjs", "lib/import/agent-cli.mjs", "lib/import/reader.mjs",
-  "skills/app-canvas/references/url-import.md", "docs/url-import.md",
+  "skills/agent-canvas/references/url-import.md", "docs/url-import.md",
   "AGENT_GUIDE.md", "CHANGELOG.md",
   "lib/import/export.mjs", "docs/self-hosted-review.md",
-  "skills/app-canvas/references/sharing.md",
+  "skills/agent-canvas/references/sharing.md",
 ]) if (!files.has(required)) throw Error(`Release package missing ${required}`);
 const sha256 = createHash("sha256").update(await readFile(join(output, pack.filename))).digest("hex");
 await writeFile(join(output, "SHA256SUMS"), `${sha256}  ${pack.filename}\n`);

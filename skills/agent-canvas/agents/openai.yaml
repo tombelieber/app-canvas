@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Canvas"
+  short_description: "Populate source UI or capture an editable URL landscape"
+  default_prompt: "Use $agent-canvas to select the repository or desktop URL input path. For URL input, follow references/url-import.md, use the packaged browser reader and capture/status commands with an authorized browser, resolve the scoped accessible desktop worklist, distinguish observed and reference flows, and verify editing, Save and a fresh offline reopen in Agent Canvas. Keep private app trials out of public artifacts. For repository input, discover and populate this repository's complete UI landscape, including components, variants, states and navigation. Create missing fixtures and render harnesses, use plan/populate and an independent UI inventory, and pass --ui-complete before calling UI delivery complete. Keep the separate strict --complete source audit explicit when requested."

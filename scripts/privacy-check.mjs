@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 const packs = JSON.parse(execFileSync("npm", ["pack", "--dry-run", "--json"], { encoding: "utf8" }));
-const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/app-canvas"];
+const pack = Array.isArray(packs) ? packs[0] : packs["@tombelieber/agent-canvas"];
 const files = new Set(pack.files.map((f) => f.path));
 for (const file of execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean)) files.add(file);
 async function collect(path) {
@@ -24,7 +24,13 @@ const rules = [
 const failures = [];
 for (const file of files) {
   if (/(^|\/)(?:\.env[^/]*|measurement-guide|\.git|\.artifacts\/privacy-review)(\/|$)|\.(?:pem|key|sqlite|db|map)$/.test(file)) failures.push(`${file}: forbidden publication file`);
-  const buffer = await readFile(file);
+  // Tracked deletions are absent from the candidate and npm archive. Keep
+  // scanning all other errors rather than failing on a renamed skill path.
+  let buffer;
+  try { buffer = await readFile(file); } catch (error) {
+    if (error.code === "ENOENT") continue;
+    throw error;
+  }
   if (/\.(?:png|jpg|jpeg|webp|gif)$/.test(file)) continue;
   const text = buffer.toString("utf8");
   for (const [name, rule] of rules) if (rule.test(text)) failures.push(`${file}: ${name}`);

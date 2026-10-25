@@ -7,8 +7,8 @@ providers and data contracts. Do not copy these Tasks pages into your app.
 
 ```sh
 npm install
-npm install --save-dev github:tombelieber/app-canvas#v0.13.0
-npx app-canvas browsers
+npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npx agent-canvas browsers
 npm run ui:review
 npm run test:ui:review
 ```
@@ -21,7 +21,7 @@ preview. `npm run dev` is the ordinary app and expects its normal `/api` backend
 To review route changes, run from this example's root and inspect the diff:
 
 ```sh
-node --input-type=module -e 'import {inventoryRoutes} from "@tombelieber/app-canvas/routes"; import {writeFile} from "node:fs/promises"; await writeFile("ui-review/routes.json", JSON.stringify(await inventoryRoutes("src/App.jsx"), null, 2)+"\n")'
+node --input-type=module -e 'import {inventoryRoutes} from "@tombelieber/agent-canvas/routes"; import {writeFile} from "node:fs/promises"; await writeFile("ui-review/routes.json", JSON.stringify(await inventoryRoutes("src/App.jsx"), null, 2)+"\n")'
 ```
 
 The checked snapshot detects newly added routes; it does not discover every
@@ -32,7 +32,7 @@ For the development UI-delivery workflow, install the verified revision that
 contains these commands (the v0.12.0 release predates them), then run:
 
 ```sh
-npx app-canvas populate --config ui-review/delivery.config.mjs --verify
+npx agent-canvas populate --config ui-review/delivery.config.mjs --verify
 # Remove --verify to keep the verified viewer open. Repeat to resume.
 ```
 

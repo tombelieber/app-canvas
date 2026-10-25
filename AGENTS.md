@@ -1,9 +1,9 @@
-# App Canvas maintenance
+# Agent Canvas maintenance
 
-This repository owns the canvas runtime, CLI, canonical `skills/app-canvas`
+This repository owns the canvas runtime, CLI, canonical `skills/agent-canvas`
 contract, references, install channels and releases. Change them here together.
-Other repositories may link to App Canvas; do not maintain another canonical
-copy or require another repository to publish an App Canvas release.
+Other repositories may link to Agent Canvas; do not maintain another canonical
+copy or require another repository to publish an Agent Canvas release.
 
 Preserve the complete-population and native-runtime contracts when maintaining
 the skill. App-specific inventories, fixtures, adapters and captures belong in

@@ -1,0 +1,12 @@
+.agent-reference {display:grid;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid #dce0e5;min-width:0}
+.agent-reference h3 {margin:0!important;color:#244a50!important;font-size:13px!important;font-weight:600!important}
+.agent-reference p {margin:0;line-height:1.5;overflow-wrap:anywhere}
+.agent-reference label {display:grid;gap:6px;font-size:12px}
+.agent-reference textarea {box-sizing:border-box;width:100%;min-width:0;max-width:100%;font:inherit;font-size:12px;line-height:1.5;color:inherit;background:#fff;border:1px solid #c6d2d6;border-radius:6px;padding:9px;resize:vertical}
+.agent-reference textarea:focus-visible {outline:3px solid #4387ce;outline-offset:2px}
+.agent-reference button {width:100%;margin:0!important}
+.agent-reference details {min-width:0}
+.agent-reference summary {cursor:pointer;min-height:36px;display:flex;align-items:center}
+.agent-reference-target code {margin:4px 0 0!important;color:#244a50!important;white-space:normal}
+.agent-reference-note {font-size:11px;color:#63727b}
+@media (pointer:coarse) {.agent-reference textarea {font-size:16px}}

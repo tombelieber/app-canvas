@@ -1,7 +1,7 @@
 # Desktop URL imports
 
-Import a website into **App Canvas**, edit its captured DOM layers, save locally
-and reopen without the website. App Canvas + an agent handle discovery, capture
+Import a website into **Agent Canvas**, edit its captured DOM layers, save locally
+and reopen without the website. Agent Canvas + an agent handle discovery, capture
 and review together. Available in v0.13.0 with the matching CLI and skill. No API
 key, model service or Figma account is required. Durable storage requires v0.14.1 or later. Verify the
 installed CLI lists `projects`, `backup`, `recover` and `--allow-ephemeral`; older
@@ -26,12 +26,12 @@ validated and checkpointed in place when opened; no format migration or silent
 relocation is needed. Existing projects must still exist for this first adoption.
 
 ```sh
-app-canvas projects
+agent-canvas projects
 # Restore a listed recovery ID into a NEW durable project directory:
-app-canvas recover <recovery-id>
-app-canvas open <recovered-directory>
+agent-canvas recover <recovery-id>
+agent-canvas open <recovered-directory>
 # A portable project directory, including every local resource and edit:
-app-canvas backup <project-directory> --out /durable/private-backups/reference
+agent-canvas backup <project-directory> --out /durable/private-backups/reference
 ```
 
 `recover` and `backup` refuse existing destinations. The backup opens with only
@@ -60,36 +60,36 @@ Reader scripts and input JSON are intermediate files, not the saved project.
 ## Dedicated capture browser
 
 ```sh
-app-canvas browsers
-app-canvas import https://example.com
+agent-canvas browsers
+agent-canvas import https://example.com
 # Stop the capture process with Ctrl+C, then reopen the saved project:
-app-canvas open <printed-project-directory>
+agent-canvas open <printed-project-directory>
 ```
 
 Open the printed loopback URL. The capture browser uses a dedicated Chromium
 profile at 1440 × 1000 CSS pixels and device scale 1. Complete normal sign-in
-there if required, then press **Capture State** in App Canvas. Password, OTP
-and recognized credential pages pause capture. App Canvas never copies another
+there if required, then press **Capture State** in Agent Canvas. Password, OTP
+and recognized credential pages pause capture. Agent Canvas never copies another
 browser's cookies, tokens or storage.
 
 ## Existing authorized browser (agent mode)
 
-Use the browser tools already authorized in your agent. App Canvas does not
+Use the browser tools already authorized in your agent. Agent Canvas does not
 transfer the browser session. The tool must support rendered DOM/computed-style
 reading and writing its returned data to local files. A screenshot-only browser
 cannot satisfy this path. Target 1440 × 1000 CSS pixels; actual desktop viewports
 1000–2400px wide are retained. Keep the project and intermediate files private.
 
 ```sh
-app-canvas import https://example.com --agent
-app-canvas capture-script --out .artifacts/reader.js
+agent-canvas import https://example.com --agent
+agent-canvas capture-script --out .artifacts/reader.js
 # Evaluate the function in reader.js using the authorized browser's read-only
 # DOM evaluation tool. Write its complete returned value as snapshot.json.
-app-canvas capture <printed-project-directory> --input .artifacts/snapshot.json --label "Overview"
+agent-canvas capture <printed-project-directory> --input .artifacts/snapshot.json --label "Overview"
 # Operate an authorized control, wait for its visible result, then read again.
-app-canvas capture <printed-project-directory> --input .artifacts/next.json --label "Menu open" --action "Open menu"
-app-canvas status <printed-project-directory>
-app-canvas open <printed-project-directory>
+agent-canvas capture <printed-project-directory> --input .artifacts/next.json --label "Menu open" --action "Open menu"
+agent-canvas status <printed-project-directory>
+agent-canvas open <printed-project-directory>
 ```
 
 `--agent` creates a source-bound project, returns JSON and exits. It launches no
@@ -107,14 +107,14 @@ The project stays readable after a rejected capture. Cross-origin app surfaces
 need separate source-bound projects; no origin override is provided.
 
 Use `--action` only for an actual transition from the immediately preceding
-captured observation. The agent attests that action; App Canvas does not
+captured observation. The agent attests that action; Agent Canvas does not
 independently watch actions in an externally managed browser. Re-capture the
 starting state before exploring another branch. Without `--action`, a direct
 visit creates no observed flow. Identical DOM states deduplicate while keeping
 observations. To connect related states without action evidence:
 
 ```sh
-app-canvas link <printed-project-directory> --from <state-id> --to <state-id> --label "Related reference"
+agent-canvas link <printed-project-directory> --from <state-id> --to <state-id> --label "Related reference"
 ```
 
 These links are always dashed `reference` edges. `status` returns JSON page,
@@ -159,7 +159,7 @@ For a credential-adjacent overview, first review a list of exact **public UI
 labels**, then use the strict reader:
 
 ```sh
-app-canvas capture-script --out .artifacts/safe-reader.js --redacted --allow-text .artifacts/public-labels.json
+agent-canvas capture-script --out .artifacts/safe-reader.js --redacted --allow-text .artifacts/public-labels.json
 ```
 
 The labels file is a JSON string array. Unknown human text, input values, images,
@@ -170,7 +170,7 @@ secret into the allowlist or use normal capture on a credential page. Strict
 redaction limits content fidelity and marks the result partial. Normal capture
 uses best-effort common-pattern redaction, not a guarantee against all secrets.
 
-The stable ESM API `@tombelieber/app-canvas/import` exports `captureScript`,
+The stable ESM API `@tombelieber/agent-canvas/import` exports `captureScript`,
 `createAgentProject({url,directory?,allowEphemeral?})`, `decodeSnapshot(value)`,
 `ingestSnapshot({directory,snapshot,label?,action?})`, `importStatus(directory)`,
 `linkStates({directory,from,to,label})`, `listProjects()`,
@@ -244,7 +244,7 @@ this v1 does not import arbitrary native applications.
 Optional flags: `--port 0` chooses an available loopback port, `--headless` omits
 the capture window, and `--no-record` retains automatic first-screen and manual
 capture without continuous recording. `--profile <directory>` accepts only an
-empty or previously marked App Canvas dedicated profile, outside the exported
+empty or previously marked Agent Canvas dedicated profile, outside the exported
 project. It persists login state until you remove that profile; keep it private.
 The default temporary profile is removed on normal shutdown. An interrupted
 process may leave temporary profile/runtime files. The project writer lock

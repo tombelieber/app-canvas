@@ -1,4 +1,12 @@
-# App Canvas
+# Agent Canvas
+
+## 0.16.0
+
+- Launch Agent Canvas as a free MIT visual workspace for reviewing and refining real apps built with coding agents.
+- Add source-screen and selected-element references with editable change requests and an explicit copy-to-agent handoff. Clipboard failure retains a manual-copy fallback.
+- Publish a responsive product site with localized guides, a live synthetic demo, canonical search metadata and accessible agent documentation.
+- Add the `agent-canvas` command and canonical skill, preserving `app-canvas`, existing project storage and safe managed skill upgrades.
+- Retain anonymous measurement history across the rebrand, add safe reference and acquisition events, and honor analytics opt-out.
 
 ## 0.15.0
 

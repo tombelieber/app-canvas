@@ -6,8 +6,8 @@ not widen source population, authorize new recipients or qualify app production.
 Use the pinned shared CLI, not a copied renderer:
 
 ```sh
-app-canvas export --config review-export.config.mjs --review-only --out <new-directory>
-app-canvas export --project <saved-capture-project> --review-only --out <new-directory>
+agent-canvas export --config review-export.config.mjs --review-only --out <new-directory>
+agent-canvas export --project <saved-capture-project> --review-only --out <new-directory>
 ```
 
 Source adapters explicitly opt in with `exportDom: true`; every registered case

@@ -1,21 +1,22 @@
 <!-- Generated from launch/locales/zh-TW.json; run npm run docs:generate. -->
-# App Canvas
+# Agent Canvas
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt.md) · [Italiano](README.it.md) · [한국어](README.ko.md) · [Nederlands](README.nl.md)
 
-## 整個 UI，一張畫布，來自真實程式碼。
+## Agent 負責 build。
+你決定下一步。
 
-與 coding agent 一起建立及維護可縮放畫布，同時查看真實頁面、狀態及互動流程。
+輕巧嘅產品工作空間：睇住 coding agent 起出嚟嘅 App，操作真實畫面，指住要改嘅地方，再由原始碼繼續 build。
 
-**[開啟互動 Demo](https://tombelieber.github.io/app-canvas/) · [加入現有 Repo](https://tombelieber.github.io/app-canvas/about/zh-TW/start/) · [產品發布文章](https://tombelieber.github.io/app-canvas/about/zh-TW/release/)**
+**[開啟互動 Demo](https://agent-canvas-app.pages.dev/demo/) · [免費開始 build](https://agent-canvas-app.pages.dev/about/zh-TW/start/) · [產品發布文章](https://agent-canvas-app.pages.dev/about/zh-TW/release/)**
 
-## TL;DR
+## 為 build → 檢視 → 修改而設
 
 - 一次看清已實作的完整頁面、具名狀態及相連流程。
 - 只維護一份 UI。Coding agent 負責 fixtures、adapter 及 coverage checks。
 - 公開虛構資料 Demo 有 77 個狀態及 44 條流程，毋須登入或 API key。
 
-![真實 StoolSense UI 狀態並排在 App Canvas 畫布上](docs/stoolsense-overview.jpg)
+![真實 StoolSense UI 狀態並排在 Agent Canvas 畫布上](docs/stoolsense-overview.jpg)
 
 公開 Demo 真實畫面：77 個已編寫狀態、44 條流程、121 個可播放項目。隊列包含獨立 case，並非 121 條端到端流程。
 
@@ -29,9 +30,9 @@
 
 Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，即可以虛構資料操作原有 App 程式。
 
-### 按 Demo，展示完整旅程
+### 指住要改嘅地方
 
-在同一個持續運行的 App session 播放成功、失敗及復原流程，附操作提示、字幕、暫停、速度及步驟時間軸。
+選取畫面或 UI 元素，寫低修改要求，再複製準確 reference 畀 coding agent。請佢改原始碼；來源整合嘅 preview 會重建。
 
 ![真實 Demo 在離線儲存失敗後保留草稿，等待重試](docs/stoolsense-playback.jpg)
 
@@ -44,16 +45,16 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 ### 貼給你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安裝共用工具
 
-使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。 v0.13.0 發佈前，這些 UI 交付指令須使用已驗證的 development commit。
+使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.15.0
-npx app-canvas browsers
+npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npx agent-canvas browsers
 ```
 
 ### 2. 先盤點，再選 Case
@@ -61,8 +62,8 @@ npx app-canvas browsers
 對整個原有 App repository 執行 plan。檢視所有檔案及 UI anchors，追查影響 UI 的依賴，並核對實際導航。獨立列齊畫面及狀態，不能由 catalog 倒推範圍；未解決 UI 必須保留。
 
 ```sh
-npx app-canvas plan --source-root . --out ui-review/ui-inventory.json
-npx app-canvas status --inventory ui-review/ui-inventory.json
+npx agent-canvas plan --source-root . --out ui-review/ui-inventory.json
+npx agent-canvas status --inventory ui-review/ui-inventory.json
 ```
 
 ### 3. 用 Fixtures 渲染原有 UI
@@ -74,7 +75,7 @@ Agent 建立 ui-review/canvas.config.mjs、catalog、虛構 fixtures、preview e
 涵蓋已實作的一般、空白、載入、錯誤、拒絕存取、對話框及復原狀態。每個 case 都要有檢查，流程要操作真實控制項。核對 inventory、來源連結 assertions 與 routes，再對同一 App 根目錄通過 --ui-complete。 --complete 保留為獨立、嚴格的完整來源審查；其待辦數並非漏頁數。
 
 ```sh
-npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
+npx agent-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify
 ```
 
 ### 5. 由原始碼維護與檢視
@@ -90,14 +91,14 @@ npm run ui:review
 
 共用套件維護 viewer、CLI 及 skill；各 Repo 維護自己的 adapter、fixtures、獨立 inventory、catalog 與互動檢查。可從可執行的 React/Vite 範例開始；其他技術棧使用專屬 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.15.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.15.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
 
 ### 可選的 Agent Skill
 
 Codex 與 Claude Code 可安裝內附 skill，其他 coding agent 可直接閱讀 AGENT_GUIDE.md。Canvas runtime 不呼叫模型，也不需要模型 API key；你選用的 Agent 有自己的費用與權限。
 
 ```sh
-npx app-canvas install --target both
+npx agent-canvas install --target both
 ```
 
 ## 這個版本能證明甚麼，有甚麼限制

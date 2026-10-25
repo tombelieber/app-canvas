@@ -1,7 +1,7 @@
 # Self-hosted review
 
 The application repository owns its review build and hosting configuration.
-App Canvas supplies one viewer and a portable directory; it has no hosted
+Agent Canvas supplies one viewer and a portable directory; it has no hosted
 collaboration service, accounts or access-control backend.
 
 ## Build
@@ -18,8 +18,8 @@ export default {
 ```
 
 ```sh
-app-canvas export --config review-export.config.mjs --review-only --out <new-directory>
-app-canvas export --project <saved-capture-project> --review-only --out <another-new-directory>
+agent-canvas export --config review-export.config.mjs --review-only --out <new-directory>
+agent-canvas export --project <saved-capture-project> --review-only --out <another-new-directory>
 ```
 
 Every registered source case must render and provide a DOM snapshot. Unsupported
@@ -42,7 +42,7 @@ static hosting; there is no Node server to expose or database to provision.
 Review the artifact, publication rights, redactions and local assets before
 upload. Export is not a general privacy sanitizer. Disabled telemetry metadata
 ships by default. Keep organization-specific identities and operational details
-in the private consumer repository, outside public App Canvas history.
+in the private consumer repository, outside public Agent Canvas history.
 
 Put authentication in front of the entire site, including document, manifest,
 JSON and image URLs. With Cloudflare Access, protect every enabled hostname
@@ -67,14 +67,14 @@ review" should follow this contract without rediscovering the renderer:
    script in the consumer repo if it bundles several canvases or adds an index.
 3. Use the chosen provider's ordinary static-site workflow. Keep provider files,
    domain, account selection and access policy in the consumer's infrastructure
-   boundary; do not add credentials or private configuration to App Canvas.
+   boundary; do not add credentials or private configuration to Agent Canvas.
 4. Verify the actual deployed documents and assets, an allowed reviewer and a
    denied visitor. Record the source revision and actual verification evidence.
    Future runs reuse this setup and ask only for changed or missing decisions.
 
 Cloudflare Workers Static Assets, Cloudflare Pages and Vercel can host the same
 export directory. Use the consumer repo as the deployment source, or upload an
-already qualified artifact. Do not configure the App Canvas runtime repository
+already qualified artifact. Do not configure the Agent Canvas runtime repository
 as a substitute source for private app fixtures.
 
 - [Cloudflare static assets](https://developers.cloudflare.com/workers/static-assets/get-started/):

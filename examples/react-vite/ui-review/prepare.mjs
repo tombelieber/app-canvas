@@ -1,8 +1,8 @@
 // The coding agent runs this once after inspecting the original source. This
 // example is deliberately explicit: discovery cannot infer semantic outcomes.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { discoverUi } from '@tombelieber/app-canvas/inventory';
-import { populationFingerprint } from '@tombelieber/app-canvas/population';
+import { discoverUi } from '@tombelieber/agent-canvas/inventory';
+import { populationFingerprint } from '@tombelieber/agent-canvas/population';
 import example from './catalog.json' with { type: 'json' };
 
 const inventoryPath = 'ui-review/ui-inventory.json';

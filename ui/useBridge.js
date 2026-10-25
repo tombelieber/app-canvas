@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-export function useBridge(onExit) {
+import { normalizeElementReference } from "../lib/agent-reference.mjs";
+export function useBridge(onExit, onPick) {
   const registry = useRef(new Map()), pending = useRef(new Map()), waiting = useRef(new Map()), exit = useRef(onExit);
   exit.current = onExit;
+  const picked = useRef(onPick); picked.current = onPick;
   const [states, setStates] = useState({});
   useEffect(() => {
     const receive = (event) => {
@@ -41,6 +43,10 @@ export function useBridge(onExit) {
         });
       }
       if (event.data.type === "exit") exit.current(id);
+      if (event.data.type === "picked" && !entry[1].navigating && event.data.documentId === entry[1].documentId) {
+        const element = normalizeElementReference(event.data.element);
+        if (element) picked.current?.(id, element);
+      }
       if (event.data.type === "result") {
         const request = pending.current.get(event.data.requestId);
         if (request?.id !== id) return;

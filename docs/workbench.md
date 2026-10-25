@@ -2,7 +2,7 @@
 
 The DOM rendering and interaction details below describe web preview adapters.
 For original native UI captures and device adapters, follow the
-[native workflow](../skills/app-canvas/references/native.md); full captures are
+[native workflow](../skills/agent-canvas/references/native.md); full captures are
 valid visual surfaces and viewer interaction is separate from native controls.
 
 Start in **畫面總覽** with every named state shown as complete application
