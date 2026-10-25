@@ -22,15 +22,26 @@ try {
   browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1366, height: 900 }, permissions: ["clipboard-read", "clipboard-write"] });
   const page = await context.newPage(), errors = [];
+  if (process.env.APP_CANVAS_REFERENCE_CPU_RATE) {
+    const cdp = await context.newCDPSession(page);
+    await cdp.send("Emulation.setCPUThrottlingRate", { rate: Number(process.env.APP_CANVAS_REFERENCE_CPU_RATE) });
+  }
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${app.address}?lang=en`);
   await page.locator('.review-workspace[data-live-ready="true"]').waitFor();
   await page.getByLabel("Search screens").fill("checkout");
   await page.locator('[title="checkout"]').click();
+  const readiness = await page.evaluate(() => ({
+    cameraReady: document.querySelector(".review-workspace").dataset.cameraReady === "true",
+    disabled: [...document.querySelectorAll("button")].find(button => button.textContent === "Point to an element").disabled,
+  }));
+  assert.ok(readiness.cameraReady || readiness.disabled, "pointing is unavailable while its target is moving");
   await page.getByRole("button", { name: "Point to an element", exact: true }).click();
   const frame = page.frameLocator('iframe[data-screen="checkout"]');
   await frame.locator("html[data-agent-canvas-picking]").waitFor();
-  await frame.locator("#save").click();
+  assert.equal(await page.locator(".review-workspace").getAttribute("data-camera-ready"), "true", "entering point mode must not launch another camera animation");
+  const point = await frame.locator("#save").boundingBox();
+  await page.mouse.click(point.x + point.width / 2, point.y + point.height / 2);
   await page.getByText("Selected element:", { exact: false }).waitFor();
   assert.equal(await frame.locator("#save").getAttribute("data-clicks"), "0", "pointing must not run the target button's action");
   assert.equal(await frame.locator("#save").getAttribute("data-capture-clicks"), "0", "pointing must stop application window capture listeners too");
@@ -42,9 +53,20 @@ try {
   assert.match(clipboard, /src\/Checkout.jsx/);
   assert.match(clipboard, /button#save/);
   assert.doesNotMatch(clipboard, /fixture-secret/);
+  await page.getByRole("button", { name: "Panels", exact: true }).click();
+  assert.equal(await page.locator(".release-preview").count(), 0, "pointing must not retain a new app interaction preview");
+  await page.getByRole("button", { name: "Panels", exact: true }).click();
   // A stale document cannot replace the confirmed target through the bridge.
   await frame.locator("body").evaluate(() => parent.postMessage({ channel: "app-canvas", type: "picked", documentId: "stale-document", element: { tag: "a", selector: "#stale" } }, location.origin));
   assert.doesNotMatch(await page.getByLabel("Agent change request", { exact: true }).inputValue(), /#stale/);
+  await page.getByRole("button", { name: "Point to an element", exact: true }).click();
+  await frame.locator("html[data-agent-canvas-picking]").waitFor();
+  await page.getByRole("button", { name: "Fit all", exact: true }).click();
+  await page.getByRole("button", { name: "Point to an element", exact: true }).waitFor();
+  await frame.locator("html[data-agent-canvas-picking]").waitFor({ state: "detached" });
+  assert.equal(await page.locator(".review-workspace").getAttribute("data-mode"), "browse", "camera motion cancels pointing and app interaction together");
+  assert.equal(await page.locator('iframe[data-screen="checkout"]').evaluate(element => getComputedStyle(element).pointerEvents), "none");
+  await page.getByRole("button", { name: "Zoom to screen", exact: false }).click();
   await page.getByRole("button", { name: "Point to an element", exact: true }).click();
   await frame.locator("html[data-agent-canvas-picking]").waitFor();
   await frame.locator("body").press("Escape");

@@ -5,8 +5,9 @@ require a separate design file or a hosted model account.
 
 1. Select a screen on the canvas. Use **Interact** to try its real controls.
 2. In the screen details, choose **Point to an element**, then click the target.
-   Picking captures a reference instead of activating the control. Press Escape
-   to cancel. Native captures support screen references rather than DOM picking.
+   The button becomes available when the camera and preview are ready. Picking
+   captures a reference instead of activating the control. Moving the camera or
+   pressing Escape cancels pointing and leaves application controls locked. Native captures support screen references rather than DOM picking.
 3. Write the change in **What should change?** and choose **Copy change request**.
    Review the request before sharing it; it can contain local source and UI context.
 4. Paste it into Claude Code, Codex or another agent working in the same source

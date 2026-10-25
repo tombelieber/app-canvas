@@ -63,10 +63,15 @@ function Canvas() {
     setReference({ screenId: id, element }); setPicking(null); setActive(null);
   });
   useEffect(() => {
-    if (!picking || active !== picking || !bridge.states[picking]?.ready) return;
+    if (!picking) return;
+    // A point refers to the rendered position the user can see. Do not arm a
+    // moving preview, and cancel if navigation or camera movement invalidates it.
+    if (moving || request || active !== picking || !bridge.states[picking]?.ready) {
+      setPicking(null); setActive(null); return;
+    }
     bridge.send(picking, { type: "pick", value: true });
     return () => bridge.send(picking, { type: "pick", value: false });
-  }, [picking, active, bridge.states[picking]?.ready, bridge.send, manifest.revision]);
+  }, [picking, active, moving, request, bridge.states[picking]?.ready, bridge.send, manifest.revision]);
   useEffect(() => { setReference(null); setPicking(null); }, [selectedId, manifest.revision]);
   const selected = catalog.find(s => s.id === selectedId);
   const visible = useMemo(() => scopedScreens(catalog, { page: journeyId ? "all" : page, query, depth: journeyId ? "all" : depth, selected: selectedId, journey: journeyScreens }), [page, query, depth, selectedId, journeyId, journeyScreens]);
@@ -206,7 +211,7 @@ function Canvas() {
   }));
   const linked = displayedFlows.filter(f => f.from === selectedId || f.to === selectedId);
   const rendered = Object.values(manifest.screens || {}).filter(s => !s.error).length;
-  const context = { bridge, selected: selectedId, active, resets, revision: manifest.revision, runId, mounted, previews, previewErrors };
+  const context = { bridge, selected: selectedId, active: picking && (moving || request || !bridge.states[picking]?.ready) ? null : active, resets, revision: manifest.revision, runId, mounted, previews, previewErrors };
   const journeyNode = player.state && nodes.find(node => node.id === player.state.screen), entryUrl = player.state && manifest.screens[player.state.definition.entry]?.url;
   const inspector = preferences.panels.right;
   const toggleRight = () => preferences.toggle("right");
@@ -225,7 +230,7 @@ function Canvas() {
             onNodeClick={(_, node) => { if (node.type === "screen") goTo(node.id); }}
             onEdgeClick={(_, edge) => goTo(edge.target, !!active)}
             onPaneClick={() => { browse(); select(null); }}
-            onMoveStart={() => setMoving(true)} onMoveEnd={() => setMoving(false)}
+            onMoveStart={() => { setMoving(true); if (picking) { setPicking(null); setActive(null); } }} onMoveEnd={() => setMoving(false)}
             minZoom={manifest.nativeOverview ? .001 : .015} maxZoom={5} nodesConnectable={false} nodesDraggable={false} deleteKeyCode={null} nodeClickDistance={8} paneClickDistance={8}
             panOnScroll panOnDrag zoomOnPinch selectionKeyCode="Shift" zoomOnDoubleClick={false} autoPanOnNodeFocus={false} onlyRenderVisibleElements={false}>
             <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable nodeColor={minimapColor} nodeStrokeWidth={0} />
@@ -242,7 +247,7 @@ function Canvas() {
       </main>
       {inspector && <aside className="details-panel" aria-label={t("Flows and details")}><div className="details-heading">{t("Flows and details")}<button className="close" aria-label={t("Collapse details")} onClick={toggleRight}>›</button></div>
         {!project.reviewOnly && <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />}
-        {selected ? <Inspector reviewOnly={project.reviewOnly} selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} reference={{ project: project.title, element: reference?.screenId === selected.id ? reference.element : null, analytics, picking: picking === selected.id, canPick: !project.reviewOnly && !!manifest.screens[selected.id]?.url && manifest.status === "ready", onPick: !project.reviewOnly ? () => { if (picking === selected.id) browse(); else { interact(selected.id); setPicking(selected.id); } } : null }} /> : <p className="selection-hint">{project.reviewOnly ? t("Zoom or select to see the full screen") : t("Select a screen to zoom, or choose a flow to play.")}{!project.reviewOnly && <><br />{t("Browse pans the canvas; Interact uses the screen.")}</>}</p>}
+        {selected ? <Inspector reviewOnly={project.reviewOnly} selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} reference={{ project: project.title, element: reference?.screenId === selected.id ? reference.element : null, analytics, picking: picking === selected.id, canPick: !project.reviewOnly && !moving && !request && bridge.states[selected.id]?.ready === true && !!manifest.screens[selected.id]?.url && manifest.status === "ready", onPick: !project.reviewOnly ? () => { if (picking === selected.id) browse(); else if (!moving && !request && bridge.states[selected.id]?.ready) { player.stop(); setPicking(selected.id); setActive(selected.id); } } : null }} /> : <p className="selection-hint">{project.reviewOnly ? t("Zoom or select to see the full screen") : t("Select a screen to zoom, or choose a flow to play.")}{!project.reviewOnly && <><br />{t("Browse pans the canvas; Interact uses the screen.")}</>}</p>}
       </aside>}
     </div>
   </PreviewContext.Provider>;
