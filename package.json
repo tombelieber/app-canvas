@@ -1,7 +1,7 @@
 {
-  "name": "@tombelieber/app-canvas",
-  "version": "0.15.0",
-  "description": "An interactive overview of real application screens, states and flows.",
+  "name": "@tombelieber/agent-canvas",
+  "version": "0.16.0",
+  "description": "A live visual workspace for seeing and refining what your coding agent builds.",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -9,6 +9,7 @@
     "url": "https://github.com/tombelieber/app-canvas"
   },
   "bin": {
+    "agent-canvas": "bin/agent-canvas.mjs",
     "app-canvas": "bin/app-canvas.mjs"
   },
   "exports": {
@@ -76,7 +77,9 @@
     "test:telemetry": "node tests/telemetry.browser.mjs",
     "test:waitlist": "node tests/waitlist-runtime.mjs",
     "test:grouping": "node tests/grouping.browser.mjs",
-    "test:review": "node tests/review.browser.mjs"
+    "test:review": "node tests/review.browser.mjs",
+    "build:product": "node scripts/build-product.mjs",
+    "test:reference": "node tests/agent-reference.browser.mjs && node tests/agent-reference-import.browser.mjs && node tests/agent-reference-flow.browser.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -91,5 +94,6 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "typescript": "5.9.3"
-  }
+  },
+  "homepage": "https://agent-canvas-app.pages.dev/"
 }

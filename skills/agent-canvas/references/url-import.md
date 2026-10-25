@@ -1,16 +1,16 @@
-# Desktop URL capture into App Canvas
+# Desktop URL capture into Agent Canvas
 
 Use this path when given a website URL and asked for an editable product
-landscape. **App Canvas + the agent** own the workflow: the agent discovers and
-operates authorized UI; App Canvas captures, edits, links, saves and reopens it.
-The output is an App Canvas project. For repository input, use the separate
+landscape. **Agent Canvas + the agent** own the workflow: the agent discovers and
+operates authorized UI; Agent Canvas captures, edits, links, saves and reopens it.
+The output is an Agent Canvas project. For repository input, use the separate
 source/native complete-population contract.
 
-Use App Canvas v0.13.0 or later with its matching skill. The CLI help lists
+Use Agent Canvas v0.13.0 or later with its matching skill. The CLI help lists
 `import`, `capture-script`, `capture`, `status`, `link`
 and `open`. Durable storage requires v0.14.1 or later; also require `projects`, `backup`, `recover`
 and `--allow-ephemeral` in the installed CLI; upgrade to a verified revision
-containing them when absent. v0.12.0 predates this workflow. Run `app-canvas guide` for the
+containing them when absent. v0.12.0 predates this workflow. Run `agent-canvas guide` for the
 installed contract. Read the matching package's `docs/url-import.md`; never assume a newer skill upgrades an older CLI.
 
 ## Choose the browser

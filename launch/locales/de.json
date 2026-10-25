@@ -1,14 +1,14 @@
 {
   "name": "Deutsch",
-  "title": "Deine ganze UI. Eine Zeichenfläche. Echter Code.",
-  "description": "Erkunde echte App-Seiten, Zustände und interaktive Abläufe auf einer zoombaren Fläche, erstellt und gepflegt mit deinem Coding-Agenten.",
+  "title": "Dein Agent baut.\nDu gestaltest den nächsten Schritt.",
+  "description": "Ein leichter Workspace, um die App deines Coding-Agenten anzusehen, zu testen und zu verbessern. Echte Oberflächen prüfen, Änderungen zeigen und direkt am Quellcode weiterbauen.",
   "demo": "Demo öffnen",
   "source": "Quellcode auf GitHub",
-  "start": "Zum Repository hinzufügen",
+  "start": "Kostenlos starten",
   "release": "Release-Artikel",
   "languages": "Sprache wählen",
-  "eyebrow": "App Canvas · Open Source · Für Coding-Agenten",
-  "summary": "TL;DR",
+  "eyebrow": "Kostenlos und Open Source",
+  "summary": "Für Bauen, Prüfen und Verbessern",
   "tldr": [
     "Sieh vollständige implementierte Seiten, benannte Zustände und verbundene Abläufe zusammen.",
     "Eine UI-Implementierung. Dein Agent erstellt Fixtures, Adapter und Abdeckungsprüfungen.",
@@ -25,13 +25,13 @@
       "Browse sperrt Bedienelemente zum Verschieben. Wähle eine Seite und Interact, um ihren Originalcode mit Wegwerfdaten zu bedienen."
     ],
     [
-      "Mit Demo einen Ablauf erklären",
-      "Erfolg, Fehler und Wiederherstellung laufen in einer fortlaufenden App-Sitzung, mit Aktionshinweisen, Texten, Pause, Tempo und Schritt-Zeitleiste."
+      "Zeige genau, was sich ändern soll",
+      "Wähle einen Screen oder ein UI-Element, ergänze deinen Änderungswunsch und kopiere die Referenz für deinen Agenten. Ändert er den Quellcode, werden quellcodebasierte Vorschauen neu gebaut."
     ]
   ],
   "overviewAlt": "Echte StoolSense-Zustände in der App-Canvas-Übersicht",
   "playbackAlt": "Echte Wiedergabe nach fehlgeschlagenem Offline-Speichern mit erhaltenem Entwurf",
-  "phoneAlt": "App Canvas in Safari auf einem echten iPhone",
+  "phoneAlt": "Agent Canvas in Safari auf einem echten iPhone",
   "overviewCaption": "Echte Demo: {states} Zustände, {flows} Abläufe, {entries} abspielbare Einträge. Darunter einzelne Fälle, nicht {entries} E2E-Abläufe.",
   "playbackCaption": "Echte Fehler- und Wiederherstellungs-UI. Die Wiedergabe führt definierte Aktionen und Prüfungen aus; eine gezeichnete Kante ist kein Test.",
   "phoneCaption": "Safari-Aufnahme auf einem echten iPhone. Der Technikartikel erklärt den Weg vom Absturz zur nutzbaren App und die Messgrenzen.",
@@ -41,7 +41,7 @@
   "steps": [
     [
       "Gemeinsames Werkzeug installieren",
-      "Nutze Node.js 22+ sowie Paketverwaltung und Lockfile des Projekts. Installiere das feste GitHub-Release und den Browser. Blockiert npm 12 diese direkte Git-Abhängigkeit, ergänze nur dann --allow-git=root; ändere keine globale Richtlinie. Bis zur Veröffentlichung von v0.13.0 benötigen diese UI-Befehle einen qualifizierten Entwicklungscommit."
+      "Nutze Node.js 22+ sowie Paketverwaltung und Lockfile des Projekts. Installiere das feste GitHub-Release und den Browser. Blockiert npm 12 diese direkte Git-Abhängigkeit, ergänze nur dann --allow-git=root; ändere keine globale Richtlinie."
     ],
     [
       "Erst inventarisieren, dann Fälle wählen",
@@ -70,10 +70,10 @@
     "Abdeckung ist eine geprüfte Zuordnung von Quellen zu Fällen, keine automatische Erkennung jeder Geschäftsbedingung. UI-Prüfungen qualifizieren weder Produktions-Backends noch klinische oder Modellgenauigkeit.",
     "Viewer: standardmäßig Englisch, 11 Sprachen. Die öffentliche Demo ist ein eingefrorenes synthetisches Frontend; lokale Integrationen folgen dem Quellcode. Physische iPad-Leistung wurde nicht gemessen."
   ],
-  "storyTitle": "Warum ich App Canvas gebaut habe",
+  "storyTitle": "Warum ich Agent Canvas gebaut habe",
   "story": [
     "KI machte die nächste Seite einfach, aber eine wachsende App nicht verständlicher. Ich wollte implementierte Seiten und Fehlerzustände sehen, ohne alles durchzuklicken oder eine zweite Designdatei zu pflegen.",
-    "App Canvas macht die Prüfung zu einer navigierbaren Übersicht. Der Agent integriert das Repository; das gemeinsame Werkzeug liefert Canvas, echte Code-Vorschauen, Kameraführung und geprüfte Wiedergabe.",
+    "Agent Canvas macht die Prüfung zu einer navigierbaren Übersicht. Der Agent integriert das Repository; das gemeinsame Werkzeug liefert Canvas, echte Code-Vorschauen, Kameraführung und geprüfte Wiedergabe.",
     "StoolSense ist das synthetische öffentliche Beispiel. Keine Produktionssitzung, echten Gesundheitsdaten oder KI-Anfragen. Optionale Nutzungsereignisse sind von App-Daten getrennt."
   ],
   "versionLabel": "CLI-Release",
@@ -84,5 +84,37 @@
   "readmeGuide": "Integrationsanleitung",
   "skip": "Zum Inhalt",
   "flowAlt": "Echter Zustandsgraph für Speicherfehler, erhaltenen Entwurf und erfolgreichen Wiederholungsversuch",
-  "flowCaption": "Wähle einen Ablauf für vollständige Seiten und benannte Übergänge. Ein Link bewegt die Kamera zum Ziel."
+  "flowCaption": "Wähle einen Ablauf für vollständige Seiten und benannte Übergänge. Ein Link bewegt die Kamera zum Ziel.",
+  "freeLabel": "Kostenlos · MIT-Lizenz · Dein eigener Agent",
+  "installTitle": "Teil deines Entwicklungsablaufs.",
+  "installNote": "Probiere die Beispiel-App lokal aus und verbinde dann dein Repository mit deinem Agenten. Node.js 22+ erforderlich.",
+  "demoProofTitle": "Die App selbst ist die Leinwand.",
+  "demoProofIntro": "Echte Screens mit originalem UI-Code. Teste das öffentliche Beispiel vor der Installation.",
+  "faqTitle": "Gut zu wissen",
+  "faq": [
+    [
+      "Ist es kostenlos?",
+      "CLI, Canvas und Skills sind kostenlos und unter MIT quelloffen. Für deinen Coding-Agenten können eigene Abo- oder API-Kosten anfallen."
+    ],
+    [
+      "Funktioniert es mit Claude Code und Codex?",
+      "Ja. Skills für beide sind enthalten. Andere Agenten können dem öffentlichen Guide folgen und das CLI nutzen. Der Canvas ruft keine Modelle auf."
+    ],
+    [
+      "Brauche ich eine Designdatei?",
+      "Beginne mit App-Quellcode oder importiere eine Website. Dein Agent verbindet die vorhandene UI und synthetische Fixtures zur gemeinsamen Prüfung von Screens und Zuständen."
+    ],
+    [
+      "Ändert die Demo meine App?",
+      "Nein. Sie zeigt ein eingefrorenes synthetisches Beispiel im Browser. Deine App und ihr Quellcode werden im lokalen Projekt mit deinem Agenten bearbeitet."
+    ],
+    [
+      "Was ist mit nativen Apps?",
+      "UIKit, SwiftUI und Android verwenden projektspezifische Harnesses und Aufnahmen der Original-Runtime. Eine Aufnahme ist keine interaktive native App im Browser."
+    ]
+  ],
+  "playbackTitle": "Mit Demo einen Ablauf erklären",
+  "playbackIntro": "Erfolg, Fehler und Wiederherstellung laufen in einer fortlaufenden App-Sitzung, mit Aktionshinweisen, Texten, Pause, Tempo und Schritt-Zeitleiste.",
+  "referenceAlt": "Wähle ein echtes App-Element, beschreibe die Änderung und kopiere den quellcodebezogenen Kontext für deinen Agenten.",
+  "referenceCaption": "Echtes lokales Beispiel: UI-Element wählen und Änderungswunsch bewusst kopieren. Der Canvas sendet die Anfrage an keinen KI-Dienst."
 }

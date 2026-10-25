@@ -57,3 +57,28 @@ test('invalid and oversized JSON fail before database writes', async()=>{
  for(const text of ['{','x'.repeat(2200)]){const response=await handle(new Request('https://service.invalid/waitlist',{method:'POST',headers:{Origin:'https://tombelieber.github.io','Content-Type':'application/json'},body:text}),env);assert.equal(response.status,400);}
  assert.equal(database.prepare('select count(*) as n from waitlist').get().n,before);
 });
+
+test('Cloudflare canonical origin is allowed while sibling and preview origins fail closed', async t => {
+ let sent;
+ t.mock.method(globalThis,'fetch',async(_url,options)=>{sent=JSON.parse(options.body);return Response.json({status:1});});
+ const event_id=crypto.randomUUID(), occurred_at=new Date().toISOString();
+ const input={id:crypto.randomUUID(),event:'reference_copied',event_id,occurred_at,properties:{surface:'official_demo',version:'0.16.0',source:'browser',environment:'production',cohort_class:'internal_test',session_id:crypto.randomUUID(),acquisition_source:'reddit_showcase',campaign:'oss_launch'}};
+ const response=await handle(request('/capture',input,'https://agent-canvas-app.pages.dev'),{...env,POSTHOG_TOKEN:'test-token'});
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('Access-Control-Allow-Origin'),'https://agent-canvas-app.pages.dev');
+ assert.equal(sent.uuid,event_id);assert.equal(sent.timestamp,occurred_at);
+ assert.equal(sent.properties.product,'app_canvas');assert.equal(sent.properties.$process_person_profile,false);
+ for(const origin of ['https://other.pages.dev','https://preview.agent-canvas-app.pages.dev','https://agent-canvas-app.pages.dev.evil.invalid'])assert.equal((await handle(request('/capture',input,origin),{...env,POSTHOG_TOKEN:'test-token'})).status,403);
+});
+
+test('reference outcomes and correlation metadata remain bounded, private and backwards compatible',()=>{
+ const input={id:crypto.randomUUID(),event:'reference_copy_failed',properties:{surface:'real_project',version:'0.16.0',error_code:'clipboard_unavailable'}};
+ assert.ok(sanitizeEvent(input));
+ for(const extra of [{error_code:'private stack'},{acquisition_source:'private-campaign'},{campaign:'secret'},{session_id:'/private/path'}])assert.equal(sanitizeEvent({...input,properties:{...input.properties,...extra}}),null);
+ assert.equal(sanitizeEvent({...input,event_id:'secret'}),null);
+ assert.equal(sanitizeEvent({...input,occurred_at:'private'}),null);
+ assert.equal(sanitizeEvent({...input,properties:{...input.properties,error_code:undefined}}),null);
+ assert.equal(sanitizeEvent({...input,event:'reference_copied'}),null);
+ assert.ok(sanitizeEvent({...input,event:'flow_failed',properties:{...input.properties,error_code:'journey_failed'}}));
+ assert.equal(sanitizeEvent({...input,event:'flow_failed'}),null);
+});

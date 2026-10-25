@@ -45,6 +45,7 @@ function Canvas() {
   const [presenting, setPresenting] = useState(false), demoSnapshot = useRef(null);
   const [retained, retain] = useState([]), [notice, setNotice] = useState(""), [menu, setMenu] = useState(false), [drawer, setDrawer] = useState(false);
   const [previewErrors, setPreviewErrors] = useState({});
+  const [picking, setPicking] = useState(null), [reference, setReference] = useState(null);
   const [nativeState, setNativeState] = useState(null);
   const receiveNativeState = useCallback((atlas, status) => setNativeState({ atlas, status }), []);
   const nativeIds = useMemo(() => new Set(manifest.nativeOverview?.cases.map(c => c.id) || []), [manifest.nativeOverview]);
@@ -57,7 +58,16 @@ function Canvas() {
   const definition = project.journeys.find(j => j.id === journeyId);
   const plan = useMemo(() => journeyPlan(project, journeyId), [journeyId]);
   const journeyScreens = useMemo(() => definition && !branches ? [...new Set([definition.entry, ...definition.steps.map(s => s.screen)])] : null, [definition, branches]);
-  const bridge = useBridge(() => { if (presenting) exitDemo(); else { setActive(null); player.stop(); } });
+  const bridge = useBridge(() => { setPicking(null); if (presenting) exitDemo(); else { setActive(null); player.stop(); } }, (id, element) => {
+    if (id !== picking || id !== active || id !== selectedId) return;
+    setReference({ screenId: id, element }); setPicking(null); setActive(null);
+  });
+  useEffect(() => {
+    if (!picking || active !== picking || !bridge.states[picking]?.ready) return;
+    bridge.send(picking, { type: "pick", value: true });
+    return () => bridge.send(picking, { type: "pick", value: false });
+  }, [picking, active, bridge.states[picking]?.ready, bridge.send, manifest.revision]);
+  useEffect(() => { setReference(null); setPicking(null); }, [selectedId, manifest.revision]);
   const selected = catalog.find(s => s.id === selectedId);
   const visible = useMemo(() => scopedScreens(catalog, { page: journeyId ? "all" : page, query, depth: journeyId ? "all" : depth, selected: selectedId, journey: journeyScreens }), [page, query, depth, selectedId, journeyId, journeyScreens]);
   const navigate = useCallback((id, interact = false) => {
@@ -67,14 +77,14 @@ function Canvas() {
       if (retained.length >= limit - 1) { setNotice(t("Preview capacity reached. Release a retained preview in Panels before opening another.")); setMenu(true); interact = false; }
       else { retain(old => old.includes(id) ? old : [...old, id]); setNotice(""); }
     }
-    select(id); setActive(interact ? id : null); setDrawer(false);
+    setPicking(null); select(id); setActive(interact ? id : null); setDrawer(false);
     if (target.pageId !== page) setPage(target.pageId);
     if (query && !`${target.id} ${target.title} ${target.feature}`.toLowerCase().includes(query.toLowerCase())) setQuery("");
     if (journeyScreens && !journeyScreens.includes(id)) setJourneyId("");
     setRequest({ id, nonce: performance.now() });
   }, [page, query, journeyScreens, retained, limit, t]);
   const player = useJourney({ definitions: plan, bridge, navigate });
-  const browse = () => { setActive(null); player.stop(); };
+  const browse = () => { setPicking(null); setActive(null); player.stop(); };
   const goTo = (id, interact = false) => { analytics.track(interact ? "interaction_started" : "screen_selected"); player.stop(); navigate(id, interact); };
   const interact = (id = selectedId || catalog[0].id) => goTo(id, true);
   useEffect(() => { if (autoStart && plan.length) { player.start(false, { presentation: autoStart === "demo" }); setAutoStart(false); } }, [autoStart, plan]);
@@ -164,7 +174,7 @@ function Canvas() {
   };
   useEffect(() => {
     const key = event => {
-      if (event.key === "Escape") { if (presenting) exitDemo(); else { setActive(null); player.stop(); } setMenu(false); setDrawer(false); return; }
+      if (event.key === "Escape") { setPicking(null); if (presenting) exitDemo(); else { setActive(null); player.stop(); } setMenu(false); setDrawer(false); return; }
       if (presenting) return;
       if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
       if (event.key === "1") { event.preventDefault(); fit(); }
@@ -173,7 +183,14 @@ function Canvas() {
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
   }, [fit, navigate, selectedId, active, presenting]);
   const trackedPlayback = useRef(null);
-  useEffect(() => { if (player.state?.status === "complete" && trackedPlayback.current !== player.state.playbackId) { trackedPlayback.current = player.state.playbackId; analytics.track("flow_completed"); } }, [player.state?.status, player.state?.playbackId]);
+  useEffect(() => {
+    const status = player.state?.status;
+    if (!["complete", "error"].includes(status)) return;
+    const outcome = `${player.state.playbackId}:${status}`;
+    if (trackedPlayback.current === outcome) return;
+    trackedPlayback.current = outcome;
+    analytics.track(status === "complete" ? "flow_completed" : "flow_failed", status === "error" ? { error_code: "journey_failed" } : {});
+  }, [player.state?.status, player.state?.playbackId]);
   const shown = new Set(visible.map(s => s.id));
   const journeyFlows = !branches && definition?.steps.map((step, i) => ({ from: i ? definition.steps[i - 1].screen : definition.entry, to: step.screen, label: step.title })).filter(edge => edge.from !== edge.to);
   const displayedFlows = journeyFlows || flows;
@@ -220,7 +237,7 @@ function Canvas() {
       </main>
       {inspector && <aside className="details-panel" aria-label={t("Flows and details")}><div className="details-heading">{t("Flows and details")}<button className="close" aria-label={t("Collapse details")} onClick={toggleRight}>›</button></div>
         {!project.reviewOnly && <JourneyPanel definitions={project.journeys} selected={journeyId} onSelect={chooseJourney} player={player} branches={branches} onBranches={setBranches} coverage={coverage} scope={journeyId ? "all" : page} catalog={catalog} pages={pages} />}
-        {selected ? <Inspector reviewOnly={project.reviewOnly} selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} /> : <p className="selection-hint">{project.reviewOnly ? t("Zoom or select to see the full screen") : t("Select a screen to zoom, or choose a flow to play.")}{!project.reviewOnly && <><br />{t("Browse pans the canvas; Interact uses the screen.")}</>}</p>}
+        {selected ? <Inspector reviewOnly={project.reviewOnly} selected={selected} page={pages.find(p => p.id === selected.pageId)} player={player} active={active} journeys={project.journeys} chooseJourney={chooseJourney} interact={interact} browse={browse} navigate={navigate} reset={() => player.state ? player.start() : setResets(old => ({ ...old, [selected.id]: (old[selected.id] || 0) + 1 }))} linked={linked} catalog={catalog} goTo={goTo} close={() => { browse(); select(null); }} retained={retained.includes(selected.id)} release={release} reference={{ project: project.title, element: reference?.screenId === selected.id ? reference.element : null, analytics, picking: picking === selected.id, canPick: !project.reviewOnly && !!manifest.screens[selected.id]?.url && manifest.status === "ready", onPick: !project.reviewOnly ? () => { if (picking === selected.id) browse(); else { interact(selected.id); setPicking(selected.id); } } : null }} /> : <p className="selection-hint">{project.reviewOnly ? t("Zoom or select to see the full screen") : t("Select a screen to zoom, or choose a flow to play.")}{!project.reviewOnly && <><br />{t("Browse pans the canvas; Interact uses the screen.")}</>}</p>}
       </aside>}
     </div>
   </PreviewContext.Provider>;

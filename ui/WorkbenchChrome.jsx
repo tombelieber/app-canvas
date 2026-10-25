@@ -1,6 +1,7 @@
 import { useI18n, LanguagePicker } from "./i18n.jsx";
 import React from "react";
 import { outcomes } from "../lib/coverage.mjs";
+import { AgentReference } from "./AgentReference.jsx";
 
 export function WorkspaceDock({ reviewOnly = false, analytics, preferences, menu, setMenu, drawer, setDrawer, active, browse, interact, retained, release, catalog, notice, limit, brand, view, setView, fit, rightOpen, toggleRight, startDemo, demoReady, hasJourneys }) {
   const { t } = useI18n();
@@ -57,7 +58,7 @@ export function PageNavigator({ pages, catalog, page, query, selectPage, selecte
   </aside>;
 }
 
-export function Inspector({ reviewOnly = false, selected, page, player, active, journeys, chooseJourney, interact, browse, navigate, reset, linked, catalog, goTo, close, retained, release }) {
+export function Inspector({ reviewOnly = false, selected, page, player, active, journeys, chooseJourney, interact, browse, navigate, reset, linked, catalog, goTo, close, retained, release, reference }) {
   const { t } = useI18n();
   return <section className="inspector" aria-label={t("Screen details")}>
     <button className="close" aria-label={t("Close details")} onClick={close}>×</button>
@@ -69,6 +70,7 @@ export function Inspector({ reviewOnly = false, selected, page, player, active, 
     <div className="inspector-actions">{!reviewOnly && <button className="present" onClick={() => active ? browse() : interact(selected.id)}>{active ? t("Stop interacting · keep screen") : t("▶ Interact with screen")}</button>}
       <button onClick={() => navigate(selected.id, !!active)}>{t("Zoom to screen")}<kbd>2</kbd></button></div>
     {journeys.find(j => j.kind === "case" && j.entry === selected.id) && <button onClick={() => chooseJourney(journeys.find(j => j.kind === "case" && j.entry === selected.id).id, true)}>{t("▶ Play this case")}</button>}
+    <AgentReference key={selected.id} screen={selected} {...reference} />
     <h3>{t("Flow links")}</h3>{linked.length ? linked.map((f, i) => {
       const target = catalog.find(s => s.id === (f.from === selected.id ? f.to : f.from));
       return <button className="flow-link" key={i} onClick={() => goTo(target.id, !!active)}><small>{f.from === selected.id ? t("Next") : t("Previous")} · {f.label}{target.pageId !== selected.pageId ? t("· Cross-page") : ""}</small><span>{target.title} ↗</span></button>;

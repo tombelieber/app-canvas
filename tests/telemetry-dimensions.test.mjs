@@ -23,6 +23,11 @@ test('legacy payloads remain accepted and unclassified; qualification cannot imp
   assert.equal(sanitizeEvent(event({surface: 'qualification', environment: 'production', cohort_class: 'internal_test'}))?.properties.environment, 'qualification');
 });
 
+test('unknown distribution is accepted without asserting an installer and arbitrary source labels fail closed', () => {
+  assert.equal(sanitizeEvent(event({source: 'unknown'}))?.properties.source, 'unknown');
+  assert.equal(sanitizeEvent(event({source: 'npm-or-maybe-github'})), null);
+});
+
 test('CLI stamps environment and cohort after caller properties without changing installation or opt-out', async () => {
   const home = await mkdtemp(join(tmpdir(), 'canvas-dimensions-'));
   const sent = [];

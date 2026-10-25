@@ -45,23 +45,23 @@ if (values.version) {
 }
 if (values.help) {
   await new Promise(done => process.stdout.write(
-    "app-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\napp-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\napp-canvas import <URL> [--out <new-private-directory>] --agent\napp-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\napp-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\napp-canvas status <directory>\napp-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\napp-canvas open <private-project-directory> [--port <port>]\napp-canvas projects\napp-canvas recover <recovery-id> [--out <new-directory>]\napp-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\napp-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\napp-canvas status --inventory <ui-inventory.json>\napp-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\napp-canvas guide\napp-canvas discover [--source-root <repository>] --out <new-inventory.json>\napp-canvas pending --inventory <inventory.json>\napp-canvas demo\napp-canvas export [--config <config>] [--review-only] --out <new-directory>\napp-canvas export --project <captured-project-directory> --review-only --out <new-directory>\napp-canvas browsers\napp-canvas install --target codex|claude|both\napp-canvas telemetry on|off|status|dogfood|unknown",
+    "agent-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\nagent-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\nagent-canvas import <URL> [--out <new-private-directory>] --agent\nagent-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\nagent-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\nagent-canvas status <directory>\nagent-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\nagent-canvas open <private-project-directory> [--port <port>]\nagent-canvas projects\nagent-canvas recover <recovery-id> [--out <new-directory>]\nagent-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\nagent-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\nagent-canvas status --inventory <ui-inventory.json>\nagent-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\nagent-canvas guide\nagent-canvas discover [--source-root <repository>] --out <new-inventory.json>\nagent-canvas pending --inventory <inventory.json>\nagent-canvas demo\nagent-canvas export [--config <config>] [--review-only] --out <new-directory>\nagent-canvas export --project <captured-project-directory> --review-only --out <new-directory>\nagent-canvas browsers\nagent-canvas install --target codex|claude|both\nagent-canvas telemetry on|off|status|dogfood|unknown",
     done,
   ));
   process.exit(0);
 }
 const telemetryCommand = positionals[0] === "telemetry";
-const trackable = !values.check && !values.verify && !values.complete && !values["ui-complete"] && !["browsers", "discover", "pending", "export", "plan", "status", "guide", "populate", "import", "open", "capture-script", "capture", "link", "projects", "recover", "backup"].includes(positionals[0]);
+const trackable = !values.check && !values.verify && !values.complete && !values["ui-complete"] && !(positionals[0] === "import" && values.agent) && !["browsers", "discover", "pending", "export", "plan", "status", "guide", "populate", "capture-script", "capture", "link", "projects", "recover", "backup"].includes(positionals[0]);
 let telemetry;
 if (trackable) {
   const { createTelemetry } = await import("../lib/telemetry.mjs");
   const version = JSON.parse(await readFile(new URL("../package.json", import.meta.url))).version;
-  telemetry = await createTelemetry({version, source: process.env.APP_CANVAS_INSTALL_SOURCE || "npx", surface: positionals[0] === "demo" ? "official_demo" : "real_project"});
+  telemetry = await createTelemetry({version, source: process.env.APP_CANVAS_INSTALL_SOURCE || "unknown", surface: positionals[0] === "demo" ? "official_demo" : "real_project"});
   if (!telemetryCommand) await telemetry.notice();
 }
 if (telemetryCommand) {
   const choice = positionals[1];
-  if (choice && !["on", "off", "status", "dogfood", "unknown"].includes(choice)) throw Error("Use app-canvas telemetry on|off|status|dogfood|unknown");
+  if (choice && !["on", "off", "status", "dogfood", "unknown"].includes(choice)) throw Error("Use agent-canvas telemetry on|off|status|dogfood|unknown");
   if (choice === "on" || choice === "off") await telemetry.setEnabled(choice === "on");
   if (choice === "dogfood" || choice === "unknown") {
     if (!await telemetry.setCohortClass(choice === "dogfood" ? "internal_test" : "unknown")) throw Error("Audience preference could not be saved");
@@ -93,7 +93,7 @@ try {
     console.log(JSON.stringify(await runAgentCommand(positionals, values)));
   } else if (["import", "open"].includes(positionals[0])) {
     const { runImportCommand } = await import("../lib/import/cli.mjs");
-    await runImportCommand(positionals, values);
+    await runImportCommand(positionals, values, { telemetry });
   } else {
   if (values.complete && (values.check || values.verify || positionals.length)) throw Error("Cannot combine --complete with --check, --verify or another command");
   if (values['ui-complete'] && (values.complete || values.check || values.verify || positionals.length)) throw Error('Cannot combine --ui-complete with other verification modes or commands');

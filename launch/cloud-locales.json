@@ -1,9 +1,9 @@
 {
   "en": {
-    "title": "App Canvas Cloud · waitlist",
+    "title": "Agent Canvas Cloud · waitlist",
     "body": "Want a hosted workspace? Join the interest list. Cloud is not available yet; the MIT tool and public demo are usable now.",
     "email": "Email address",
-    "consent": "I agree to store my email in Cloudflare D1 for App Canvas Cloud updates, for up to 12 months. No payment or account is created.",
+    "consent": "I agree to store my email in Cloudflare D1 for Agent Canvas Cloud updates, for up to 12 months. No payment or account is created.",
     "join": "Join the waitlist",
     "privacy": "Privacy and telemetry",
     "pending": "Submitting…",
@@ -20,10 +20,10 @@
     "demoPrivacy": "StoolSense is the synthetic public example. It has no production session, real health records or AI requests. Optional anonymous tool usage events are separate from app data."
   },
   "zh-TW": {
-    "title": "App Canvas Cloud · 候補名單",
+    "title": "Agent Canvas Cloud · 候補名單",
     "body": "想要託管工作區？登記興趣。Cloud 尚未推出；MIT 工具同公開 Demo 而家已可用。",
     "email": "Email 地址",
-    "consent": "我同意將 email 儲存喺 Cloudflare D1，最多 12 個月，用作 App Canvas Cloud 更新通知。唔會建立付費或登入帳戶。",
+    "consent": "我同意將 email 儲存喺 Cloudflare D1，最多 12 個月，用作 Agent Canvas Cloud 更新通知。唔會建立付費或登入帳戶。",
     "join": "加入候補名單",
     "privacy": "私隱與遙測",
     "pending": "提交中…",
@@ -40,10 +40,10 @@
     "demoPrivacy": "StoolSense 係公開嘅虛構示例，冇正式登入、真實健康記錄或 AI 請求。可選嘅匿名工具使用事件同 App 資料分開。"
   },
   "zh-CN": {
-    "title": "App Canvas Cloud · 候补名单",
+    "title": "Agent Canvas Cloud · 候补名单",
     "body": "想要托管工作区？登记兴趣。Cloud 尚未推出；MIT 工具与公开 Demo 现已可用。",
     "email": "Email 地址",
-    "consent": "我同意将 email 存储在 Cloudflare D1，最多 12 个月，用于 App Canvas Cloud 更新通知。不会创建付费或登录账户。",
+    "consent": "我同意将 email 存储在 Cloudflare D1，最多 12 个月，用于 Agent Canvas Cloud 更新通知。不会创建付费或登录账户。",
     "join": "加入候补名单",
     "privacy": "隐私与遥测",
     "pending": "提交中…",
@@ -60,10 +60,10 @@
     "demoPrivacy": "StoolSense 是公开的虚构示例，没有生产会话、真实健康记录或 AI 请求。可选的匿名工具使用事件与 App 数据分开。"
   },
   "ja": {
-    "title": "App Canvas Cloud · ウェイトリスト",
+    "title": "Agent Canvas Cloud · ウェイトリスト",
     "body": "ホスト型ワークスペースに関心がありますか？Cloud はまだ提供されていません。MIT ツールと公開デモは今すぐ使えます。",
     "email": "メールアドレス",
-    "consent": "App Canvas Cloud の更新案内のため、メールを Cloudflare D1 に最大12か月保存することに同意します。支払いやアカウント作成はありません。",
+    "consent": "Agent Canvas Cloud の更新案内のため、メールを Cloudflare D1 に最大12か月保存することに同意します。支払いやアカウント作成はありません。",
     "join": "登録する",
     "privacy": "プライバシーとテレメトリ",
     "pending": "送信中…",
@@ -80,10 +80,10 @@
     "demoPrivacy": "StoolSense は合成の公開例です。本番セッション、実際の健康記録、AI リクエストはありません。任意の匿名利用イベントはアプリデータと別です。"
   },
   "es": {
-    "title": "App Canvas Cloud · lista de espera",
+    "title": "Agent Canvas Cloud · lista de espera",
     "body": "¿Quieres un espacio alojado? Registra tu interés. Cloud aún no está disponible; la herramienta MIT y la demo pública ya funcionan.",
     "email": "Correo electrónico",
-    "consent": "Acepto guardar mi correo en Cloudflare D1 hasta 12 meses para recibir novedades de App Canvas Cloud. No se crea ninguna cuenta ni pago.",
+    "consent": "Acepto guardar mi correo en Cloudflare D1 hasta 12 meses para recibir novedades de Agent Canvas Cloud. No se crea ninguna cuenta ni pago.",
     "join": "Apuntarme",
     "privacy": "Privacidad y telemetría",
     "pending": "Enviando…",
@@ -100,10 +100,10 @@
     "demoPrivacy": "StoolSense es el ejemplo público sintético. No contiene sesiones de producción, historiales reales ni peticiones de IA. Los eventos opcionales de uso son independientes de los datos de la app."
   },
   "fr": {
-    "title": "App Canvas Cloud · liste d’attente",
+    "title": "Agent Canvas Cloud · liste d’attente",
     "body": "Vous souhaitez un espace hébergé ? Inscrivez votre intérêt. Cloud n’est pas encore disponible ; l’outil MIT et la démo publique le sont déjà.",
     "email": "Adresse e-mail",
-    "consent": "J’accepte le stockage de mon e-mail dans Cloudflare D1 pendant 12 mois maximum pour les nouvelles d’App Canvas Cloud. Aucun paiement ni compte n’est créé.",
+    "consent": "J’accepte le stockage de mon e-mail dans Cloudflare D1 pendant 12 mois maximum pour les nouvelles d’Agent Canvas Cloud. Aucun paiement ni compte n’est créé.",
     "join": "M’inscrire",
     "privacy": "Confidentialité et télémétrie",
     "pending": "Envoi…",
@@ -120,10 +120,10 @@
     "demoPrivacy": "StoolSense est l’exemple public synthétique. Aucune session de production, donnée de santé réelle ou requête IA. Les événements facultatifs d’utilisation sont séparés des données de l’app."
   },
   "de": {
-    "title": "App Canvas Cloud · Warteliste",
+    "title": "Agent Canvas Cloud · Warteliste",
     "body": "Interesse an einem gehosteten Arbeitsbereich? Cloud ist noch nicht verfügbar; das MIT-Tool und die öffentliche Demo kannst du bereits nutzen.",
     "email": "E-Mail-Adresse",
-    "consent": "Ich stimme zu, dass meine E-Mail bis zu 12 Monate in Cloudflare D1 für App Canvas Cloud-Neuigkeiten gespeichert wird. Kein Konto und keine Zahlung werden erstellt.",
+    "consent": "Ich stimme zu, dass meine E-Mail bis zu 12 Monate in Cloudflare D1 für Agent Canvas Cloud-Neuigkeiten gespeichert wird. Kein Konto und keine Zahlung werden erstellt.",
     "join": "Auf die Warteliste",
     "privacy": "Datenschutz und Telemetrie",
     "pending": "Wird gesendet…",
@@ -140,10 +140,10 @@
     "demoPrivacy": "StoolSense ist das synthetische öffentliche Beispiel. Keine Produktionssitzung, echten Gesundheitsdaten oder KI-Anfragen. Optionale Nutzungsereignisse sind von App-Daten getrennt."
   },
   "pt": {
-    "title": "App Canvas Cloud · lista de espera",
+    "title": "Agent Canvas Cloud · lista de espera",
     "body": "Quer um espaço alojado? Registe o seu interesse. Cloud ainda não está disponível; a ferramenta MIT e a demo pública já estão.",
     "email": "Endereço de email",
-    "consent": "Concordo em guardar o meu email no Cloudflare D1 até 12 meses para novidades do App Canvas Cloud. Não é criada uma conta nem um pagamento.",
+    "consent": "Concordo em guardar o meu email no Cloudflare D1 até 12 meses para novidades do Agent Canvas Cloud. Não é criada uma conta nem um pagamento.",
     "join": "Entrar na lista",
     "privacy": "Privacidade e telemetria",
     "pending": "A enviar…",
@@ -160,10 +160,10 @@
     "demoPrivacy": "StoolSense é o exemplo público sintético. Não contém sessões de produção, dados de saúde reais ou pedidos de IA. Eventos de utilização opcionais são separados dos dados da app."
   },
   "it": {
-    "title": "App Canvas Cloud · lista d’attesa",
+    "title": "Agent Canvas Cloud · lista d’attesa",
     "body": "Vuoi uno spazio ospitato? Registra il tuo interesse. Cloud non è ancora disponibile; lo strumento MIT e la demo pubblica sono già utilizzabili.",
     "email": "Indirizzo email",
-    "consent": "Acconsento a conservare la mia email in Cloudflare D1 per un massimo di 12 mesi per gli aggiornamenti di App Canvas Cloud. Non vengono creati account né pagamenti.",
+    "consent": "Acconsento a conservare la mia email in Cloudflare D1 per un massimo di 12 mesi per gli aggiornamenti di Agent Canvas Cloud. Non vengono creati account né pagamenti.",
     "join": "Iscrivimi",
     "privacy": "Privacy e telemetria",
     "pending": "Invio…",
@@ -180,10 +180,10 @@
     "demoPrivacy": "StoolSense è l’esempio pubblico sintetico. Non contiene sessioni di produzione, dati sanitari reali o richieste IA. Gli eventi facoltativi di utilizzo sono separati dai dati dell’app."
   },
   "ko": {
-    "title": "App Canvas Cloud · 대기 목록",
+    "title": "Agent Canvas Cloud · 대기 목록",
     "body": "호스팅 작업 공간이 필요하신가요? 관심을 등록하세요. Cloud는 아직 제공되지 않으며 MIT 도구와 공개 데모는 지금 사용할 수 있습니다.",
     "email": "이메일 주소",
-    "consent": "App Canvas Cloud 소식을 위해 이메일을 Cloudflare D1에 최대 12개월 저장하는 데 동의합니다. 결제나 계정이 생성되지 않습니다.",
+    "consent": "Agent Canvas Cloud 소식을 위해 이메일을 Cloudflare D1에 최대 12개월 저장하는 데 동의합니다. 결제나 계정이 생성되지 않습니다.",
     "join": "대기 목록 등록",
     "privacy": "개인정보 및 텔레메트리",
     "pending": "전송 중…",
@@ -200,10 +200,10 @@
     "demoPrivacy": "StoolSense는 합성 공개 예제입니다. 프로덕션 세션, 실제 건강 기록 또는 AI 요청이 없습니다. 선택적 사용 이벤트는 앱 데이터와 분리됩니다."
   },
   "nl": {
-    "title": "App Canvas Cloud · wachtlijst",
+    "title": "Agent Canvas Cloud · wachtlijst",
     "body": "Wil je een gehoste werkruimte? Meld je interesse. Cloud is nog niet beschikbaar; de MIT-tool en openbare demo kun je al gebruiken.",
     "email": "E-mailadres",
-    "consent": "Ik stem in met opslag van mijn e-mail in Cloudflare D1 tot 12 maanden voor App Canvas Cloud-updates. Er wordt geen account of betaling aangemaakt.",
+    "consent": "Ik stem in met opslag van mijn e-mail in Cloudflare D1 tot 12 maanden voor Agent Canvas Cloud-updates. Er wordt geen account of betaling aangemaakt.",
     "join": "Aanmelden",
     "privacy": "Privacy en telemetrie",
     "pending": "Verzenden…",

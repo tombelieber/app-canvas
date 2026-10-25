@@ -1,0 +1,42 @@
+import "./fixtures/import-storage.mjs";
+import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { chromium } from "playwright";
+import { startCaptureSession } from "../lib/import/session.mjs";
+import { startImportCanvas } from "../lib/import/server.mjs";
+import { startImportSite } from "./fixtures/import-site.mjs";
+
+const directory = await mkdtemp(join(tmpdir(), "agent-reference-import-")), site = await startImportSite();
+let capture, app, browser;
+try {
+  capture = await startCaptureSession({ allowEphemeral: true, url: `${site.url}/calendar`, directory: join(directory, "project"), headless: true, record: false });
+  await capture.ready;
+  app = await startImportCanvas({ directory: join(directory, "project"), port: 0 });
+  browser = await chromium.launch();
+  const context = await browser.newContext({ viewport: { width: 1600, height: 1100 }, permissions: ["clipboard-read", "clipboard-write"] });
+  const page = await context.newPage(), errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(app.address);
+  await page.getByRole("button", { name: "Content calendar captured", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
+  await page.locator('iframe[data-import-editor][data-ready="true"]').waitFor();
+  await page.getByRole("button", { name: "Nested text", exact: true }).click();
+  await page.getByLabel("What should change?", { exact: true }).fill("Use this alternative's heading spacing in my application.");
+  await page.getByRole("button", { name: "Copy change request", exact: true }).click();
+  await page.getByText("Copied. Paste into Claude Code, Codex, or your coding agent.", { exact: true }).waitFor();
+  const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+  assert.match(clipboard, /"capturedLayer"/);
+  assert.match(clipboard, /"kind": "text"/);
+  assert.match(clipboard, /"name": "Nested text"/);
+  assert.match(clipboard, /captured local design alternative, not a source-linked application edit/);
+  assert.match(clipboard, /Find the matching implementation in the authorized project/);
+  assert.doesNotMatch(clipboard, /member@example\.test|fixture-secret/);
+  await page.getByRole("button", { name: "Reference card", exact: true }).click();
+  assert.equal(await page.getByLabel("What should change?", { exact: true }).inputValue(), "", "another layer must not inherit the previous target's change request");
+  assert.equal(await page.getByRole("button", { name: "Copy change request", exact: true }).isEnabled(), false);
+  assert.equal(site.mutations(), 0, "reference creation never mutates the original website");
+  assert.deepEqual(errors, []);
+  console.log("PASS imported reference: selected real captured layer + typed request reach clipboard, local-alternative boundary explicit, no original-site mutation or unrelated contents.");
+} finally { await app?.close(); await capture?.close(); await browser?.close(); await site.close(); await rm(directory, { recursive: true, force: true }); }

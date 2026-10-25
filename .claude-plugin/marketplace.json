@@ -1,14 +1,14 @@
 {
-  "name": "app-canvas",
+  "name": "agent-canvas",
   "owner": {
     "name": "tombelieber"
   },
   "metadata": {
-    "description": "App Canvas: the canvas, CLI and complete UI landscape skill."
+    "description": "Agent Canvas: the visual workspace, CLI and complete UI landscape skill."
   },
   "plugins": [
     {
-      "name": "app-canvas",
+      "name": "agent-canvas",
       "source": "./",
       "description": "Populate a complete web or native UI landscape with your coding agent."
     }

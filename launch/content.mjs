@@ -4,7 +4,9 @@ import { caseCoverage } from "../lib/coverage.mjs";
 
 import { languages } from "../lib/locales.mjs";
 export { languages };
-export const baseUrl = "https://tombelieber.github.io/app-canvas/";
+const siteUrl = process.env.APP_CANVAS_SITE_URL || "https://tombelieber.github.io/app-canvas/";
+export const baseUrl = new URL(siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`).href;
+export const demoUrl = process.env.APP_CANVAS_DEMO_URL || baseUrl;
 export const repository = "https://github.com/tombelieber/app-canvas";
 export const personalRelease = "https://tomtang3.ai/blog/introducing-app-canvas/";
 export const technicalArticle = "https://tomtang3.ai/blog/app-canvas-safari-rendering/";
@@ -46,18 +48,22 @@ export function validateLocales(locales, facts) {
 }
 
 export const text = (value, facts) => value.replace(/\{(\w+)\}/g, (_, key) => facts[key]);
-export const pagePath = (locale, page = "product") => `/app-canvas/about/${locale === "en" ? "" : `${locale}/`}${page === "product" ? "" : `${page}/`}`;
-export const pageUrl = (locale, page = "product") => new URL(pagePath(locale, page), baseUrl).href;
+export const pagePath = (locale, page = "product") => `${new URL(baseUrl).pathname}about/${locale === "en" ? "" : `${locale}/`}${page === "product" ? "" : `${page}/`}`;
+export const pageUrl = (locale, page = "product") => process.env.APP_CANVAS_SITE_URL && locale === "en" && page === "product" ? baseUrl : new URL(pagePath(locale, page), baseUrl).href;
+export const publicSiteUrl = process.env.APP_CANVAS_SITE_URL || "https://agent-canvas-app.pages.dev/";
+export const publicDemoUrl = process.env.APP_CANVAS_DEMO_URL || new URL("demo/", publicSiteUrl).href;
+export const publicPageUrl = (locale, page = "product") => locale === "en" && page === "product" ? publicSiteUrl : new URL(`about/${locale === "en" ? "" : `${locale}/`}${page === "product" ? "" : `${page}/`}`, publicSiteUrl).href;
 export const readmePath = locale => locale === "en" ? "README.md" : `README.${locale}.md`;
 
 export function commands(facts) {
   const pin = `github:tombelieber/app-canvas#v${facts.version}`;
   return {
-    install: `npm install --save-dev ${pin}\nnpx app-canvas browsers`,
-    discover: "npx app-canvas plan --source-root . --out ui-review/ui-inventory.json\nnpx app-canvas status --inventory ui-review/ui-inventory.json",
-    verify: "npx app-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify",
+    install: `npm install --save-dev ${pin}\nnpx agent-canvas browsers`,
+    try: `npm install -g ${pin}\nagent-canvas browsers\nagent-canvas demo`,
+    discover: "npx agent-canvas plan --source-root . --out ui-review/ui-inventory.json\nnpx agent-canvas status --inventory ui-review/ui-inventory.json",
+    verify: "npx agent-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify",
     review: "npm run ui:review",
-    skill: "npx app-canvas install --target both",
-    prompt: `Read ${repository}/blob/v${facts.version}/AGENT_GUIDE.md and add a completely populated App Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.`,
+    skill: "npx agent-canvas install --target both",
+    prompt: `Read ${repository}/blob/v${facts.version}/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.`,
   };
 }

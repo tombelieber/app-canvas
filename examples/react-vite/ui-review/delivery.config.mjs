@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { discoverUi } from '@tombelieber/app-canvas/inventory';
-import { populationFingerprint } from '@tombelieber/app-canvas/population';
+import { discoverUi } from '@tombelieber/agent-canvas/inventory';
+import { populationFingerprint } from '@tombelieber/agent-canvas/population';
 import base from './canvas.config.mjs';
 
 export default {

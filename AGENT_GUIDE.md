@@ -1,10 +1,10 @@
-# Add App Canvas to an existing repository
+# Add Agent Canvas to an existing repository
 
 **For coding agents:** deliver the complete UI landscape of this repository.
 Own discovery, fixtures, render setup, population and verification; the user
 does not supply a screen list or repeatedly ask you to continue. A few working
 screens are an intermediate result. Follow the required
-[completion contract](skills/app-canvas/references/completion.md).
+[completion contract](skills/agent-canvas/references/completion.md).
 Follow the user's repository instructions and authorization boundaries.
 
 [Try the public StoolSense canvas](https://tombelieber.github.io/app-canvas/) ·
@@ -15,8 +15,8 @@ Follow the user's repository instructions and authorization boundaries.
 
 For a website URL and editable captured landscape, follow the separate
 [desktop URL import guide](docs/url-import.md) and the canonical
-[URL skill reference](skills/app-canvas/references/url-import.md). Available in v0.13.0; verify the installed CLI exposes `import`, `capture-script`,
-`capture`, `status`, `link` and `open`. App Canvas + the agent support an existing
+[URL skill reference](skills/agent-canvas/references/url-import.md). Available in v0.13.0; verify the installed CLI exposes `import`, `capture-script`,
+`capture`, `status`, `link` and `open`. Agent Canvas + the agent support an existing
 authorized browser or a dedicated capture browser. Resolve the accessible
 worklist, review fidelity, edit, Save and verify a fresh offline reopen. Keep
 app-specific captures and trials private. Require the durable-storage commands
@@ -32,7 +32,7 @@ follows labeled flow connections that pan/zoom to the destination, and uses a
 screen's actual controls directly on the canvas for web adapters. Web cases
 render original DOM. Native apps can use full original-runtime captures with
 source/build provenance, or a verified device adapter; follow the
-[native integration contract](skills/app-canvas/references/native.md).
+[native integration contract](skills/agent-canvas/references/native.md).
 Capture viewers expose visual evidence; their controls do not become native
 app controls. React and pre-existing previews are not prerequisites.
 They ask their coding agent to edit the corresponding source. Existing screen
@@ -77,14 +77,14 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.15.0
-npx app-canvas browsers
+npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npx agent-canvas browsers
 ```
 
 On npm 12, Git admission may require `--allow-git=root` on that install command.
 Keep the exception scoped to the direct requested dependency and command.
 
-The installed package includes this guide and `app-canvas guide`. New UI
+The installed package includes this guide and `agent-canvas guide`. New UI
 delivery commands require v0.13.0 or later;
 v0.12.0 does not contain them. The release pin and lockfile record the qualified revision. For another tool revision,
 verify its availability and inventory export before pinning it; do not invent
@@ -94,11 +94,16 @@ The guide works with any agent that can read files, edit code and run commands.
 Codex and Claude Code can additionally install the bundled Agent Skills format:
 
 ```sh
-npx app-canvas install --target both
+npx agent-canvas install --target both
 ```
 
-Targets are `codex`, `claude`, or `both`. The installer preserves unmanaged or
-locally edited skills. Other agents can read this guide and `skills/app-canvas/SKILL.md`
+Targets are `codex`, `claude`, or `both`. The installer preflights both harnesses
+and preserves unmanaged or locally edited skills by refusing to overwrite them.
+An unchanged managed `app-canvas` skill is migrated to `agent-canvas`; both CLI
+commands remain supported. Existing `APP_CANVAS_*` settings, saved projects and
+telemetry preferences retain their paths. The npm package is now
+`@tombelieber/agent-canvas`; update ESM imports when upgrading an application.
+The GitHub repository URL stays `tombelieber/app-canvas`. Other agents can read this guide and `skills/agent-canvas/SKILL.md`
 directly or use their own supported skill loader; they do not need a Claude
 plugin. Do not claim untested clients or frameworks are certified.
 
@@ -124,7 +129,7 @@ ui-review/
   README.md            # coverage, commands, fixture boundaries and omissions
 ```
 
-For native applications, implement the [native capture/harness path](skills/app-canvas/references/native.md)
+For native applications, implement the [native capture/harness path](skills/agent-canvas/references/native.md)
 and adapt this file layout. Keep native rendering checks separate from viewer
 checks and connect them to `verify`. A native repository can keep the CLI's
 package/lockfile under `ui-review/` without adding a root web app. Missing
@@ -200,8 +205,8 @@ in the tool repository. Emulation does not qualify a physical iPad.
 
 ## 4. Make missing coverage fail
 
-Complete **UI delivery** uses the [population workflow](skills/app-canvas/references/population.md).
-Use `app-canvas guide` from the installed package. Run `plan` on the whole
+Complete **UI delivery** uses the [population workflow](skills/agent-canvas/references/population.md).
+Use `agent-canvas guide` from the installed package. Run `plan` on the whole
 original repository before captures, inspect all files and UI anchors, and
 reconcile meaningful states with actual navigation. Keep one project/device
 owner, deduplicate exact equivalent captures and resume durable checkpoints.
@@ -224,7 +229,7 @@ New UI deliveries above 128 cases start at feature depth, or page depth when
 features also exceed 128. All states/search/flow links retain the whole model.
 
 The existing `--complete` remains the unchanged, stricter
-[all-source audit](skills/app-canvas/references/source-audit.md). It still
+[all-source audit](skills/agent-canvas/references/source-audit.md). It still
 requires version 2 discovery and every raw obligation's review/evidence.
 Report audit-only pending work separately from missing UI; UI acceptance never
 turns an audit failure into a pass. Finish both if both are requested. Legacy
@@ -232,7 +237,7 @@ source inventories and registered-case checks remain construction evidence.
 
 For supported React Router JSX/object route forms, configure `routeCoverage`
 with source and reviewed snapshot paths. Generate the snapshot with
-`inventoryRoutes` from `@tombelieber/app-canvas/routes`. Base cases retain their
+`inventoryRoutes` from `@tombelieber/agent-canvas/routes`. Base cases retain their
 route `pattern`, including parameters, separately from a concrete fixture `path`.
 A new route or a missing base case must make `--check` fail. Inspect changes
 before updating a snapshot; do not blindly refresh it to silence the gate.
@@ -254,9 +259,9 @@ that its corresponding application interaction works.
 ## 5. Verify and hand over
 
 ```sh
-npx app-canvas --config ui-review/canvas.config.mjs --check
-npx app-canvas --config ui-review/canvas.config.mjs --verify
-npx app-canvas populate --config ui-review/canvas.config.mjs --source-root .
+npx agent-canvas --config ui-review/canvas.config.mjs --check
+npx agent-canvas --config ui-review/canvas.config.mjs --verify
+npx agent-canvas populate --config ui-review/canvas.config.mjs --source-root .
 # --verify verifies then exits; otherwise keep the verified viewer open.
 ```
 
@@ -290,7 +295,7 @@ The hosted StoolSense demo is a frozen synthetic frontend export. Live project
 canvases read their own current source. To publish a different project's canvas,
 first obtain publication authority and create an explicit `exportStatic` adapter
 that writes only reviewed synthetic preview assets. Then use
-`app-canvas export --config ui-review/canvas.config.mjs --out <new-directory>`.
+`agent-canvas export --config ui-review/canvas.config.mjs --out <new-directory>`.
 The exporter refuses existing output directories and adapters without a static
 export contract. It does not sanitize private code or data automatically.
 
@@ -307,7 +312,7 @@ renderer or automatically discover semantic states without the coding agent.
 The viewer defaults to English with an in-place switcher for all eleven launch
 languages. Application content and authored case labels keep their own language.
 Official CLI downloads enable minimal anonymous tool usage events; users can
-run `app-canvas telemetry off` or set `APP_CANVAS_TELEMETRY=0`. CI, DNT/GPC and
+run `agent-canvas telemetry off` or set `APP_CANVAS_TELEMETRY=0`. CI, DNT/GPC and
 self-hosted exports can disable transmission. No application data, source or
 paths are sent. See [telemetry](docs/telemetry.md). Do not send fixture or
 repository content to analytics when extending an adapter.

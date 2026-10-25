@@ -1,3 +1,5 @@
+import { useTelemetry } from "../useTelemetry.js";
+import { useI18n } from "../i18n.jsx";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReactFlow, Background, Controls, MiniMap, MarkerType, ViewportPortal, useReactFlow, useViewport } from "@xyflow/react";
 import { ScreenNode, GroupNode, PreviewContext } from "../ScreenNode.jsx";
@@ -14,6 +16,8 @@ import "./import.css";
 const types = { screen: ScreenNode, section: GroupNode }, empty = new Set();
 
 export function ImportCanvas({ project: initial }) {
+  const { locale } = useI18n();
+  const analytics = useTelemetry(locale);
   const [stored, setStored] = useState(null), [history, setHistory] = useState([]), [cursor, setCursor] = useState(0), [capture, setCapture] = useState(null);
   const [selected, setSelected] = useState(null), [layer, setLayer] = useState(null), [cache, setCache] = useState({});
   const [mode, setMode] = useState("browse"), [view, setView] = useState("overview"), [page, setPage] = useState("all"), [query, setQuery] = useState("");
@@ -112,7 +116,7 @@ export function ImportCanvas({ project: initial }) {
   const previewContext = { bridge: {}, selected, active: null, resets: {}, revision, runId: "import", mounted: empty, previews, previewErrors: errors };
   const edges = (stored?.flows || []).filter(f => filtered.some(s => s.id === f.from) && filtered.some(s => s.id === f.to)).map(f => ({ id: f.id, source: f.from, target: f.to, label: f.label, type: "smoothstep", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#588a91", strokeDasharray: f.kind === "reference" ? "8 5" : undefined } }));
   return <PreviewContext.Provider value={previewContext}><div className="review-workspace has-top has-navigation has-inspector import-workspace" data-mode={mode}>
-    <header className="workspace-bar"><div className="workspace-dock"><div className="workspace-identity"><a className="workspace-brand" href="./">App Canvas · {stored?.title || initial.title}</a><span className="sync-status ready">{stored?.screens.length || 0} captured states · desktop · observed scope</span></div>
+    <header className="workspace-bar"><div className="workspace-dock"><div className="workspace-identity"><a className="workspace-brand" href="./">Agent Canvas · {stored?.title || initial.title}</a><span className="sync-status ready">{stored?.screens.length || 0} captured states · desktop · observed scope</span></div>
       <div className="mode-switch">{["browse", "edit", "prototype"].map(next => <button key={next} disabled={saving} aria-pressed={mode === next} onClick={() => setMode(next)}>{next[0].toUpperCase() + next.slice(1)}</button>)}</div>
       <button onClick={() => setCursor(Math.max(0, cursor - 1))} disabled={!cursor || saving}>Undo</button><button onClick={() => setCursor(Math.min(history.length, cursor + 1))} disabled={cursor === history.length || saving}>Redo</button><button className="present" disabled={saving || !dirty} onClick={save}>{saving ? "Saving…" : "Save"}</button>
     </div></header>
@@ -127,8 +131,8 @@ export function ImportCanvas({ project: initial }) {
         <Background gap={24} size={1} color="#c9cdd3" /><Controls showInteractive={false} showFitView={false} /><MiniMap pannable zoomable />
         <OverviewPlane nodes={nodes} viewport={viewport} area={area} previews={previews} mounted={hidden} revision={revision} onError={setErrors} overrides={overrides} />
         {mode !== "browse" && document && assets && selectedNode && <ViewportPortal><div className="import-editor-surface nodrag nopan nowheel" style={{ left: selectedNode.position.x, top: selectedNode.position.y + 4, width: 390, height: editorHeight }}><EditorFrame key={selected} document={document} assets={assets} selected={layer} onSelect={setLayer} onOperation={operation} onBrowse={() => setMode("browse")} prototype={mode === "prototype"} links={links} onNavigate={navigate} /></div></ViewportPortal>}
-      </ReactFlow>{!screens.length && <div className="import-empty"><h2>Capture a product into App Canvas</h2><p>{capture?.phase === "paused" ? "Complete sign-in in the capture browser, then press Capture State." : "Explore in the capture browser; captured screens appear here."}</p></div>}</div>
+      </ReactFlow>{!screens.length && <div className="import-empty"><h2>Capture a product into Agent Canvas</h2><p>{capture?.phase === "paused" ? "Complete sign-in in the capture browser, then press Capture State." : "Explore in the capture browser; captured screens appear here."}</p></div>}</div>
     </main>
-    <aside className="details-panel"><ImportInspector node={mode === "edit" ? node : null} screen={screen} busy={saving} operation={operation} duplicateScreen={() => operation({ type: "duplicateScreen", newId: `copy-${crypto.randomUUID()}`, value: `${screen.title} · copy` })} upload={upload} links={links} navigate={navigate} /></aside>
+    <aside className="details-panel"><ImportInspector project={stored?.title || initial.title} analytics={analytics} node={mode === "edit" ? node : null} screen={screen} busy={saving} operation={operation} duplicateScreen={() => operation({ type: "duplicateScreen", newId: `copy-${crypto.randomUUID()}`, value: `${screen.title} · copy` })} upload={upload} links={links} navigate={navigate} /></aside>
   </div></PreviewContext.Provider>;
 }

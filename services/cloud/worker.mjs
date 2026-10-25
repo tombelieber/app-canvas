@@ -1,5 +1,5 @@
 import { languages } from "../../lib/locales.mjs";
-const publicOrigins = new Set(["https://tombelieber.github.io", "https://tomtang3.ai"]);
+const publicOrigins = new Set(["https://tombelieber.github.io", "https://tomtang3.ai", "https://agent-canvas-app.pages.dev"]);
 const json = (body, status = 200, origin) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", ...(origin ? { "Access-Control-Allow-Origin": origin, "Vary": "Origin" } : {}) } });
 const hash = async text => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)))].map(x => x.toString(16).padStart(2, "0")).join("");
 async function body(request) {
@@ -53,7 +53,7 @@ async function capture(input, env, origin) {
   if (!env.POSTHOG_TOKEN) return json({ error: "unavailable" }, 503, origin);
   const budget = await env.DB.prepare("INSERT INTO event_budget (day, events) VALUES (?, 1) ON CONFLICT(day) DO UPDATE SET events = events + 1 WHERE events < 5000 RETURNING events").bind(new Date().toISOString().slice(0, 10)).first();
   if (!budget) return json({ error: "capacity" }, 429, origin);
-  const response = await fetch("https://us.i.posthog.com/i/v0/e/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: env.POSTHOG_TOKEN, event: event.event, distinct_id: `${event.properties.product}:${event.id}`, properties: { ...event.properties, $process_person_profile: false, $geoip_disable: true, $ip: null } }), signal: AbortSignal.timeout(4000) });
+  const response = await fetch("https://us.i.posthog.com/i/v0/e/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: env.POSTHOG_TOKEN, event: event.event, distinct_id: `${event.properties.product}:${event.id}`, ...(event.event_id ? {uuid: event.event_id} : {}), ...(event.occurred_at ? {timestamp: event.occurred_at} : {}), properties: { ...event.properties, $process_person_profile: false, $geoip_disable: true, $ip: null } }), signal: AbortSignal.timeout(4000) });
   let receipt; try { receipt = await response.json(); } catch {}
   const ok = response.ok && receipt && !receipt.quota_limited?.length && !receipt.error;
   return json({ ok: !!ok }, ok ? 200 : 503, origin);

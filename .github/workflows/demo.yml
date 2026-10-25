@@ -27,6 +27,7 @@ jobs:
       - run: sudo apt-get install -y --no-install-recommends xauth
       - run: npm run test:import && npm run test:grouping
       - run: npm run test:review
+      - run: npm run test:reference
       - run: npm run test:onboarding
       - run: npm run test:dom && npm run test:legacy && npm run test:navigation && npm run test:height && npm run test:journeys
       - run: npm run test:queue && npm run test:file && node tests/action-focus.browser.mjs && npm run test:demo && npm run test:demo-controls

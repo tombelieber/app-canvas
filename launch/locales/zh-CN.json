@@ -1,14 +1,14 @@
 {
   "name": "简体中文",
-  "title": "整个 UI，一张画布，来自真实代码。",
-  "description": "与 coding agent 一起创建和维护可缩放画布，同时查看真实页面、状态和交互流程。",
+  "title": "Agent 负责 build。\n你决定下一步。",
+  "description": "轻巧的产品工作空间：查看 coding agent 构建的 App，操作真实界面，指出要改的地方，再从源代码继续构建。",
   "demo": "打开交互 Demo",
   "source": "GitHub 源码",
-  "start": "接入现有 Repo",
+  "start": "免费开始构建",
   "release": "产品发布文章",
   "languages": "选择语言",
-  "eyebrow": "App Canvas · 开源 · 为 Coding Agent 而设计",
-  "summary": "TL;DR",
+  "eyebrow": "免费、开源",
+  "summary": "为构建 → 检视 → 修改而设",
   "tldr": [
     "一次看清已实现的完整页面、命名状态和连接流程。",
     "只维护一份 UI。Coding agent 负责 fixtures、adapter 和 coverage checks。",
@@ -25,13 +25,13 @@
       "Browse 锁定控件，便于拖动画布。选中画面后点击 Interact，即可用合成数据操作原有 App 代码。"
     ],
     [
-      "点击 Demo，展示完整旅程",
-      "在持续运行的 App session 中播放成功、失败和恢复流程，附操作提示、字幕、暂停、速度和步骤时间轴。"
+      "指出要修改的地方",
+      "选择画面或 UI 元素，写下修改要求，再复制准确引用给 coding agent。让它修改源代码；源码整合的 preview 会重建。"
     ]
   ],
-  "overviewAlt": "真实 StoolSense UI 状态排列在 App Canvas 画布中",
+  "overviewAlt": "真实 StoolSense UI 状态排列在 Agent Canvas 画布中",
   "playbackAlt": "真实 Demo 在离线保存失败后保留草稿，等待重试",
-  "phoneAlt": "App Canvas 在实体 iPhone Safari 中运行",
+  "phoneAlt": "Agent Canvas 在实体 iPhone Safari 中运行",
   "overviewCaption": "公开 Demo 真实画面：{states} 个已编写状态、{flows} 条流程、{entries} 个可播放项目。队列包含独立 case，并非 {entries} 条端到端流程。",
   "playbackCaption": "实际失败和恢复画面。播放会执行已编写操作与检查；画一条连线本身不等于测试。",
   "phoneCaption": "实体 iPhone Safari 截图。从崩溃到可运行的过程和测量限制，详见技术文章。",
@@ -41,7 +41,7 @@
   "steps": [
     [
       "安装共享工具",
-      "使用 Node.js 22+，沿用项目的包管理器与 lockfile。安装固定版本的 GitHub release，再安装浏览器。npm 12 若阻止此直接 Git 依赖，才添加 --allow-git=root；无需更改全局设置。 v0.13.0 发布前，这些 UI 交付命令须使用已验证的 development commit。"
+      "使用 Node.js 22+，沿用项目的包管理器与 lockfile。安装固定版本的 GitHub release，再安装浏览器。npm 12 若阻止此直接 Git 依赖，才添加 --allow-git=root；无需更改全局设置。"
     ],
     [
       "先盘点，再选择 Case",
@@ -70,10 +70,10 @@
     "Coverage 是经过审查的源码与 case 对照，不会自动推断所有业务场景。UI checks 不代表 production backend、医疗准确率或模型 precision 已达标。",
     "Viewer 默认 English，支持 11 种语言。公开 Demo 是固定的虚构前端；本机集成会跟随源码更新。尚未测量实体 iPad 性能。"
   ],
-  "storyTitle": "为什么我创建 App Canvas",
+  "storyTitle": "为什么我创建 Agent Canvas",
   "story": [
     "AI 让创建新页面变得容易，却未让整个 App 更容易理解。我想一次看到实际页面和失败状态，无需逐页点击，也无需另外维护一份设计文件。",
-    "App Canvas 将审查变成可导航的画布。Coding agent 负责各 Repo 的集成；共享工具提供画布、真实代码 web previews、跟随流程的镜头和可检查播放。",
+    "Agent Canvas 将审查变成可导航的画布。Coding agent 负责各 Repo 的集成；共享工具提供画布、真实代码 web previews、跟随流程的镜头和可检查播放。",
     "StoolSense 是公开的虚构示例，没有生产会话、真实健康记录或 AI 请求。可选的匿名工具使用事件与 App 数据分开。"
   ],
   "versionLabel": "CLI 版本",
@@ -84,5 +84,37 @@
   "readmeGuide": "Agent 集成教程",
   "skip": "跳转到主要内容",
   "flowAlt": "保存失败、保留草稿和重试成功的真实状态图",
-  "flowCaption": "选择流程即可看到完整画面和命名转换。点击流程链接，镜头会移动到目标画面。"
+  "flowCaption": "选择流程即可看到完整画面和命名转换。点击流程链接，镜头会移动到目标画面。",
+  "freeLabel": "永久免费 · MIT 许可 · 使用你的 Agent",
+  "installTitle": "加入你的构建流程。",
+  "installNote": "先在本机试用内置 App，再让 Agent 接入你的仓库。需要 Node.js 22+。",
+  "demoProofTitle": "App 本身，就是画布。",
+  "demoProofIntro": "画面由真实 UI 代码渲染。安装前，先试公开示例。",
+  "faqTitle": "开始之前，你可能想知道",
+  "faq": [
+    [
+      "Agent Canvas 免费吗？",
+      "是。本地 CLI、画布和内置 Agent skill 均以 MIT 许可免费开源。所选 coding agent 有自己的订阅或 API 费用。"
+    ],
+    [
+      "支持 Claude Code 和 Codex 吗？",
+      "支持。可安装其中一个或两个的 skill。其他 Agent 可按公开指南使用 CLI。画布本身不调用模型。"
+    ],
+    [
+      "需要先做设计文件吗？",
+      "从 App 源代码或导入网站开始。Agent 接入现有 UI 并建立虚构 fixtures，让你一起检视真实画面和状态。"
+    ],
+    [
+      "公开 Demo 会修改我的 App 吗？",
+      "不会。Demo 在浏览器运行固定的虚构示例。检视你的 App 和修改源码需在本地项目与 coding agent 进行。"
+    ],
+    [
+      "原生 App 呢？",
+      "UIKit、SwiftUI 和 Android 需要项目专属的原始 runtime harness 与截图。原生截图不等于浏览器内可操作的原生 App。"
+    ]
+  ],
+  "playbackTitle": "点击 Demo，展示完整旅程",
+  "playbackIntro": "在持续运行的 App session 中播放成功、失败和恢复流程，附操作提示、字幕、暂停、速度和步骤时间轴。",
+  "referenceAlt": "选择真实 App 元素、描述修改，再复制关联源代码的上下文给 coding agent。",
+  "referenceCaption": "本机真实示例：选择 UI 元素并明确复制修改要求。画布不会将要求发送到 AI 服务。"
 }

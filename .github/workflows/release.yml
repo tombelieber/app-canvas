@@ -1,4 +1,4 @@
-name: Release App Canvas
+name: Release Agent Canvas
 on:
   push:
     tags: ['v*']
@@ -27,6 +27,7 @@ jobs:
       - run: npm run check && npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:review
+      - run: npm run test:reference
       - run: npm run test:onboarding
       - run: npm run check:privacy
       - run: npm run release:pack
@@ -36,5 +37,5 @@ jobs:
         run: >-
           gh release create "$RELEASE_TAG"
           .artifacts/release/*.tgz .artifacts/release/SHA256SUMS
-          --verify-tag --title "App Canvas $RELEASE_TAG"
+          --verify-tag --title "Agent Canvas $RELEASE_TAG"
           --notes-file .artifacts/release/release-notes.md

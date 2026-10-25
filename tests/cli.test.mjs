@@ -76,7 +76,7 @@ test('UI planning is independent, status detects stale reviews, and guide matche
   assert.equal(status.sourceChanged, true); assert.equal(status.sourceFilesToInspect, 1);
   assert.ok(status.uiAnchorsToResolve > 0);
   const guide = await exec(process.execPath, [cli, 'guide']);
-  assert.equal(guide.stdout.trim(), (await readFile(new URL('../skills/app-canvas/SKILL.md', import.meta.url), 'utf8')).trim());
+  assert.equal(guide.stdout.trim(), (await readFile(new URL('../skills/agent-canvas/SKILL.md', import.meta.url), 'utf8')).trim());
   await assert.rejects(() => exec(process.execPath, [cli, 'populate', '--check'], { cwd: root }), error => /cannot replace/.test(error.stderr));
 });
 
@@ -96,5 +96,64 @@ test('piped CLI help includes the complete review-export contract', async () => 
   const { stdout } = await exec(process.execPath, [cli, '--help']);
   assert.match(stdout, /export \[--config <config>\] \[--review-only\]/);
   assert.match(stdout, /export --project <captured-project-directory> --review-only/);
-  assert.ok(stdout.endsWith('app-canvas telemetry on|off|status|dogfood|unknown'));
+  assert.ok(stdout.endsWith('agent-canvas telemetry on|off|status|dogfood|unknown'));
+});
+
+
+test('canonical and legacy CLI aliases expose the same version, guide and complete help', async () => {
+  const canonical = fileURLToPath(new URL('../bin/agent-canvas.mjs', import.meta.url));
+  for (const args of [['--version'], ['--help'], ['guide']]) {
+    const [current, legacy] = await Promise.all([
+      exec(process.execPath, [canonical, ...args]),
+      exec(process.execPath, [cli, ...args]),
+    ]);
+    assert.equal(current.stdout, legacy.stdout);
+    if (args[0] === '--help') assert.match(current.stdout, /^agent-canvas --config/);
+    if (args[0] === 'guide') assert.match(current.stdout, /name: agent-canvas/);
+  }
+});
+
+test('interactive imported viewer receives safe telemetry while noninteractive agent import stays untracked', { timeout: 30000 }, async t => {
+  const { createServer } = await import('node:http');
+  const { spawn } = await import('node:child_process');
+  const { once } = await import('node:events');
+  const { stat } = await import('node:fs/promises');
+  const { createAgentProject } = await import('../lib/import/agent.mjs');
+  const root = await mkdtemp(join(tmpdir(), 'agent-canvas-cli-import-telemetry-'));
+  const home = join(root, 'home'), directory = join(root, 'private-project');
+  const received = [];
+  const collector = createServer(async (request, response) => {
+    let data = ''; for await (const chunk of request) data += chunk;
+    received.push(JSON.parse(data)); response.end('{"ok":true}');
+  });
+  collector.listen(0, '127.0.0.1'); await once(collector, 'listening');
+  const endpoint = `http://127.0.0.1:${collector.address().port}/capture`;
+  const env = { ...process.env, HOME: home, CI: '', DO_NOT_TRACK: '', APP_CANVAS_TELEMETRY: '1', APP_CANVAS_TELEMETRY_ENDPOINT: endpoint, APP_CANVAS_ENVIRONMENT: 'test', APP_CANVAS_COHORT_CLASS: 'internal_test', APP_CANVAS_INSTALL_SOURCE: '' };
+  await createAgentProject({ directory, allowEphemeral: true, url: 'https://private.example.test/dashboard' });
+  const child = spawn(process.execPath, [cli, 'open', directory, '--port', '0'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
+  t.after(async () => {
+    if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.kill('SIGTERM'); await exited; }
+    await new Promise(resolve => collector.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  });
+  let stderr = ''; child.stderr.on('data', bytes => { stderr += bytes; });
+  const address = await new Promise((resolve, reject) => {
+    let stdout = '';
+    child.stdout.on('data', bytes => { stdout += bytes; const found = stdout.match(/import: (http:\/\/127\.0\.0\.1:\d+)/); if (found) resolve(found[1]); });
+    child.once('error', reject); child.once('exit', code => reject(Error(`Viewer exited ${code}: ${stderr}`)));
+  });
+  const config = await (await fetch(address + '/telemetry.json')).json();
+  assert.equal(config.enabled, true); assert.equal(config.local, true);
+  assert.equal(config.surface, 'real_project'); assert.equal(config.cohort_class, 'internal_test');
+  assert.equal(config.source, 'unknown', 'the CLI cannot infer its installation channel');
+  const response = await fetch(address + '/telemetry', { method: 'POST', headers: { Origin: address, 'Content-Type': 'application/json' }, body: JSON.stringify({ id: config.id, event: 'viewer_ready', properties: { surface: config.surface, version: config.version, source: config.source } }) });
+  assert.equal(response.status, 204); assert.equal(received.length, 1);
+  assert.equal(received[0].event, 'viewer_ready'); assert.equal(received[0].properties.environment, 'test');
+  assert.equal(received[0].properties.source, 'unknown');
+  assert.doesNotMatch(JSON.stringify(received), /private-project|private\.example|dashboard/);
+  const agentHome = join(root, 'agent-home');
+  const noninteractive = await exec(process.execPath, [cli, 'import', 'https://private.example.test/dashboard', '--agent', '--out', join(root, 'agent-project'), '--allow-ephemeral'], { env: { ...env, HOME: agentHome } });
+  assert.doesNotMatch(noninteractive.stderr, /anonymous usage/i);
+  await assert.rejects(() => stat(join(agentHome, '.config/app-canvas/telemetry.json')), { code: 'ENOENT' });
+  assert.equal(received.length, 1, 'agent import emits no telemetry');
 });

@@ -1,7 +1,7 @@
 {
-  "name": "app-canvas",
-  "version": "0.15.0",
-  "description": "An interactive overview of real application pages, states and flows",
+  "name": "agent-canvas",
+  "version": "0.16.0",
+  "description": "See, try and refine real apps with your coding agent.",
   "author": {
     "name": "tombelieber",
     "url": "https://github.com/tombelieber"
@@ -9,6 +9,6 @@
   "repository": "https://github.com/tombelieber/app-canvas",
   "license": "MIT",
   "skills": [
-    "./skills/app-canvas"
+    "./skills/agent-canvas"
   ]
 }

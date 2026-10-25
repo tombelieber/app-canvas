@@ -1,7 +1,8 @@
 import { mkdir, writeFile, copyFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadContent, languages, baseUrl, pageUrl, repository, commands } from "../launch/content.mjs";
+import { loadContent, languages, publicSiteUrl, publicDemoUrl, publicPageUrl, repository, commands } from "../launch/content.mjs";
+import { renderSitemap, renderRobots, renderLlms } from "../launch/seo.mjs";
 import { renderPage } from "../launch/pages.mjs";
 import { syncReadmes } from "../launch/readmes.mjs";
 
@@ -10,28 +11,28 @@ export async function buildLaunch(outDir, content) {
   content ||= await loadContent();
   const assets = join(outDir, "about/assets");
   await mkdir(assets, { recursive: true });
-  for (const [from, to] of [["launch/launch.css", "launch.css"], ["launch/cloud.js", "cloud.js"], ["docs/stoolsense-overview.jpg", "overview.jpg"], ["docs/stoolsense-flow.jpg", "flow.jpg"], ["docs/stoolsense-playback.jpg", "playback.jpg"], ["docs/stoolsense-iphone.png", "iphone.png"]])
+  for (const [from, to] of [["launch/launch.css", "launch.css"], ["launch/cloud.js", "cloud.js"], ["launch/analytics.js", "analytics.js"], ["docs/agent-reference.png", "reference.png"], ["docs/agent-reference-phone.png", "reference-phone.png"], ["docs/stoolsense-overview.jpg", "overview.jpg"], ["docs/stoolsense-flow.jpg", "flow.jpg"], ["docs/stoolsense-playback.jpg", "playback.jpg"], ["docs/stoolsense-iphone.png", "iphone.png"]])
     await copyFile(join(root, from), join(assets, to));
-  await writeFile(join(assets, "icon.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#216e72"/><path d="M14 14h36v36H14zm0 12h36M26 14v36M38 14v36M14 38h36" fill="none" stroke="white" stroke-width="3"/></svg>');
-  const urls = [baseUrl];
+  await writeFile(join(assets, "icon.svg"), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28"><rect width="28" height="28" rx="5" fill="#f6f8fb"/><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="#315be8" stroke-width="2"/><path d="m13 12 11 4-4 2-2 6-5-12Z" fill="#315be8" stroke="#f6f8fb" stroke-width="1.3"/></svg>');
+  const urls = [publicSiteUrl];
   for (const locale of languages) for (const page of ["product", "start", "release"]) {
-    const pathname = new URL(pageUrl(locale, page)).pathname.replace("/app-canvas/", "");
+    const pathname = `about/${locale === "en" ? "" : `${locale}/`}${page === "product" ? "" : `${page}/`}`;
     const directory = join(outDir, pathname);
     await mkdir(directory, { recursive: true });
     await writeFile(join(directory, "index.html"), renderPage(locale, page, content));
-    urls.push(pageUrl(locale, page));
+    urls.push(publicPageUrl(locale, page));
   }
-  await writeFile(join(outDir, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(url => `<url><loc>${url}</loc></url>`).join("")}</urlset>`);
-  await writeFile(join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${baseUrl}sitemap.xml\n`);
-  await writeFile(join(outDir, "llms.txt"), `# App Canvas\n\n> A zoomable overview of real application screens, states and interactive flows, integrated by a coding agent.\n\n## Canonical integration\n- [Agent guide](${repository}/blob/v${content.facts.version}/AGENT_GUIDE.md): full source inventory, original UI, synthetic fixtures, checked journeys, --complete. Installation alone does not populate a repo.\n- [Source and license](${repository}): MIT.\n- [Live synthetic web demo](${baseUrl}): no login, production backend or model API key.\n- [Quickstart](${pageUrl("en", "start")}): install the GitHub release, not an unpublished npm registry package.\n\n## Languages\n${languages.map(locale => `- [${content.locales[locale].name}](${pageUrl(locale)}): product, quickstart and release story.`).join("\n")}\n\n## Boundaries\nViewer defaults to English and supports all 11 launch languages. Web interactions run original application JavaScript; native captures require original-runtime evidence and are not live native controls. Coverage does not qualify production backends or AI accuracy. No universal one-command GUI importer.\n`);
+  await writeFile(join(outDir, "sitemap.xml"), renderSitemap([...urls, publicDemoUrl]));
+  await writeFile(join(outDir, "robots.txt"), renderRobots(publicSiteUrl));
+  await writeFile(join(outDir, "llms.txt"), renderLlms({ siteUrl: publicSiteUrl, demoUrl: publicDemoUrl, guideUrl: publicPageUrl("en", "start"), repository, version: content.facts.version, languages: languages.map(locale => ({ name: content.locales[locale].name, url: publicPageUrl(locale) })) }));
   await writeFile(join(outDir, "llms-full.txt"), await readAgentGuide(content));
-  await writeFile(join(outDir, "about/launch.json"), JSON.stringify({ ...content.facts, languages, install: commands(content.facts).install, viewerLocale: "en", viewerLanguages: languages, demo: baseUrl }, null, 2));
+  await writeFile(join(outDir, "about/launch.json"), JSON.stringify({ ...content.facts, brand: "Agent Canvas", languages, install: commands(content.facts).install, viewerLocale: "en", viewerLanguages: languages, demo: publicDemoUrl }, null, 2));
   return { pages: urls.length - 1, languages: languages.length };
 }
 
 async function readAgentGuide(content) {
   const { readFile } = await import("node:fs/promises");
-  return `# App Canvas v${content.facts.version}\n\nCanonical repository: ${repository}\n\n${await readFile(join(root, "AGENT_GUIDE.md"), "utf8")}\n`;
+  return `# Agent Canvas v${content.facts.version}\n\nCanonical repository: ${repository}\n\n${await readFile(join(root, "AGENT_GUIDE.md"), "utf8")}\n`;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "ui:review": "app-canvas --config ui-review/canvas.config.mjs",
-    "test:ui:review": "app-canvas --config ui-review/canvas.config.mjs --verify"
+    "ui:review": "agent-canvas --config ui-review/canvas.config.mjs",
+    "test:ui:review": "agent-canvas --config ui-review/canvas.config.mjs --verify"
   },
   "dependencies": {
     "react": "^19.3.1",
