@@ -23,7 +23,7 @@ test('count parameters and app-owned content remain intact', () => {
 
 test('viewer literal translation calls exist in the canonical dictionary', async () => {
  const { default: ts } = await import('typescript');
- for (const file of ['canvas.jsx','WorkbenchChrome.jsx','JourneyPanel.jsx','DemoPlayer.jsx','ScreenNode.jsx','PlaylistSelect.jsx','i18n.jsx','NativeOverviewPlane.jsx','OverviewPlane.jsx']) {
+ for (const file of ['canvas.jsx','WorkbenchChrome.jsx','JourneyPanel.jsx','DemoPlayer.jsx','ScreenNode.jsx','AgentReference.jsx','PlaylistSelect.jsx','i18n.jsx','NativeOverviewPlane.jsx','OverviewPlane.jsx']) {
   const source = ts.createSourceFile(file, await readFile(new URL('../ui/'+file, import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JSX);
   const visit = node => { if(ts.isCallExpression(node) && node.expression.getText(source)==='t' && ts.isStringLiteral(node.arguments[0])) assert.ok(Object.hasOwn(messages.en,node.arguments[0].text),file+': '+node.arguments[0].text); ts.forEachChild(node,visit); }; visit(source);
  }

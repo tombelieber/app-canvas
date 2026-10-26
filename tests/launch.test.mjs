@@ -4,7 +4,8 @@ import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
-import { loadContent, validateLocales, languages, pageUrl, publicPageUrl, commands } from "../launch/content.mjs";
+import { loadContent, validateLocales, languages, pageUrl, publicPageUrl, publicDemoUrl, demoUrlForLocale, commands } from "../launch/content.mjs";
+import { demoAssetForLocale, demoAssetCopies, demoLanguageBadge, demoLocaleForLocale } from "../launch/demo-assets.mjs";
 import { renderPage } from "../launch/pages.mjs";
 import { buildLaunch } from "../scripts/build-launch.mjs";
 import { translatedReadme, syncReadmes } from "../launch/readmes.mjs";
@@ -36,6 +37,66 @@ test("translation omissions and invented facts fail closed", async () => {
   assert.throws(() => validateLocales(missing, facts), /schema mismatch: ja/);
   const unknown = structuredClone(locales); unknown.fr.title += " {unsupported}";
   assert.throws(() => validateLocales(unknown, facts), /Unknown fact unsupported/);
+});
+
+test("marketing pixels and social images only use actual matching example locales", async () => {
+  const content = await loadContent();
+  for (const locale of languages) {
+    const actualLocale = demoLocaleForLocale(locale);
+    const supported = ["en", "zh-TW"].includes(locale);
+    for (const page of ["product", "start", "release"]) {
+      const html = renderPage(locale, page, content);
+      assert.ok(html.includes(`data-demo-locale="${actualLocale}"`));
+      assert.ok(html.includes(demoLanguageBadge(locale)));
+      assert.ok(html.includes(`href="${demoUrlForLocale(locale)}"`));
+      assert.ok(!/stoolsense-|assets\/(?:overview|reference|flow|playback|iphone)\./.test(html));
+      const structured = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
+      if (supported) {
+        assert.ok(html.includes(`assets/screenshots/${locale}/overview.jpg`));
+        assert.ok(html.includes(`property="og:image" content="https://agent-canvas-app.pages.dev/about/assets/screenshots/${locale}/overview.jpg"`));
+        assert.ok(structured.find(item => item["@type"] === "SoftwareApplication").image.endsWith(`/screenshots/${locale}/overview.jpg`));
+        assert.ok(!html.includes(`/screenshots/${locale === "en" ? "zh-TW" : "en"}/`));
+        if (page === "product") {
+          assert.ok(html.includes(`screenshots/${locale}/reference-desktop.png`));
+          assert.ok(html.includes(`screenshots/${locale}/reference-phone.png`));
+        }
+      } else {
+        assert.ok(!/<(?:img|picture|figure)\b/.test(html), `${locale}/${page} omits unmatched screenshots`);
+        assert.ok(!html.includes('property="og:image"'));
+        assert.ok(!html.includes('name="twitter:image"'));
+        assert.ok(html.includes('name="twitter:card" content="summary"'));
+        assert.ok(structured.every(item => !("image" in item)));
+      }
+    }
+    const readme = translatedReadme(locale, content);
+    assert.ok(readme.includes(demoLanguageBadge(locale)));
+    assert.ok(readme.includes(demoUrlForLocale(locale, publicDemoUrl)));
+    assert.equal(readme.includes("!["), supported);
+    if (supported) assert.ok(readme.includes(`docs/screenshots/${locale}/playback.jpg`));
+    assert.ok(!readme.includes("docs/stoolsense-"));
+  }
+  assert.equal(demoAssetCopies().length, 10);
+  assert.equal(demoAssetForLocale("fr", "overview"), null);
+  assert.throws(() => demoAssetForLocale("unknown", "overview"), /Unknown marketing locale/);
+  assert.throws(() => demoAssetForLocale("en", "unknown"), /Unknown demo screenshot/);
+});
+
+test("example links align app and viewer language while retaining deployment prefixes", () => {
+  assert.equal(demoUrlForLocale("en", "https://agent-canvas-app.pages.dev/demo/"), "https://agent-canvas-app.pages.dev/demo/?lang=en");
+  assert.equal(demoUrlForLocale("zh-TW", "https://agent-canvas-app.pages.dev/demo/"), "https://agent-canvas-app.pages.dev/demo/zh-TW/?lang=zh-TW");
+  assert.equal(demoUrlForLocale("zh-CN", "https://tombelieber.github.io/app-canvas/"), "https://tombelieber.github.io/app-canvas/zh-TW/?lang=zh-TW");
+  assert.equal(demoUrlForLocale("ja", "https://tombelieber.github.io/app-canvas/"), "https://tombelieber.github.io/app-canvas/?lang=en");
+  assert.equal(demoUrlForLocale("zh-TW", "https://example.com/nested/demo?ac_source=github"), "https://example.com/nested/demo/zh-TW/?ac_source=github&lang=zh-TW");
+});
+
+test("local demo commands use the same actual example language as the marketing demo link", async () => {
+  const content = await loadContent();
+  for (const locale of languages) {
+    const expected = demoLocaleForLocale(locale) === "zh-TW" ? "agent-canvas demo --locale zh-TW" : "agent-canvas demo";
+    assert.equal(commands(content.facts, locale).try.split("\n").at(-1), expected, `${locale} local example language`);
+    assert.ok(renderPage(locale, "product", content).includes(`${expected}</code>`), `${locale} renders the matching command`);
+  }
+  assert.equal(commands(content.facts).try.split("\n").at(-1), "agent-canvas demo");
 });
 
 test("the free product journey uses a real demo, current install pins and visible limits", async () => {
@@ -90,9 +151,16 @@ test("publishing launch pages preserves the demo and writes real screenshot byte
     assert.deepEqual(await buildLaunch(directory), { pages: 33, languages: 11 });
     assert.equal(await readFile(join(directory, "index.html"), "utf8"), "existing demo");
     assert.equal(await readFile(join(directory, "project.json"), "utf8"), '{"legacy":"preserved"}');
-    assert.deepEqual(await readFile(join(directory, "about/assets/overview.jpg")), await readFile(new URL("../docs/stoolsense-overview.jpg", import.meta.url)));
+    for (const shot of demoAssetCopies()) {
+      assert.deepEqual(await readFile(join(directory, "about/assets", shot.asset)), await readFile(new URL(`../${shot.source}`, import.meta.url)));
+    }
+    await assert.rejects(readFile(join(directory, "about/assets/overview.jpg")), { code: "ENOENT" });
     const sitemap = await readFile(join(directory, "sitemap.xml"), "utf8");
-    assert.equal((sitemap.match(/<loc>/g) || []).length, 34);
+    assert.equal((sitemap.match(/<loc>/g) || []).length, 35);
+    assert.ok(sitemap.includes("<loc>https://agent-canvas-app.pages.dev/demo/zh-TW/</loc>"));
+    const launch = JSON.parse(await readFile(join(directory, "about/launch.json"), "utf8"));
+    assert.deepEqual(launch.exampleLocales, ["en", "zh-TW"]);
+    assert.deepEqual(launch.demos.map(demo => demo.url), ["https://agent-canvas-app.pages.dev/demo/?lang=en", "https://agent-canvas-app.pages.dev/demo/zh-TW/?lang=zh-TW"]);
     for (const locale of languages) {
       const url = new URL(pageUrl(locale, "start"));
       assert.ok((await readFile(join(directory, url.pathname.replace("/app-canvas/", ""), "index.html"), "utf8")).includes("populate --config ui-review/canvas.config.mjs --source-root . --verify"));

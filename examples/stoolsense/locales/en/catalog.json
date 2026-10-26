@@ -1,0 +1,1246 @@
+{
+  "catalog": [
+    {
+      "id": "capture-home",
+      "title": "Capture home",
+      "group": "app",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Signed in, no draft created",
+      "feature": "Home",
+      "pageId": "capture"
+    },
+    {
+      "id": "history-home",
+      "title": "Record history",
+      "group": "app",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Fictional event saved",
+      "feature": "Record list",
+      "pageId": "history"
+    },
+    {
+      "id": "insights-home",
+      "title": "Trends and diet comparison",
+      "group": "app",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Fictional history and dietary data",
+      "feature": "Trends and clues",
+      "pageId": "insights"
+    },
+    {
+      "id": "import-home",
+      "title": "Food records",
+      "group": "app",
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "Fictional food records exist",
+      "feature": "Food list",
+      "pageId": "import"
+    },
+    {
+      "id": "data-home",
+      "title": "Data and Profiles",
+      "group": "app",
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "Signed-in fictional workspace",
+      "feature": "Data management",
+      "pageId": "data"
+    },
+    {
+      "id": "capture-manual",
+      "title": "Manual entry without a photo",
+      "group": "capture",
+      "setup": "manual",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Manual entry without a photo (fictional data)",
+      "feature": "Add record",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-photo",
+      "title": "Photo preview and retake",
+      "group": "capture",
+      "setup": "photo",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Photo preview and retake (fictional data)",
+      "feature": "Add record",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-observations",
+      "title": "Appearance and symptoms · Expanded",
+      "group": "capture",
+      "setup": "observations",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Appearance and symptoms · Expanded (fictional data)",
+      "feature": "Additional details",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-care",
+      "title": "Care questions · Expanded",
+      "group": "capture",
+      "setup": "care",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Care questions · Expanded (fictional data)",
+      "feature": "Care questions",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-time",
+      "title": "Time and ownership · Expanded",
+      "group": "capture",
+      "setup": "time",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Time and ownership · Expanded (fictional data)",
+      "feature": "Additional details",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-pending",
+      "title": "Pending sync record · Resume",
+      "group": "capture",
+      "setup": "pending",
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "Pending sync record · Resume (fictional data)",
+      "feature": "Sync and drafts",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-saving",
+      "title": "Saving to cloud",
+      "group": "capture",
+      "setup": "saving",
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "Synthetic save request stays pending to show the in-progress UI",
+      "feature": "Sync and drafts",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-offline",
+      "title": "Offline · Draft retained",
+      "group": "capture",
+      "setup": "offline",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Synthetic network failure; draft retained",
+      "feature": "Sync and drafts",
+      "pageId": "capture"
+    },
+    {
+      "id": "capture-preview-error",
+      "title": "Photo format cannot be previewed",
+      "group": "capture",
+      "setup": "preview-error",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Fictional unsupported image format; original file retained",
+      "feature": "Add record",
+      "pageId": "capture"
+    },
+    {
+      "id": "history-empty",
+      "title": "No records yet",
+      "group": "result",
+      "empty": true,
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "No events in the selected range",
+      "feature": "Record list",
+      "pageId": "history"
+    },
+    {
+      "id": "history-pagination",
+      "title": "History · Pagination",
+      "group": "result",
+      "pagination": true,
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "53 fictional events require pagination",
+      "feature": "Record list",
+      "pageId": "history"
+    },
+    {
+      "id": "result-manual",
+      "title": "Manual record · Saved",
+      "group": "result",
+      "event": "manual",
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "Manual record · Saved (fictional data)",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-photo",
+      "title": "Original photo saved · Not analyzed",
+      "group": "result",
+      "event": "photo",
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "Original photo synced; analysis not started",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-partial",
+      "title": "Original photo sync incomplete",
+      "group": "result",
+      "event": "partial",
+      "source": "client/history.js",
+      "outcome": "pending",
+      "condition": "Event exists, but original photo sync is incomplete",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-running",
+      "title": "AI analysis in progress",
+      "group": "result",
+      "event": "running",
+      "source": "client/history.js",
+      "outcome": "pending",
+      "condition": "Analysis job exists, status running",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-failed",
+      "title": "Analysis failed · Retry available",
+      "group": "result",
+      "event": "failed",
+      "source": "client/history.js",
+      "outcome": "failure",
+      "condition": "Saved analysis job failed",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-unknown",
+      "title": "Analysis complete · Not eligible",
+      "group": "result",
+      "event": "unknown",
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "Analysis complete, classifications are still ineligible",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-appearance",
+      "title": "Appearance suggestions · Simulated eligibility",
+      "group": "result",
+      "event": "appearance",
+      "experimental": true,
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "UI shown using only fictional qualifying classifications",
+      "feature": "Analysis status",
+      "pageId": "history"
+    },
+    {
+      "id": "result-photo-open",
+      "title": "View and download original photo",
+      "group": "result",
+      "event": "photo",
+      "expand": "photo",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "View and download original photos (fictional data)",
+      "feature": "Original photo",
+      "pageId": "history"
+    },
+    {
+      "id": "result-edit",
+      "title": "Edit time, Profile and symptoms",
+      "group": "result",
+      "event": "manual",
+      "expand": "edit",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Edit time, Profile and symptoms (fictional data)",
+      "feature": "Corrections and deletion",
+      "pageId": "history"
+    },
+    {
+      "id": "result-versions",
+      "title": "Analysis and correction versions",
+      "group": "result",
+      "event": "versions",
+      "expand": "versions",
+      "source": "client/history.js",
+      "outcome": "success",
+      "condition": "Analysis and correction versions (fictional data)",
+      "feature": "Version history",
+      "pageId": "history"
+    },
+    {
+      "id": "result-delete",
+      "title": "Delete record · Confirm",
+      "group": "result",
+      "event": "manual",
+      "setup": "confirm-event",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Delete record · Confirm (fictional data)",
+      "feature": "Corrections and deletion",
+      "pageId": "history"
+    },
+    {
+      "id": "visit-summary",
+      "title": "Consultation summary · Export content",
+      "group": "result",
+      "setup": "summary",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Download content preview generated by the actual summary renderer",
+      "feature": "Doctor visit summary",
+      "pageId": "history"
+    },
+    {
+      "id": "care-insufficient",
+      "title": "Not enough information",
+      "group": "care",
+      "event": "insufficient",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "Additional answers incomplete",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "care-record",
+      "title": "Keep a record and watch for changes",
+      "group": "care",
+      "event": "record",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Complete fictional adult answers with no care prompt triggered",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "care-contact",
+      "title": "Contact a doctor for follow-up",
+      "group": "care",
+      "event": "contact",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "Fictional report of a small amount of visible blood",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "care-urgent",
+      "title": "Seek medical advice promptly",
+      "group": "care",
+      "event": "urgent",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "Fictional diarrhea lasting more than two days",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "care-emergency",
+      "title": "Get help now",
+      "group": "care",
+      "event": "emergency",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "Fictional report of heavy bleeding",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "care-other",
+      "title": "Non-adults · Scope",
+      "group": "care",
+      "event": "other",
+      "expand": "care",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "The person being recorded is not an adult",
+      "feature": "Care guidance",
+      "pageId": "history"
+    },
+    {
+      "id": "insights-empty",
+      "title": "No comparison data yet",
+      "group": "insights",
+      "empty": true,
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "No comparison data in the selected range",
+      "feature": "Trends and clues",
+      "pageId": "insights"
+    },
+    {
+      "id": "insights-candidate",
+      "title": "Candidate pattern · Supporting records",
+      "group": "insights",
+      "pattern": "candidate",
+      "expand": "all",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Fictional data includes candidate patterns and supporting records",
+      "feature": "Trends and clues",
+      "pageId": "insights"
+    },
+    {
+      "id": "insights-confounded",
+      "title": "Food co-occurrence · Cannot distinguish",
+      "group": "insights",
+      "pattern": "confounded",
+      "expand": "all",
+      "source": "client/history.js",
+      "outcome": "warning",
+      "condition": "Fictional foods frequently co-occur and cannot be distinguished",
+      "feature": "Trends and clues",
+      "pageId": "insights"
+    },
+    {
+      "id": "insights-intervals",
+      "title": "Event intervals and symptom changes",
+      "group": "insights",
+      "expand": "all",
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Recorded event intervals available",
+      "feature": "Trends and clues",
+      "pageId": "insights"
+    },
+    {
+      "id": "import-empty",
+      "title": "No food records yet",
+      "group": "import",
+      "empty": true,
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "No fictional food records",
+      "feature": "Food list",
+      "pageId": "import"
+    },
+    {
+      "id": "import-mapping",
+      "title": "CSV column and time mapping",
+      "group": "import",
+      "setup": "mapping",
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "CSV column and time mapping (fictional data)",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "import-xlsx",
+      "title": "Excel worksheet selection",
+      "group": "import",
+      "setup": "xlsx",
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "Excel worksheet selection (fictional data)",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "import-ready",
+      "title": "Preview · Ready to import",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "ready",
+      "source": "client/import.js",
+      "outcome": "success",
+      "condition": "Preview · Ready to import (fictional data)",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "import-duplicate",
+      "title": "Preview · Duplicate data",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "duplicate",
+      "source": "client/import.js",
+      "outcome": "warning",
+      "condition": "Synthetic preview identifies all source rows as duplicates",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "import-invalid",
+      "title": "Preview · Date unconfirmed",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "invalid",
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "Synthetic preview has unconfirmed dates; submission is disabled",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "import-committed",
+      "title": "Import complete",
+      "group": "import",
+      "setup": "import-preview",
+      "preview": "ready",
+      "commit": true,
+      "source": "client/import.js",
+      "outcome": "success",
+      "condition": "Import complete (fictional data)",
+      "feature": "Import",
+      "pageId": "import"
+    },
+    {
+      "id": "meal-delete",
+      "title": "Delete food entry · Confirmation",
+      "group": "import",
+      "setup": "confirm-meal",
+      "source": "client/import.js",
+      "outcome": "neutral",
+      "condition": "Delete dietary record · Confirm (fictional data)",
+      "feature": "Food list",
+      "pageId": "import"
+    },
+    {
+      "id": "data-originals",
+      "title": "Original photo selection and ZIP export",
+      "group": "data",
+      "setup": "originals",
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "Original photo selection and ZIP export (fictional data)",
+      "feature": "Original photo export",
+      "pageId": "data"
+    },
+    {
+      "id": "data-no-originals",
+      "title": "No original photos available to export",
+      "group": "data",
+      "setup": "originals",
+      "empty": true,
+      "source": "client/data.js",
+      "outcome": "warning",
+      "condition": "No complete original photos in the selected range",
+      "feature": "Original photo export",
+      "pageId": "data"
+    },
+    {
+      "id": "data-delete",
+      "title": "Choose deletion scope",
+      "group": "data",
+      "setup": "delete",
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "Choose deletion scope (fictional data)",
+      "feature": "Delete data",
+      "pageId": "data"
+    },
+    {
+      "id": "data-confirm-delete",
+      "title": "Delete selected data · Confirm",
+      "group": "data",
+      "setup": "confirm-delete",
+      "source": "client/data.js",
+      "outcome": "neutral",
+      "condition": "Delete selected data · Confirm (fictional data)",
+      "feature": "Delete data",
+      "pageId": "data"
+    },
+    {
+      "id": "data-profile-created",
+      "title": "Profile added",
+      "group": "data",
+      "setup": "profile",
+      "source": "client/data.js",
+      "outcome": "success",
+      "condition": "Profile creation complete (fictional data)",
+      "feature": "Profiles",
+      "pageId": "data"
+    },
+    {
+      "id": "data-export-complete",
+      "title": "ZIP export complete",
+      "group": "data",
+      "setup": "zip",
+      "source": "client/data.js",
+      "outcome": "success",
+      "condition": "ZIP export complete (fictional data)",
+      "feature": "Original photo export",
+      "pageId": "data"
+    },
+    {
+      "id": "component-symptoms",
+      "title": "Pain, straining · All options",
+      "group": "components",
+      "component": "symptoms",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Actual shared component options",
+      "feature": "Shared options",
+      "pageId": "shared"
+    },
+    {
+      "id": "component-observations",
+      "title": "Appearance and notes · All options",
+      "group": "components",
+      "component": "observations",
+      "source": "client/capture.js",
+      "outcome": "neutral",
+      "condition": "Actual shared component options",
+      "feature": "Shared options",
+      "pageId": "shared"
+    },
+    {
+      "id": "component-appearance",
+      "title": "Bristol, color and red material resembling blood",
+      "group": "components",
+      "component": "appearance",
+      "experimental": true,
+      "source": "client/history.js",
+      "outcome": "neutral",
+      "condition": "Actual shared component options",
+      "feature": "Shared options",
+      "pageId": "shared"
+    },
+    {
+      "id": "auth-checking",
+      "title": "Verifying sign-in identity",
+      "group": "system",
+      "auth": "checking",
+      "source": "client/capture.js",
+      "outcome": "pending",
+      "condition": "Identity check is not yet complete",
+      "feature": "Sign in",
+      "pageId": "system"
+    },
+    {
+      "id": "auth-expired",
+      "title": "Session expired",
+      "group": "system",
+      "auth": "expired",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Fictional authentication response 401",
+      "feature": "Sign in",
+      "pageId": "system"
+    },
+    {
+      "id": "auth-denied",
+      "title": "Not invited",
+      "group": "system",
+      "auth": "denied",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Fictional identity returns 403; the existing App shows the shared sign-in-again screen",
+      "feature": "Sign in",
+      "pageId": "system"
+    },
+    {
+      "id": "error-invalid_care_answers",
+      "title": "Care guidance information could not be validated. Check the options and number of days; leave blank if unknown",
+      "group": "system",
+      "error": "invalid_care_answers",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: invalid_care_answers",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-invalid_image",
+      "title": "The photo format could not be identified. Sync is incomplete",
+      "group": "system",
+      "error": "invalid_image",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error example: invalid_image",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-sign_in_required",
+      "title": "Your session has expired. Please sign in again",
+      "group": "system",
+      "error": "sign_in_required",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: sign_in_required",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-not_invited",
+      "title": "This email has not been invited",
+      "group": "system",
+      "error": "not_invited",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: not_invited",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-storage_capacity",
+      "title": "Cloud storage is full. The original photo is retained locally, awaiting sync",
+      "group": "system",
+      "error": "storage_capacity",
+      "setup": "photo",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: storage_capacity",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-too_large",
+      "title": "The content exceeds the size limit for this operation",
+      "group": "system",
+      "error": "too_large",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: too_large",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-integrity_failed",
+      "title": "Photo integrity check failed",
+      "group": "system",
+      "error": "integrity_failed",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: integrity_failed",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-event_deleted",
+      "title": "This event was deleted and will not be recreated",
+      "group": "system",
+      "error": "event_deleted",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: event_deleted",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-revision_conflict",
+      "title": "This record was changed in another view",
+      "group": "system",
+      "error": "revision_conflict",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error example: revision_conflict",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-analysis_limit_or_running",
+      "title": "Analysis is in progress or today's analysis allowance has been used up",
+      "group": "system",
+      "error": "analysis_limit_or_running",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: analysis_limit_or_running",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-analysis_unavailable",
+      "title": "Analysis is temporarily unavailable. You can still save the record",
+      "group": "system",
+      "error": "analysis_unavailable",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: analysis_unavailable",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-provider_unavailable",
+      "title": "The AI service is temporarily unavailable. You can retry manually later",
+      "group": "system",
+      "error": "provider_unavailable",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error example: provider_unavailable",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-upload_incomplete",
+      "title": "Photo sync is incomplete. You can retry",
+      "group": "system",
+      "error": "upload_incomplete",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: upload_incomplete",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-ambiguous_date",
+      "title": "The date could not be validated. Use YYYY-MM-DD HH:mm format",
+      "group": "system",
+      "error": "ambiguous_date",
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: ambiguous_date",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-invalid_import_rows",
+      "title": "Correct the unconfirmed rows in the preview first",
+      "group": "system",
+      "error": "invalid_import_rows",
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: invalid_import_rows",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-service_unavailable",
+      "title": "The service is temporarily unavailable",
+      "group": "system",
+      "error": "service_unavailable",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: service_unavailable",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-conflict",
+      "title": "The name or record already exists. Please refresh",
+      "group": "system",
+      "error": "conflict",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: conflict",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-narrow_export_range",
+      "title": "There is too much data. Shorten the export date range",
+      "group": "system",
+      "error": "narrow_export_range",
+      "source": "client/capture.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: narrow_export_range",
+      "feature": "Service errors",
+      "pageId": "system"
+    },
+    {
+      "id": "error-narrow_date_range",
+      "title": "There is too much data. Please shorten the date range",
+      "group": "system",
+      "error": "narrow_date_range",
+      "source": "client/import.js",
+      "outcome": "failure",
+      "condition": "Shared error message example: narrow_date_range",
+      "feature": "Service errors",
+      "pageId": "system"
+    }
+  ],
+  "groups": [
+    {
+      "id": "app",
+      "title": "App · Five main pages",
+      "color": "#287b83"
+    },
+    {
+      "id": "capture",
+      "title": "Record · Capture and sync",
+      "color": "#287b83"
+    },
+    {
+      "id": "result",
+      "title": "Results · Observations and corrections",
+      "color": "#4377bc"
+    },
+    {
+      "id": "care",
+      "title": "Care guidance · All alert levels",
+      "color": "#b36a30"
+    },
+    {
+      "id": "insights",
+      "title": "Compare · Trends and clues",
+      "color": "#8b68aa"
+    },
+    {
+      "id": "import",
+      "title": "Food · Import flow",
+      "color": "#53863c"
+    },
+    {
+      "id": "data",
+      "title": "Data · Export and deletion",
+      "color": "#987338"
+    },
+    {
+      "id": "components",
+      "title": "Shared UI · All options",
+      "color": "#687681"
+    },
+    {
+      "id": "system",
+      "title": "System · Sign-in and errors",
+      "color": "#b45c58"
+    }
+  ],
+  "flows": [
+    {
+      "to": "history-home",
+      "label": "History tab",
+      "kind": "action",
+      "from": "capture-home"
+    },
+    {
+      "to": "capture-home",
+      "label": "Fictional identity authorized",
+      "kind": "condition",
+      "from": "auth-checking"
+    },
+    {
+      "to": "auth-expired",
+      "label": "Identity expired",
+      "kind": "condition",
+      "from": "auth-checking"
+    },
+    {
+      "to": "auth-denied",
+      "label": "Not invited",
+      "kind": "condition",
+      "from": "auth-checking"
+    },
+    {
+      "to": "capture-saving",
+      "label": "Synthetic save request pending",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "capture-offline",
+      "label": "Synthetic network disconnection",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "history-empty",
+      "label": "No events yet",
+      "kind": "condition",
+      "from": "history-home"
+    },
+    {
+      "to": "history-pagination",
+      "label": "Events span more than one page",
+      "kind": "condition",
+      "from": "history-home"
+    },
+    {
+      "to": "result-partial",
+      "label": "Original photo incomplete",
+      "kind": "condition",
+      "from": "history-home"
+    },
+    {
+      "to": "result-running",
+      "label": "Job running",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "result-failed",
+      "label": "Synthetic analysis job failed",
+      "kind": "condition",
+      "from": "result-running"
+    },
+    {
+      "to": "result-unknown",
+      "label": "Complete but ineligible",
+      "kind": "condition",
+      "from": "result-running"
+    },
+    {
+      "to": "result-appearance",
+      "label": "Fictional eligible fields",
+      "kind": "condition",
+      "from": "result-unknown"
+    },
+    {
+      "to": "visit-summary",
+      "label": "Download summary content",
+      "kind": "reference",
+      "from": "result-manual"
+    },
+    {
+      "to": "capture-care",
+      "label": "Expand additional care questions",
+      "kind": "reference",
+      "from": "capture-manual"
+    },
+    {
+      "to": "insights-empty",
+      "label": "No comparison data",
+      "kind": "condition",
+      "from": "insights-home"
+    },
+    {
+      "to": "insights-candidate",
+      "label": "Candidate pattern available",
+      "kind": "condition",
+      "from": "insights-home"
+    },
+    {
+      "to": "insights-confounded",
+      "label": "Food co-occurrence",
+      "kind": "condition",
+      "from": "insights-home"
+    },
+    {
+      "to": "insights-intervals",
+      "label": "Event intervals",
+      "kind": "reference",
+      "from": "insights-home"
+    },
+    {
+      "to": "import-empty",
+      "label": "No dietary records",
+      "kind": "condition",
+      "from": "import-home"
+    },
+    {
+      "to": "import-xlsx",
+      "label": "Fictional Excel loaded",
+      "kind": "condition",
+      "from": "import-home"
+    },
+    {
+      "to": "data-no-originals",
+      "label": "No complete original photos",
+      "kind": "condition",
+      "from": "data-home"
+    },
+    {
+      "to": "component-symptoms",
+      "label": "Shared symptom options",
+      "kind": "reference",
+      "from": "capture-manual"
+    },
+    {
+      "to": "component-observations",
+      "label": "Shared appearance options",
+      "kind": "reference",
+      "from": "capture-observations"
+    },
+    {
+      "to": "component-appearance",
+      "label": "All fictional appearance options",
+      "kind": "reference",
+      "from": "result-appearance"
+    },
+    {
+      "to": "care-insufficient",
+      "label": "Additional answers incomplete",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-record",
+      "label": "Complete fictional adult answers with no care prompt triggered",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-contact",
+      "label": "Fictional report of a small amount of visible blood",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-urgent",
+      "label": "Fictional diarrhea lasting more than two days",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-emergency",
+      "label": "Fictional report of heavy bleeding",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "care-other",
+      "label": "The person being recorded is not an adult",
+      "kind": "condition",
+      "from": "capture-care"
+    },
+    {
+      "to": "error-invalid_care_answers",
+      "label": "invalid_care_answers",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-invalid_image",
+      "label": "invalid_image",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-sign_in_required",
+      "label": "sign_in_required",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-not_invited",
+      "label": "not_invited",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-storage_capacity",
+      "label": "storage_capacity",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-too_large",
+      "label": "too_large",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-integrity_failed",
+      "label": "integrity_failed",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-event_deleted",
+      "label": "event_deleted",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-revision_conflict",
+      "label": "revision_conflict",
+      "kind": "condition",
+      "from": "result-edit"
+    },
+    {
+      "to": "error-analysis_limit_or_running",
+      "label": "analysis_limit_or_running",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-analysis_unavailable",
+      "label": "analysis_unavailable",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-provider_unavailable",
+      "label": "provider_unavailable",
+      "kind": "condition",
+      "from": "result-photo"
+    },
+    {
+      "to": "error-upload_incomplete",
+      "label": "upload_incomplete",
+      "kind": "condition",
+      "from": "capture-photo"
+    },
+    {
+      "to": "error-ambiguous_date",
+      "label": "ambiguous_date",
+      "kind": "condition",
+      "from": "import-mapping"
+    },
+    {
+      "to": "error-invalid_import_rows",
+      "label": "invalid_import_rows",
+      "kind": "condition",
+      "from": "import-mapping"
+    },
+    {
+      "to": "error-service_unavailable",
+      "label": "service_unavailable",
+      "kind": "condition",
+      "from": "capture-manual"
+    },
+    {
+      "to": "error-conflict",
+      "label": "conflict",
+      "kind": "condition",
+      "from": "data-home"
+    },
+    {
+      "to": "error-narrow_export_range",
+      "label": "narrow_export_range",
+      "kind": "condition",
+      "from": "data-home"
+    },
+    {
+      "to": "error-narrow_date_range",
+      "label": "narrow_date_range",
+      "kind": "condition",
+      "from": "import-mapping"
+    }
+  ],
+  "pages": [
+    {
+      "id": "capture",
+      "title": "Record"
+    },
+    {
+      "id": "history",
+      "title": "History and details"
+    },
+    {
+      "id": "insights",
+      "title": "Compare"
+    },
+    {
+      "id": "import",
+      "title": "Diet"
+    },
+    {
+      "id": "data",
+      "title": "Data"
+    },
+    {
+      "id": "shared",
+      "title": "Shared components"
+    },
+    {
+      "id": "system",
+      "title": "Sign-in and system"
+    }
+  ]
+}

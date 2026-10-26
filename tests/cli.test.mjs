@@ -157,3 +157,54 @@ test('interactive imported viewer receives safe telemetry while noninteractive a
   await assert.rejects(() => stat(join(agentHome, '.config/app-canvas/telemetry.json')), { code: 'ENOENT' });
   assert.equal(received.length, 1, 'agent import emits no telemetry');
 });
+
+test('demo locale rejects unsupported values and non-demo usage before telemetry or project resources', async t => {
+  const { stat, readdir } = await import('node:fs/promises');
+  const root = await mkdtemp(join(tmpdir(), 'agent-canvas-invalid-locale-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const env = { ...process.env, HOME: join(root, 'home'), CI: '', APP_CANVAS_TELEMETRY: '1', DO_NOT_TRACK: '' };
+  for (const args of [
+    ['demo', '--locale', 'fr'], ['demo', '--locale', 'zh-tw'],
+    ['--locale', 'en'], ['--version', '--locale', 'en'],
+    ['import', 'https://private.example.test/', '--agent', '--locale', 'en'],
+    ['--config', 'private.config.mjs', '--locale', 'zh-TW'],
+  ]) {
+    await assert.rejects(() => exec(process.execPath, [cli, ...args], { env, cwd: root }), error => {
+      assert.equal(error.code, 1); assert.match(error.stderr, /--locale.*(?:supported only|en\|zh-TW)|supported only.*demo/);
+      assert.doesNotMatch(error.stderr, /anonymous usage events/i); return true;
+    });
+  }
+  await assert.rejects(() => stat(join(root, 'home/.config/app-canvas/telemetry.json')), { code: 'ENOENT' });
+  assert.deepEqual(await readdir(root), [], 'invalid locale starts no server, config build or saved project');
+});
+
+test('public demo CLI selects actual English or original Chinese config and prints matching viewer language', { timeout: 60000 }, async t => {
+  const { spawn } = await import('node:child_process');
+  const { once } = await import('node:events');
+  const canonical = fileURLToPath(new URL('../bin/agent-canvas.mjs', import.meta.url));
+  const cases = [
+    { executable: canonical, args: [], locale: 'en', catalog: '../examples/stoolsense/locales/en/catalog.json', ui: '../examples/stoolsense/public/en/frame.js' },
+    { executable: cli, args: ['--locale', 'en'], locale: 'en', catalog: '../examples/stoolsense/locales/en/catalog.json', ui: '../examples/stoolsense/public/en/frame.js' },
+    { executable: canonical, args: ['--locale', 'zh-TW'], locale: 'zh-TW', catalog: '../examples/stoolsense/catalog.json', ui: '../examples/stoolsense/public/frame.js' },
+  ];
+  for (const item of cases) {
+    const child = spawn(process.execPath, [item.executable, 'demo', ...item.args, '--port', '0'], { env: { ...process.env, APP_CANVAS_TELEMETRY: '0', CI: '1' }, stdio: ['ignore', 'pipe', 'pipe'] });
+    let stderr = ''; child.stderr.on('data', bytes => { stderr += bytes; });
+    try {
+      const address = await new Promise((resolve, reject) => {
+        let stdout = '';
+        child.stdout.on('data', bytes => { stdout += bytes; const found = stdout.match(/Agent Canvas: (http:\/\/127\.0\.0\.1:\d+\/\?lang=[^\s]+)/); if (found) resolve(found[1]); });
+        child.once('error', reject); child.once('exit', code => reject(Error(`Demo exited ${code}: ${stderr}`)));
+      });
+      assert.equal(new URL(address).searchParams.get('lang'), item.locale);
+      const project = await (await fetch(new URL('/project.json', address))).json();
+      const expected = JSON.parse(await readFile(new URL(item.catalog, import.meta.url), 'utf8'));
+      assert.deepEqual(project.catalog.map(({ id, title }) => ({ id, title })), expected.catalog.map(({ id, title }) => ({ id, title })));
+      assert.equal(project.catalog.length, 77);
+      const actualUi = await (await fetch(new URL('/assets/frame.js', address))).text();
+      assert.equal(actualUi, await readFile(new URL(item.ui, import.meta.url), 'utf8'), `${item.locale} must serve its actual frozen app UI`);
+    } finally {
+      if (child.exitCode === null && child.signalCode === null) { const exited = once(child, 'exit'); child.kill('SIGTERM'); await exited; }
+    }
+  }
+});

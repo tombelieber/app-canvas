@@ -176,5 +176,20 @@
   "Native acceleration unavailable; using original previews.": "Accelerazione nativa non disponibile; vengono usate le anteprime originali.",
   "Preview unavailable; select the screen to open the original app.": "Anteprima non disponibile; seleziona la schermata per aprire l’app originale.",
   "Full UI · shared isolated rendering": "UI completa · rendering isolato condiviso",
-  "Review snapshot": "Istantanea di revisione"
+  "Review snapshot": "Istantanea di revisione",
+  "Change with your agent": "Modifica con il tuo agente",
+  "Cancel pointing": "Annulla selezione",
+  "Point to an element": "Indica un elemento",
+  "Click an element in the preview. Its normal action will not run. Press Escape to cancel.": "Fai clic su un elemento nell’anteprima. La sua azione normale non verrà eseguita. Premi Escape per annullare.",
+  "Selected element:": "Elemento selezionato:",
+  "References a captured local alternative. Your agent needs the matching source project to apply changes.": "Il riferimento indica una variante acquisita in locale. Il tuo agente ha bisogno del progetto sorgente corrispondente per applicare le modifiche.",
+  "What should change?": "Cosa deve cambiare?",
+  "Make this button easier to find.": "Rendi questo pulsante più facile da trovare.",
+  "Copying…": "Copia in corso…",
+  "Copy change request": "Copia richiesta di modifica",
+  "Copied. Paste into Claude Code, Codex, or your coding agent.": "Copiato. Incolla in Claude Code, Codex o nel tuo agente di programmazione.",
+  "Clipboard unavailable. Select and copy the request below.": "Appunti non disponibili. Seleziona e copia la richiesta qui sotto.",
+  "Review or copy the request": "Rivedi o copia la richiesta",
+  "Agent change request": "Richiesta di modifica per l’agente",
+  "Only copied when you ask. Agent Canvas does not send this request to an AI service.": "Copiato solo su tua richiesta. Agent Canvas non invia questa richiesta a un servizio AI."
 }

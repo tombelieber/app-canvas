@@ -77,9 +77,22 @@ examples below are the reference path. The runtime makes no model calls; the
 user's coding agent performs discovery and integration.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
+
+To try the bundled synthetic app before integrating your own source:
+
+```sh
+npx agent-canvas demo
+# Original Traditional Chinese demo:
+npx agent-canvas demo --locale zh-TW
+```
+
+The demo defaults to actual English application UI and opens with matching viewer
+controls (`?lang=en`). `--locale en|zh-TW` selects only the bundled demo; it does
+not translate a source application, imported website or native capture. Both CLI
+names share this behavior. Existing source app configuration stays unchanged.
 
 On npm 12, Git admission may require `--allow-git=root` on that install command.
 Keep the exception scoped to the direct requested dependency and command.

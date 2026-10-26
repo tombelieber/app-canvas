@@ -176,5 +176,20 @@
   "Native acceleration unavailable; using original previews.": "Native acceleration unavailable; using original previews.",
   "Preview unavailable; select the screen to open the original app.": "Preview unavailable; select the screen to open the original app.",
   "Full UI · shared isolated rendering": "Full UI · shared isolated rendering",
-  "Review snapshot": "Review snapshot"
+  "Review snapshot": "Review snapshot",
+  "Change with your agent": "Change with your agent",
+  "Cancel pointing": "Cancel pointing",
+  "Point to an element": "Point to an element",
+  "Click an element in the preview. Its normal action will not run. Press Escape to cancel.": "Click an element in the preview. Its normal action will not run. Press Escape to cancel.",
+  "Selected element:": "Selected element:",
+  "References a captured local alternative. Your agent needs the matching source project to apply changes.": "References a captured local alternative. Your agent needs the matching source project to apply changes.",
+  "What should change?": "What should change?",
+  "Make this button easier to find.": "Make this button easier to find.",
+  "Copying…": "Copying…",
+  "Copy change request": "Copy change request",
+  "Copied. Paste into Claude Code, Codex, or your coding agent.": "Copied. Paste into Claude Code, Codex, or your coding agent.",
+  "Clipboard unavailable. Select and copy the request below.": "Clipboard unavailable. Select and copy the request below.",
+  "Review or copy the request": "Review or copy the request",
+  "Agent change request": "Agent change request",
+  "Only copied when you ask. Agent Canvas does not send this request to an AI service.": "Only copied when you ask. Agent Canvas does not send this request to an AI service."
 }

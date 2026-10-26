@@ -1,5 +1,15 @@
 # Agent Canvas
 
+## 0.16.1
+
+- Align the official English demo, screen catalog, checked flows and embedded
+  app UI. Keep the complete Traditional Chinese example on its own demo route.
+- Match active landing and README screenshots to their actual demo language.
+  Hide screenshots for locales without a matching example and state the demo
+  language explicitly; preserve historical review and device evidence.
+- Default the public demo command to English and provide an explicit
+  `demo --locale zh-TW` option for the Traditional Chinese example.
+
 ## 0.16.0
 
 - Launch Agent Canvas as a free MIT visual workspace for reviewing and refining real apps built with coding agents.

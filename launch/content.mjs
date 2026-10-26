@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { createJourneys } from "../examples/stoolsense/journeys.mjs";
 import { caseCoverage } from "../lib/coverage.mjs";
+import { demoLocaleForLocale } from "./demo-assets.mjs";
 
 import { languages } from "../lib/locales.mjs";
 export { languages };
@@ -52,14 +53,23 @@ export const pagePath = (locale, page = "product") => `${new URL(baseUrl).pathna
 export const pageUrl = (locale, page = "product") => process.env.APP_CANVAS_SITE_URL && locale === "en" && page === "product" ? baseUrl : new URL(pagePath(locale, page), baseUrl).href;
 export const publicSiteUrl = process.env.APP_CANVAS_SITE_URL || "https://agent-canvas-app.pages.dev/";
 export const publicDemoUrl = process.env.APP_CANVAS_DEMO_URL || new URL("demo/", publicSiteUrl).href;
+export function demoUrlForLocale(locale, rootUrl = demoUrl) {
+  const actualLocale = demoLocaleForLocale(locale);
+  const url = new URL(rootUrl);
+  if (!url.pathname.endsWith("/")) url.pathname += "/";
+  if (actualLocale !== "en") url.pathname += `${actualLocale}/`;
+  url.searchParams.set("lang", actualLocale);
+  return url.href;
+}
 export const publicPageUrl = (locale, page = "product") => locale === "en" && page === "product" ? publicSiteUrl : new URL(`about/${locale === "en" ? "" : `${locale}/`}${page === "product" ? "" : `${page}/`}`, publicSiteUrl).href;
 export const readmePath = locale => locale === "en" ? "README.md" : `README.${locale}.md`;
 
-export function commands(facts) {
+export function commands(facts, locale = "en") {
   const pin = `github:tombelieber/app-canvas#v${facts.version}`;
+  const demoCommand = `agent-canvas demo${demoLocaleForLocale(locale) === "zh-TW" ? " --locale zh-TW" : ""}`;
   return {
     install: `npm install --save-dev ${pin}\nnpx agent-canvas browsers`,
-    try: `npm install -g ${pin}\nagent-canvas browsers\nagent-canvas demo`,
+    try: `npm install -g ${pin}\nagent-canvas browsers\n${demoCommand}`,
     discover: "npx agent-canvas plan --source-root . --out ui-review/ui-inventory.json\nnpx agent-canvas status --inventory ui-review/ui-inventory.json",
     verify: "npx agent-canvas populate --config ui-review/canvas.config.mjs --source-root . --verify",
     review: "npm run ui:review",

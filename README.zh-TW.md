@@ -8,7 +8,9 @@
 
 輕巧嘅產品工作空間：睇住 coding agent 起出嚟嘅 App，操作真實畫面，指住要改嘅地方，再由原始碼繼續 build。
 
-**[開啟互動 Demo](https://agent-canvas-app.pages.dev/demo/) · [免費開始 build](https://agent-canvas-app.pages.dev/about/zh-TW/start/) · [產品發布文章](https://agent-canvas-app.pages.dev/about/zh-TW/release/)**
+**[開啟互動 Demo](https://agent-canvas-app.pages.dev/demo/zh-TW/?lang=zh-TW) · [免費開始 build](https://agent-canvas-app.pages.dev/about/zh-TW/start/) · [產品發布文章](https://agent-canvas-app.pages.dev/about/zh-TW/release/)**
+
+示範語言：繁體中文
 
 ## 為 build → 檢視 → 修改而設
 
@@ -16,7 +18,7 @@
 - 只維護一份 UI。Coding agent 負責 fixtures、adapter 及 coverage checks。
 - 公開虛構資料 Demo 有 77 個狀態及 44 條流程，毋須登入或 API key。
 
-![真實 StoolSense UI 狀態並排在 Agent Canvas 畫布上](docs/stoolsense-overview.jpg)
+![真實 StoolSense UI 狀態並排在 Agent Canvas 畫布上](docs/screenshots/zh-TW/overview.jpg)
 
 公開 Demo 真實畫面：77 個已編寫狀態、44 條流程、121 個可播放項目。隊列包含獨立 case，並非 121 條端到端流程。
 
@@ -34,7 +36,7 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 
 選取畫面或 UI 元素，寫低修改要求，再複製準確 reference 畀 coding agent。請佢改原始碼；來源整合嘅 preview 會重建。
 
-![真實 Demo 在離線儲存失敗後保留草稿，等待重試](docs/stoolsense-playback.jpg)
+![真實 Demo 在離線儲存失敗後保留草稿，等待重試](docs/screenshots/zh-TW/playback.jpg)
 
 實際失敗及復原畫面。播放會執行已編寫操作與檢查；畫一條連線本身並不等於測試。
 
@@ -45,7 +47,7 @@ Browse 會鎖住控制項，方便拖動畫布。選取畫面後按 Interact，�
 ### 貼給你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安裝共用工具
@@ -53,7 +55,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and a
 使用 Node.js 22+，沿用專案的 package manager 與 lockfile。安裝固定版本的 GitHub release，再安裝瀏覽器。npm 12 若阻擋此直接 Git dependency，才加 --allow-git=root；毋須更改全域設定。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
 
@@ -91,7 +93,7 @@ npm run ui:review
 
 共用套件維護 viewer、CLI 及 skill；各 Repo 維護自己的 adapter、fixtures、獨立 inventory、catalog 與互動檢查。可從可執行的 React/Vite 範例開始；其他技術棧使用專屬 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.1/examples/react-vite)
 
 ### 可選的 Agent Skill
 

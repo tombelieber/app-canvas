@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, webkit } from "./locale-browser.mjs";
 import { serveStatic } from "./serve-static.mjs";
-import { loadContent, languages, pagePath } from "../launch/content.mjs";
+import { loadContent, languages, pagePath, baseUrl } from "../launch/content.mjs";
+import { demoAssetForLocale, demoLanguageBadge, demoLocaleForLocale } from "../launch/demo-assets.mjs";
 
-const site = await serveStatic(process.env.APP_CANVAS_STATIC_DIR || ".artifacts/site", "/app-canvas/");
+const site = await serveStatic(process.env.APP_CANVAS_STATIC_DIR || ".artifacts/site", new URL(baseUrl).pathname);
 const origin = new URL(site.url).origin;
 const { locales, facts } = await loadContent();
 const results = [];
@@ -18,11 +19,26 @@ try {
         await page.setViewportSize({ width: 390, height: 844 });
         const response = await page.goto(`${origin}${pagePath(locale, kind)}`);
         assert.equal(response.status(), 200);
-        await page.locator("figure img").first().scrollIntoViewIfNeeded();
-        await page.locator("figure img").first().waitFor({ state: "visible" });
-        await page.locator("figure img").first().evaluate(img => img.decode());
-        const image = await page.locator("figure img").first().evaluate(img => ({ loaded: img.complete && img.naturalWidth > 0 }));
-        assert.ok(image.loaded, `${engine} ${locale} ${kind} image`);
+        const supported = Boolean(demoAssetForLocale(locale, "overview"));
+        const actualLocale = demoLocaleForLocale(locale);
+        const images = page.locator("figure img");
+        assert.equal(await images.count(), supported ? kind === "product" ? 2 : kind === "start" ? 1 : 3 : 0, `${engine} ${locale} ${kind} image policy`);
+        for (const img of await images.all()) {
+          await img.scrollIntoViewIfNeeded();
+          await img.waitFor({ state: "visible" });
+          await img.evaluate(element => element.decode());
+          const image = await img.evaluate(element => ({ loaded: element.complete && element.naturalWidth > 0, url: element.currentSrc }));
+          assert.ok(image.loaded, `${engine} ${locale} ${kind} image`);
+          assert.ok(image.url.includes(`/screenshots/${locale}/`));
+        }
+        if (supported && kind === "product") {
+          assert.ok((await page.locator(".journey-proof img").evaluate(img => img.currentSrc)).endsWith("/reference-phone.png"));
+        }
+        assert.equal(await page.locator('meta[property="og:image"]').count(), supported ? 1 : 0);
+        assert.ok((await page.locator(".demo-language").innerText()).includes(demoLanguageBadge(locale)));
+        const demoLink = new URL(await page.locator('[data-action="demo"]').first().getAttribute("href"));
+        assert.equal(demoLink.searchParams.get("lang"), actualLocale);
+        assert.equal(demoLink.pathname.endsWith("/zh-TW/"), actualLocale === "zh-TW");
         assert.equal(await page.locator("html").getAttribute("lang"), locale);
         assert.ok(await page.locator(".summary").innerText());
         assert.equal(await page.locator('link[hreflang="x-default"]').count(), 1);
