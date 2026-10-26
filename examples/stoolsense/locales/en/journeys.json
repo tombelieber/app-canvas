@@ -1,0 +1,179 @@
+[
+  {
+    "id": "record-happy",
+    "title": "Standard manual entry → Save",
+    "entry": "capture-home",
+    "steps": [
+      {
+        "title": "Open manual entry form",
+        "screen": "capture-manual",
+        "actions": [
+          {
+            "type": "click",
+            "selector": "#manual"
+          },
+          {
+            "type": "expect",
+            "selector": "#save-form"
+          }
+        ]
+      },
+      {
+        "title": "Enter pain and save",
+        "screen": "result-manual",
+        "actions": [
+          {
+            "type": "check",
+            "selector": "[name=pain][value='2']"
+          },
+          {
+            "type": "click",
+            "selector": ".save-capture"
+          },
+          {
+            "type": "expect",
+            "selector": "#doctor-summary"
+          },
+          {
+            "type": "expect",
+            "selector": "#view",
+            "text": "Manual entry saved"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "record-offline",
+    "title": "Save fails → Draft retained → Retry",
+    "entry": "capture-home",
+    "steps": [
+      {
+        "title": "Create a draft with pain information",
+        "screen": "capture-manual",
+        "actions": [
+          {
+            "type": "click",
+            "selector": "#manual"
+          },
+          {
+            "type": "check",
+            "selector": "[name=pain][value='2']"
+          }
+        ]
+      },
+      {
+        "title": "Simulate one connection loss and verify the draft remains",
+        "screen": "capture-offline",
+        "actions": [
+          {
+            "type": "fault",
+            "path": "/api/records",
+            "method": "POST",
+            "network": true,
+            "count": 1
+          },
+          {
+            "type": "click",
+            "selector": ".save-capture"
+          },
+          {
+            "type": "expect",
+            "selector": "#sync-state",
+            "text": "Local copy retained"
+          },
+          {
+            "type": "expect",
+            "selector": "[name=pain][value='2']",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "title": "Retry the same draft and save successfully",
+        "screen": "result-manual",
+        "actions": [
+          {
+            "type": "click",
+            "selector": ".save-capture"
+          },
+          {
+            "type": "expect",
+            "selector": "#doctor-summary"
+          },
+          {
+            "type": "expect",
+            "selector": "#view",
+            "text": "Manual entry saved"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "analysis-retry",
+    "title": "Photo saved → Analysis request failed → Retry",
+    "entry": "capture-home",
+    "steps": [
+      {
+        "title": "Select a fictional placeholder image",
+        "screen": "capture-photo",
+        "actions": [
+          {
+            "type": "file",
+            "selector": "#file",
+            "asset": "./sample.png"
+          },
+          {
+            "type": "expect",
+            "selector": "#save-form"
+          }
+        ]
+      },
+      {
+        "title": "Analysis request failed, but the record and original photo are still saved",
+        "screen": "result-failed",
+        "actions": [
+          {
+            "type": "fault",
+            "path": "/api/records/:id/analyze",
+            "method": "POST",
+            "status": 503,
+            "count": 1
+          },
+          {
+            "type": "click",
+            "selector": ".save-capture"
+          },
+          {
+            "type": "expect",
+            "selector": "#doctor-summary"
+          },
+          {
+            "type": "expect",
+            "selector": "#reanalyze"
+          },
+          {
+            "type": "expect",
+            "selector": "#message"
+          }
+        ]
+      },
+      {
+        "title": "Retry synthetic analysis; ineligible fields stay Unknown",
+        "screen": "result-unknown",
+        "actions": [
+          {
+            "type": "click",
+            "selector": "#reanalyze"
+          },
+          {
+            "type": "expect",
+            "selector": "#view",
+            "text": "analysis versions: 1."
+          }
+        ]
+      }
+    ]
+  }
+]

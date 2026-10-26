@@ -176,5 +176,20 @@
   "Native acceleration unavailable; using original previews.": "原生总览无法加速；已使用原有预览。",
   "Preview unavailable; select the screen to open the original app.": "预览无法加载；选择画面可打开原 App。",
   "Full UI · shared isolated rendering": "全部完整 UI · 共享隔离渲染",
-  "Review snapshot": "审阅快照"
+  "Review snapshot": "审阅快照",
+  "Change with your agent": "与 Agent 一起修改",
+  "Cancel pointing": "取消指向",
+  "Point to an element": "指向 UI 元素",
+  "Click an element in the preview. Its normal action will not run. Press Escape to cancel.": "点击预览中的元素，不会执行原本操作。按 Escape 取消。",
+  "Selected element:": "已选择元素：",
+  "References a captured local alternative. Your agent needs the matching source project to apply changes.": "此引用指向本机捕获的设计版本。Agent 需要匹配的源项目才能应用修改。",
+  "What should change?": "想修改什么？",
+  "Make this button easier to find.": "让这个按钮更容易找到。",
+  "Copying…": "正在复制…",
+  "Copy change request": "复制修改要求",
+  "Copied. Paste into Claude Code, Codex, or your coding agent.": "已复制。请粘贴到 Claude Code、Codex 或你的 coding agent。",
+  "Clipboard unavailable. Select and copy the request below.": "无法使用剪贴板。请选中并复制下面的要求。",
+  "Review or copy the request": "查看或复制要求",
+  "Agent change request": "Agent 修改要求",
+  "Only copied when you ask. Agent Canvas does not send this request to an AI service.": "仅在你要求时复制。Agent Canvas 不会将此要求发送到 AI 服务。"
 }

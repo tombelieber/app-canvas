@@ -8,7 +8,9 @@
 
 轻巧的产品工作空间：查看 coding agent 构建的 App，操作真实界面，指出要改的地方，再从源代码继续构建。
 
-**[打开交互 Demo](https://agent-canvas-app.pages.dev/demo/) · [免费开始构建](https://agent-canvas-app.pages.dev/about/zh-CN/start/) · [产品发布文章](https://agent-canvas-app.pages.dev/about/zh-CN/release/)**
+**[打开交互 Demo](https://agent-canvas-app.pages.dev/demo/zh-TW/?lang=zh-TW) · [免费开始构建](https://agent-canvas-app.pages.dev/about/zh-CN/start/) · [产品发布文章](https://agent-canvas-app.pages.dev/about/zh-CN/release/)**
+
+演示语言：繁体中文
 
 ## 为构建 → 检视 → 修改而设
 
@@ -16,9 +18,7 @@
 - 只维护一份 UI。Coding agent 负责 fixtures、adapter 和 coverage checks。
 - 公开合成数据 Demo 有 77 个状态和 44 条流程，无需登录或 API key。
 
-![真实 StoolSense UI 状态排列在 Agent Canvas 画布中](docs/stoolsense-overview.jpg)
 
-公开 Demo 真实画面：77 个已编写状态、44 条流程、121 个可播放项目。队列包含独立 case，并非 121 条端到端流程。
 
 ## 看全貌、直接操作、播放流程
 
@@ -34,9 +34,7 @@ Browse 锁定控件，便于拖动画布。选中画面后点击 Interact，即�
 
 选择画面或 UI 元素，写下修改要求，再复制准确引用给 coding agent。让它修改源代码；源码整合的 preview 会重建。
 
-![真实 Demo 在离线保存失败后保留草稿，等待重试](docs/stoolsense-playback.jpg)
 
-实际失败和恢复画面。播放会执行已编写操作与检查；画一条连线本身不等于测试。
 
 ## 从现有 Repo 到完整交互画布
 
@@ -45,7 +43,7 @@ Browse 锁定控件，便于拖动画布。选中画面后点击 Interact，即�
 ### 粘贴给你的 Coding Agent
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 安装共享工具
@@ -53,7 +51,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and a
 使用 Node.js 22+，沿用项目的包管理器与 lockfile。安装固定版本的 GitHub release，再安装浏览器。npm 12 若阻止此直接 Git 依赖，才添加 --allow-git=root；无需更改全局设置。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
 
@@ -91,7 +89,7 @@ npm run ui:review
 
 共享包维护 viewer、CLI 和 skill；各 Repo 维护自己的 adapter、fixtures、独立 inventory、catalog 和交互检查。从可运行的 React/Vite 示例开始；其他技术栈使用专属 adapter。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.1/examples/react-vite)
 
 ### 可选的 Agent Skill
 

@@ -8,7 +8,9 @@ Tú decides lo que sigue.
 
 Un espacio ligero para ver, probar y mejorar la app que construye tu agente. Explora pantallas reales, señala qué cambiar y sigue trabajando desde el código fuente.
 
-**[Abrir demo](https://agent-canvas-app.pages.dev/demo/) · [Empezar gratis](https://agent-canvas-app.pages.dev/about/es/start/) · [Historia del lanzamiento](https://agent-canvas-app.pages.dev/about/es/release/)**
+**[Abrir demo](https://agent-canvas-app.pages.dev/demo/?lang=en) · [Empezar gratis](https://agent-canvas-app.pages.dev/about/es/start/) · [Historia del lanzamiento](https://agent-canvas-app.pages.dev/about/es/release/)**
+
+Demo en inglés
 
 ## Para construir, revisar y mejorar
 
@@ -16,9 +18,7 @@ Un espacio ligero para ver, probar y mejorar la app que construye tu agente. Exp
 - Mantén una sola implementación de UI. Tu agente crea fixtures, adapter y verificaciones de cobertura.
 - Prueba 77 estados y 44 flujos con datos sintéticos, sin cuenta ni API key.
 
-![Estados reales de StoolSense en el lienzo Agent Canvas](docs/stoolsense-overview.jpg)
 
-Demo real: 77 estados, 44 flujos y 121 entradas reproducibles. Incluye casos independientes; no son 121 recorridos E2E.
 
 ## Explora, interactúa y reproduce
 
@@ -34,9 +34,7 @@ Browse bloquea los controles para mover el lienzo. Selecciona una pantalla y pul
 
 Selecciona una pantalla o elemento UI, añade tu petición y copia una referencia para el agente. Pídele modificar el código; las vistas conectadas al código se reconstruyen.
 
-![Reproducción real tras un fallo de guardado sin conexión, conservando el borrador](docs/stoolsense-playback.jpg)
 
-UI real de fallo y recuperación. La reproducción ejecuta acciones y comprobaciones; una conexión dibujada no es una prueba.
 
 ## De un repo existente a un lienzo interactivo
 
@@ -45,7 +43,7 @@ Encarga la integración a un agente que pueda leer, editar y ejecutar comandos. 
 ### Pega esto en tu agente
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. Instala la herramienta compartida
@@ -53,7 +51,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and a
 Usa Node.js 22+ y el gestor y lockfile del proyecto. Instala la versión fijada desde GitHub y el navegador. En npm 12, añade --allow-git=root solo si bloquea esa dependencia Git directa; no cambies la política global.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
 
@@ -91,7 +89,7 @@ npm run ui:review
 
 El paquete compartido mantiene viewer, CLI y skill. Tu repo mantiene adapter, fixtures, inventory independiente, catalog y comprobaciones. Empieza con el ejemplo ejecutable React/Vite; otros stacks necesitan su adapter.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.1/examples/react-vite)
 
 ### Skill opcional
 

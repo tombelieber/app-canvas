@@ -176,5 +176,20 @@
   "Native acceleration unavailable; using original previews.": "ネイティブ高速化は利用できません。元のプレビューを使用します。",
   "Preview unavailable; select the screen to open the original app.": "プレビューを読み込めません。画面を選択して元のアプリを開いてください。",
   "Full UI · shared isolated rendering": "UI 全体 · 共有の分離描画",
-  "Review snapshot": "レビュー用スナップショット"
+  "Review snapshot": "レビュー用スナップショット",
+  "Change with your agent": "エージェントと変更する",
+  "Cancel pointing": "選択をキャンセル",
+  "Point to an element": "要素を指定",
+  "Click an element in the preview. Its normal action will not run. Press Escape to cancel.": "プレビュー内の要素をクリックしてください。通常の操作は実行しません。Escape でキャンセルします。",
+  "Selected element:": "選択した要素：",
+  "References a captured local alternative. Your agent needs the matching source project to apply changes.": "ローカルに取り込んだデザインの参照です。変更を適用するには、対応するソースプロジェクトが必要です。",
+  "What should change?": "何を変更しますか？",
+  "Make this button easier to find.": "このボタンを見つけやすくする。",
+  "Copying…": "コピー中…",
+  "Copy change request": "変更依頼をコピー",
+  "Copied. Paste into Claude Code, Codex, or your coding agent.": "コピーしました。Claude Code、Codex、またはコーディングエージェントに貼り付けてください。",
+  "Clipboard unavailable. Select and copy the request below.": "クリップボードを利用できません。下の依頼を選択してコピーしてください。",
+  "Review or copy the request": "依頼を確認またはコピー",
+  "Agent change request": "エージェントへの変更依頼",
+  "Only copied when you ask. Agent Canvas does not send this request to an AI service.": "明示的に操作した場合のみコピーします。Agent Canvas は依頼を AI サービスに送信しません。"
 }

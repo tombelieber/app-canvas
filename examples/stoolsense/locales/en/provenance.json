@@ -1,0 +1,27 @@
+{
+  "example": "StoolSense",
+  "locale": "en",
+  "data": "synthetic only",
+  "sourceFrontendCommit": "86066485a0619c5e3368906875d8ca7fe5d093d2",
+  "sourceGeneratedAt": "2026-10-15T18:36:59.426Z",
+  "sourceBundleSha256": "446f66490b40ab1f4bbe86da322b7f6d0cff16a9af6b6c3bb76da035100e3594",
+  "sourceShellSha256": "2049b62736b295542503b7d6b722992292c4df4141194803b81bb528c1131177",
+  "sourceCatalogSha256": "12934f72abd751be2e166925ac9cd3d07175c0abacb2e747ab1ce8ea4725f95d",
+  "sourceJourneysSha256": "940fe4859fead12849d4dd24bec191997001a2bfb9faf0f10063ae44f2b470a1",
+  "sourceBaselineJourneysSha256": "c67ef8fb66022e4ac090fee5cf74bae14142b4e5a2a21ba61ffd46683abc85ab",
+  "sourceCsvSha256": "cc0b0ed126b169f970154136d168d3a1dfe6f4cd8c4d80cf3979cfe990a2eddd",
+  "sourceInvalidCsvSha256": "7fdc293b86c44b1bf7b2ef28039a2fa25d2a3ca2d7e40777b731f55486e8d372",
+  "dictionarySha256": "f97bb5760c8f7c8da76775cf78243a8ad44fdd76ccecac20ed9a3d363777f84c",
+  "expectationsSha256": "e281136a1410a9d57cefdd62f85bc9f3b55ad79be635308793424616e6875a8b",
+  "recipeSha256": "a631fd152edc67ffb41450f1da48feadbd9af6f9a6c87cf75b6a8fb220c224d3",
+  "method": "Reviewed cooked JavaScript literal/template, HTML and metadata translations compiled from the frozen source before execution. No DOM translation or screenshot overlay.",
+  "outputs": {
+    "public/en/frame.js": "74cef1a58cd736f5da7761a9ab5d61e61e70eb4d963acf91748a767e94514201",
+    "public/en/index.html": "a07191b9905ba6c9a616a2eeae9eef408f15169e2118f0e8b410a77a1e81f78a",
+    "public/en/diet-template.csv": "df2d9c9d2508381ebe65132d0b4cf6648be35549535cd4839037e9a1c1c9f0d5",
+    "public/en/invalid-meals.csv": "7f031289c9fee74024dc95d30a654586e44e3c094faf0df867b8ffe83647cc5c",
+    "locales/en/catalog.json": "1eb3392db8337dfc85233c60842ae1865cb4bc2475dc4fb4d7bcc592b8db7e35",
+    "locales/en/journeys.mjs": "d27de066d8c594d389fd823e098f57d766c687a184778626b123c61e5e02a167",
+    "locales/en/journeys.json": "1bd0c97ec4b18998c8866134be7ae62caaeb460044d76046a278ce62be2b0bae"
+  }
+}

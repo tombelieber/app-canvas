@@ -12,6 +12,7 @@ const { values, positionals } = parseArgs({
     project: { type: "string" },
     "review-only": { type: "boolean" },
     port: { type: "string" },
+    locale: { type: "string" },
     version: { type: "boolean" },
     verify: { type: "boolean" },
     check: { type: "boolean" },
@@ -36,6 +37,13 @@ const { values, positionals } = parseArgs({
     "allow-ephemeral": { type: "boolean" },
   },
 });
+// Locale selection applies only to the bundled synthetic demo. Never imply that
+// this flag translates a consumer application's real source UI.
+if (values.locale !== undefined && positionals[0] !== "demo")
+  throw Error("--locale is supported only by agent-canvas demo");
+if (values.locale !== undefined && !["en", "zh-TW"].includes(values.locale))
+  throw Error("Use agent-canvas demo --locale en|zh-TW");
+const demoLocale = values.locale || "en";
 if (values.version) {
   console.log(
     JSON.parse(await readFile(new URL("../package.json", import.meta.url)))
@@ -45,7 +53,7 @@ if (values.version) {
 }
 if (values.help) {
   await new Promise(done => process.stdout.write(
-    "agent-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\nagent-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\nagent-canvas import <URL> [--out <new-private-directory>] --agent\nagent-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\nagent-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\nagent-canvas status <directory>\nagent-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\nagent-canvas open <private-project-directory> [--port <port>]\nagent-canvas projects\nagent-canvas recover <recovery-id> [--out <new-directory>]\nagent-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\nagent-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\nagent-canvas status --inventory <ui-inventory.json>\nagent-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\nagent-canvas guide\nagent-canvas discover [--source-root <repository>] --out <new-inventory.json>\nagent-canvas pending --inventory <inventory.json>\nagent-canvas demo\nagent-canvas export [--config <config>] [--review-only] --out <new-directory>\nagent-canvas export --project <captured-project-directory> --review-only --out <new-directory>\nagent-canvas browsers\nagent-canvas install --target codex|claude|both\nagent-canvas telemetry on|off|status|dogfood|unknown",
+    "agent-canvas --config <project.config.mjs> [--port <port>] [--verify | --check | --ui-complete | --complete]\nagent-canvas import <URL> [--out <new-private-directory>] [--port <port>] [--headless] [--no-record]\nagent-canvas import <URL> [--out <new-private-directory>] --agent\nagent-canvas capture-script --out <new-reader.js> [--redacted --allow-text <labels.json>]\nagent-canvas capture <directory> --input <snapshot.json> [--label <label>] [--action <observed-action>]\nagent-canvas status <directory>\nagent-canvas link <directory> --from <state-id> --to <state-id> --label <reference-label>\nagent-canvas open <private-project-directory> [--port <port>]\nagent-canvas projects\nagent-canvas recover <recovery-id> [--out <new-directory>]\nagent-canvas backup <directory> --out <new-directory>\nUnsafe output paths require --allow-ephemeral; writes are checkpointed outside Git in APP_CANVAS_HOME.\nagent-canvas plan [--source-root <repository>] --out <new-ui-inventory.json>\nagent-canvas status --inventory <ui-inventory.json>\nagent-canvas populate --config <project.config.mjs> [--source-root <repository>] [--verify]\nagent-canvas guide\nagent-canvas discover [--source-root <repository>] --out <new-inventory.json>\nagent-canvas pending --inventory <inventory.json>\nagent-canvas demo [--locale en|zh-TW] (default: en; bundled demo only)\nagent-canvas export [--config <config>] [--review-only] --out <new-directory>\nagent-canvas export --project <captured-project-directory> --review-only --out <new-directory>\nagent-canvas browsers\nagent-canvas install --target codex|claude|both\nagent-canvas telemetry on|off|status|dogfood|unknown",
     done,
   ));
   process.exit(0);
@@ -180,12 +188,14 @@ try {
     root: positionals[0] === "demo" ? packageRoot : process.cwd(),
     configPath:
       positionals[0] === "demo"
-        ? "examples/stoolsense/canvas.config.mjs"
+        ? demoLocale === "en" ? "examples/stoolsense/canvas.en.config.mjs" : "examples/stoolsense/canvas.config.mjs"
         : values.config || "canvas.config.mjs",
     port: values.port ? Number(values.port) : exporting ? 0 : undefined,
     watchFiles: !values.verify && !values.complete && !values['ui-complete'] && !exporting,
   });
-  console.log(`Agent Canvas: ${app.address}`);
+  const viewerUrl = positionals[0] === "demo" ? new URL(app.address) : null;
+  if (viewerUrl) viewerUrl.searchParams.set("lang", demoLocale);
+  console.log(`Agent Canvas: ${viewerUrl?.href || app.address}`);
   for (const signal of ["SIGINT", "SIGTERM"])
     process.once(signal, async () => {
       await app.close();

@@ -11,7 +11,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: read
       pages: read
@@ -39,6 +39,7 @@ jobs:
       - run: npm run test:overview-budget && npm run test:readiness
       - run: npm run build:demo
       - run: npm run test:static
+      - run: npm run test:demo-locales
       - run: npm run test:launch && npm run test:i18n && npm run test:telemetry
       - run: npm ci --prefix services/cloud && npm run check --prefix services/cloud && npm run test:waitlist
       - run: npm run check:privacy -- .artifacts/site

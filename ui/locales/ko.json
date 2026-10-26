@@ -176,5 +176,20 @@
   "Native acceleration unavailable; using original previews.": "네이티브 가속을 사용할 수 없어 기존 미리 보기를 사용합니다.",
   "Preview unavailable; select the screen to open the original app.": "미리 보기를 사용할 수 없습니다. 화면을 선택하여 원래 앱을 여세요.",
   "Full UI · shared isolated rendering": "전체 UI · 공유 격리 렌더링",
-  "Review snapshot": "검토 스냅샷"
+  "Review snapshot": "검토 스냅샷",
+  "Change with your agent": "에이전트와 함께 수정",
+  "Cancel pointing": "선택 취소",
+  "Point to an element": "요소 지정",
+  "Click an element in the preview. Its normal action will not run. Press Escape to cancel.": "미리보기에서 요소를 클릭하세요. 원래 동작은 실행되지 않습니다. Escape를 눌러 취소하세요.",
+  "Selected element:": "선택한 요소:",
+  "References a captured local alternative. Your agent needs the matching source project to apply changes.": "이 참조는 로컬에서 캡처한 디자인 버전을 가리킵니다. 변경하려면 에이전트에 해당 소스 프로젝트가 필요합니다.",
+  "What should change?": "무엇을 바꿀까요?",
+  "Make this button easier to find.": "이 버튼을 더 쉽게 찾을 수 있게 해 주세요.",
+  "Copying…": "복사 중…",
+  "Copy change request": "변경 요청 복사",
+  "Copied. Paste into Claude Code, Codex, or your coding agent.": "복사했습니다. Claude Code, Codex 또는 코딩 에이전트에 붙여 넣으세요.",
+  "Clipboard unavailable. Select and copy the request below.": "클립보드를 사용할 수 없습니다. 아래 요청을 선택해 복사하세요.",
+  "Review or copy the request": "요청 검토 또는 복사",
+  "Agent change request": "에이전트 변경 요청",
+  "Only copied when you ask. Agent Canvas does not send this request to an AI service.": "요청할 때만 복사합니다. Agent Canvas는 이 요청을 AI 서비스로 보내지 않습니다."
 }

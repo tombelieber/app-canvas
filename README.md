@@ -5,21 +5,21 @@
 
 **[Product & multilingual guides](https://agent-canvas-app.pages.dev/) · [Agent walkthrough](https://agent-canvas-app.pages.dev/about/start/) · [Release story](https://agent-canvas-app.pages.dev/about/release/)**
 
-CLI **v0.16.0** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages.
+CLI **v0.16.1** · Demo **77 states · 44 flows · 121 playable entries**, including standalone cases. Viewer: English by default + 10 languages. Example app: English and 繁體中文.
 <!-- launch:end -->
 
 **Build with agents. Shape it live.**
 
 See your real app on one canvas. Try screens and flows, point to an element, and copy a precise change request to Claude Code or Codex. Selected screens render live HTML/CSS/JS. Press Interact to use them in place; follow a flow to pan and zoom to its destination.
 
-**[Play with the hosted StoolSense canvas →](https://tombelieber.github.io/app-canvas/)**
+**[Play with the English StoolSense canvas →](https://agent-canvas-app.pages.dev/demo/?lang=en)** · [繁體中文示例](https://agent-canvas-app.pages.dev/demo/zh-TW/?lang=zh-TW)
 No install, login or API key. [Product site](https://agent-canvas-app.pages.dev/). Explore **77 named states**, labeled flows and
 working recording/editing/import/export interactions using synthetic data.
 Play **44 interaction flows and all 77 individual cases**, separately or as
 one queue. The branching state graph labels success, failure, waiting and
 conditional variants using complete real UI screens.
 
-![A failed save, retained draft and successful retry on the real UI canvas](docs/stoolsense-playback.jpg)
+![A failed save, retained draft and successful retry on the English real UI canvas](docs/screenshots/en/playback.jpg)
 
 [How to point at UI and ask for a change](docs/agent-reference.md) · [Contributing](CONTRIBUTING.md) · [Support](docs/support.md)
 
@@ -72,7 +72,7 @@ bundle a universal device renderer; viewer checks and native checks are separate
 Requires Node.js 22+ and Chromium installed through Playwright. Viewer controls default to English, with a persistent switcher for all 11 launch languages. App screen titles and contents remain in their original language.
 
 ```sh
-npm install -g github:tombelieber/app-canvas#v0.16.0
+npm install -g github:tombelieber/app-canvas#v0.16.1
 agent-canvas browsers
 agent-canvas demo
 ```

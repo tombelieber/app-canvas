@@ -8,7 +8,9 @@
 
 エージェントが作ったアプリを見て、試して、磨く軽量ワークスペース。実際の画面を確認し、変更したい場所を示して、ソースから開発を続けます。
 
-**[デモを開く](https://agent-canvas-app.pages.dev/demo/) · [無料で始める](https://agent-canvas-app.pages.dev/about/ja/start/) · [リリース記事](https://agent-canvas-app.pages.dev/about/ja/release/)**
+**[デモを開く](https://agent-canvas-app.pages.dev/demo/?lang=en) · [無料で始める](https://agent-canvas-app.pages.dev/about/ja/start/) · [リリース記事](https://agent-canvas-app.pages.dev/about/ja/release/)**
+
+デモは英語です
 
 ## 実装 → 確認 → 改善のループに
 
@@ -16,9 +18,7 @@
 - UI 実装は一つ。エージェントが fixtures、adapter、カバレッジ検証を作成。
 - 公開の合成データデモで 77 状態と 44 フローを体験。ログインも API キーも不要。
 
-![Agent Canvas に並ぶ実際の StoolSense の UI 状態](docs/stoolsense-overview.jpg)
 
-公開デモの実画面：77 状態、44 フロー、121 再生項目。単独ケースを含み、121 本の E2E フローではありません。
 
 ## 全体を見る、操作する、再生する
 
@@ -34,9 +34,7 @@ Browse は操作をロックして移動を優先。画面を選び Interact を
 
 画面や UI 要素を選び、変更内容を書いて参照情報をエージェントにコピーします。エージェントがソースを変更すると、ソース連携プレビューが再構築されます。
 
-![オフライン保存失敗後に下書きを保持して再試行する実際のデモ](docs/stoolsense-playback.jpg)
 
-失敗と復旧の実画面。再生は定義された操作と検証を実行します。線を引くだけではテストになりません。
 
 ## 既存リポジトリから対話的なキャンバスへ
 
@@ -45,7 +43,7 @@ Browse は操作をロックして移動を優先。画面を選び Interact を
 ### エージェントに貼り付ける指示
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 共通ツールを導入
@@ -53,7 +51,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and a
 Node.js 22+ とプロジェクトのパッケージ管理・lockfile を使用。固定した GitHub リリースとブラウザをインストールします。npm 12 が直接 Git 依存を拒否する場合のみ --allow-git=root を追加。グローバル設定は変更しません。
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
 
@@ -91,7 +89,7 @@ npm run ui:review
 
 共通パッケージは viewer、CLI、skill を管理。各リポジトリは adapter、fixtures、独立 inventory、catalog、操作検証を管理します。動作する React/Vite 例を参考にし、他の構成には専用 adapter を用意します。
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.1/examples/react-vite)
 
 ### 任意のエージェント Skill
 

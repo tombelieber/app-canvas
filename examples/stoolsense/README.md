@@ -24,3 +24,32 @@ graph guards are enabled, so new catalog states cannot silently be omitted.
 original application maintains the UI source; this example is regenerated from
 it rather than maintained as separate screen markup. The whole canvas comes
 from the shared package, as it does for other project adapters.
+
+## English and Traditional Chinese demos
+
+`canvas.en.config.mjs` renders the English example; `canvas.config.mjs` retains
+the original Traditional Chinese example. Both have the same 77 case IDs,
+44 flows, 121 playable entries, original application controls and synthetic API.
+The demo locale belongs to this example, independently of the canvas toolbar's
+language. Other applications retain their own original language.
+
+The English renderer is compiled from the already-public frozen `frame.js`,
+shell and fixture metadata using the explicit dictionaries in `locales/`.
+Translations replace cooked JavaScript literals/template segments before the
+original code executes. They do not translate a rendered DOM, overlay labels,
+replace controls or import a later private application revision. English CSV
+fixtures and fixed journey expectations are generated alongside the renderer.
+The original application's frozen revision was Traditional Chinese; the English
+demo is a source-derived localized edition, not a claim that its production app
+already supports English.
+
+Regenerate or verify these reproducible outputs with:
+
+```sh
+node examples/stoolsense/build-locales.mjs
+node examples/stoolsense/build-locales.mjs --check
+```
+
+`locales/en/provenance.json` records the original frontend commit, frozen-source,
+dictionary and recipe hashes, and every generated output hash. Missing English
+messages fail the compiler; no untranslated fallback is silently published.

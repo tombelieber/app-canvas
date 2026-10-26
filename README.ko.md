@@ -8,7 +8,9 @@
 
 코딩 에이전트가 만든 앱을 보고, 사용하고, 다듬는 가벼운 워크스페이스. 실제 화면에서 바꿀 곳을 가리키고 소스에서 계속 빌드하세요.
 
-**[데모 열기](https://agent-canvas-app.pages.dev/demo/) · [무료로 시작](https://agent-canvas-app.pages.dev/about/ko/start/) · [출시 이야기](https://agent-canvas-app.pages.dev/about/ko/release/)**
+**[데모 열기](https://agent-canvas-app.pages.dev/demo/?lang=en) · [무료로 시작](https://agent-canvas-app.pages.dev/about/ko/start/) · [출시 이야기](https://agent-canvas-app.pages.dev/about/ko/release/)**
+
+데모 언어: 영어
 
 ## 빌드 → 검토 → 개선을 위한 공간
 
@@ -16,9 +18,7 @@
 - UI 구현은 하나만 유지합니다. 에이전트가 fixtures, adapter, 커버리지 검증을 만듭니다.
 - 합성 데이터 공개 데모에서 77개 상태와 44개 흐름을 체험하세요. 로그인과 API 키가 필요 없습니다.
 
-![Agent Canvas에 배치된 실제 StoolSense UI 상태](docs/stoolsense-overview.jpg)
 
-실제 공개 데모: 상태 77개, 흐름 44개, 재생 항목 121개. 개별 케이스를 포함하며 E2E 흐름 121개라는 뜻은 아닙니다.
 
 ## 보고, 사용하고, 재생하기
 
@@ -34,9 +34,7 @@ Browse는 이동 중 컨트롤을 잠급니다. 화면을 선택하고 Interact�
 
 화면이나 UI 요소를 선택하고 변경 요청을 적어 정확한 참조를 에이전트에 복사하세요. 에이전트가 소스를 수정하면 소스 기반 미리보기가 다시 빌드됩니다.
 
-![오프라인 저장 실패 후 초안을 유지하고 재시도하는 실제 데모](docs/stoolsense-playback.jpg)
 
-실제 실패 및 복구 UI입니다. 재생은 작성된 동작과 검증을 실행합니다. 연결선을 그리는 것만으로 테스트가 되지 않습니다.
 
 ## 기존 저장소를 상호작용 캔버스로
 
@@ -45,7 +43,7 @@ Browse는 이동 중 컨트롤을 잠급니다. 화면을 선택하고 Interact�
 ### 코딩 에이전트에 붙여 넣기
 
 ```text
-Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
+Read https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md and add a completely populated Agent Canvas to this repository. Discover all screens, components, variants, states and navigation from the whole application source. Use original UI code. Create the missing synthetic fixtures and render harnesses. Reconcile an independent source inventory with rendered cases and source-linked runtime checks. Add checked happy, failure and recovery journeys. Group by actual page and feature, connect checked flows, deduplicate repeated captures and resume checkpoints. Run --ui-complete against the original source root; keep the stricter --complete source audit separate and unchanged. Continue until the full landscape is populated and verified; report genuine blockers as incomplete. Keep production sessions, credentials and real user data out of previews.
 ```
 
 ### 1. 공유 도구 설치
@@ -53,7 +51,7 @@ Read https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md and a
 Node.js 22+와 프로젝트의 패키지 관리자 및 lockfile을 사용합니다. 고정한 GitHub 릴리스와 브라우저를 설치하세요. npm 12가 이 직접 Git 의존성을 차단할 때만 --allow-git=root를 추가하고 전역 정책은 바꾸지 마세요.
 
 ```sh
-npm install --save-dev github:tombelieber/app-canvas#v0.16.0
+npm install --save-dev github:tombelieber/app-canvas#v0.16.1
 npx agent-canvas browsers
 ```
 
@@ -91,7 +89,7 @@ npm run ui:review
 
 공유 패키지는 viewer, CLI, skill을 관리합니다. 각 저장소는 adapter, fixtures, 독립 inventory, catalog, 상호작용 검증을 관리합니다. 실행 가능한 React/Vite 예제로 시작하고 다른 스택에는 전용 adapter를 사용하세요.
 
-[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.0/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.0/examples/react-vite)
+[Agent guide](https://github.com/tombelieber/app-canvas/blob/v0.16.1/AGENT_GUIDE.md) · [React/Vite](https://github.com/tombelieber/app-canvas/tree/v0.16.1/examples/react-vite)
 
 ### 선택 사항인 Agent Skill
 
